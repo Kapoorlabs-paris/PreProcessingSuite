@@ -94,15 +94,37 @@ public class Utils {
 		jpb.setString(message + "= " + framenumber + "/" + thirdDimsize);
 
 	}
-	public static RandomAccessibleInterval<FloatType> Preprocess(RandomAccessibleInterval<FloatType> originalimg, final double[] psf) {
+	public static RandomAccessibleInterval<FloatType> FlatFieldMedian(RandomAccessibleInterval<FloatType> originalimg, final int radius, final int flatfieldradius) {
 
 
-		final FlatFieldCorrection flatfilter = new FlatFieldCorrection(originalimg, 1, psf);
+		final FlatFieldCorrection flatfilter = new FlatFieldCorrection(originalimg, radius, flatfieldradius);
 		flatfilter.process();
 		RandomAccessibleInterval<FloatType> ProgramPreprocessedimg = flatfilter.getResult();
 		return ProgramPreprocessedimg;
 				
 			}
+	public static RandomAccessibleInterval<FloatType> FlatFieldOnly(RandomAccessibleInterval<FloatType> originalimg, final int flatfieldradius) {
+
+
+		final FlatFieldOnly flatfilter = new FlatFieldOnly(originalimg, flatfieldradius);
+		flatfilter.process();
+		RandomAccessibleInterval<FloatType> ProgramPreprocessedimg = flatfilter.getResult();
+		return ProgramPreprocessedimg;
+				
+			}
+	
+	public static RandomAccessibleInterval<FloatType> MedianOnly(RandomAccessibleInterval<FloatType> originalimg, final int radius) {
+
+
+		final MedianFilterOnly flatfilter = new MedianFilterOnly(originalimg, radius);
+		flatfilter.process();
+		RandomAccessibleInterval<FloatType> ProgramPreprocessedimg = flatfilter.getResult();
+		return ProgramPreprocessedimg;
+				
+			}
+	
+	
+	
 	public static Img<FloatType> copyImage(final RandomAccessibleInterval<FloatType> input) {
 		// create a new Image with the same dimensions but the other imgFactory
 		// note that the input provides the size for the new image by

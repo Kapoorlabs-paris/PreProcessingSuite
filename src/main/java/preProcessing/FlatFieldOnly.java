@@ -65,9 +65,8 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 
 	private RandomAccessibleInterval< FloatType > output;
 
-	private final int radius;
+	private final int flatfieldradius;
 	
-	private final double[] psf;
 	
 	private  JProgressBar jpb;
 
@@ -81,19 +80,17 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 	 *            determines the size of the neighborhood. In 2D or 3D, a radius
 	 *            of 1 will generate a 3x3 neighborhood.
 	 */
-	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int radius, final double[] psf )
+	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int flatfieldradius )
 	{
 		this.source = source;
-		this.radius = radius;
-		this.psf = psf;
+		this.flatfieldradius = flatfieldradius;
 	}
 	
 	
-	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int radius, final JProgressBar jpb, final double[] psf  )
+	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int flatfieldradius, final JProgressBar jpb  )
 	{
 		this.source = source;
-		this.radius = radius;
-		this.psf = psf;
+		this.flatfieldradius = flatfieldradius;
 		this.jpb = jpb;
 	}
 
@@ -105,11 +102,7 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 			errorMessage = BASE_ERROR_MSG + " Can only operate on 1D, 2D or 3D images. Got " + source.numDimensions() + "D.";
 			return false;
 		}
-		if ( radius < 1 )
-		{
-			errorMessage = BASE_ERROR_MSG + "Radius cannot be smaller than 1. Got " + radius + ".";
-			return false;
-		}
+		
 		return true;
 	}
 
@@ -196,7 +189,7 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 		
 		double[] sigma = new double[in.numDimensions()];
 		for (int d = 0; d < in.numDimensions(); ++d) {
-			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / 24.0);
+			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / flatfieldradius);
 		}
 		
 		RandomAccessibleInterval<FloatType> gaussimg = Utils.copyImage(in);
