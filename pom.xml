@@ -10,7 +10,7 @@
 	</parent>
 
 	<groupId>net.kapoor</groupId>
-	<artifactId>Bubbleator</artifactId>
+	<artifactId>Preprocessing</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
 	<name>PreprocessingSuite</name>
