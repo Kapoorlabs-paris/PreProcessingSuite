@@ -8,10 +8,14 @@ import mpicbg.imglib.util.Util;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.stats.Normalize;
+import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import interactivePreprocessing.InteractiveMethods;
@@ -35,8 +39,69 @@ public class Slicer {
 		return totalimg;
 
 	}
-	
-	
+	/**
+	 * Generic, type-agnostic method to create an identical copy of an Img
+	 *
+	 * @param currentPreprocessedimg2
+	 *            - the Img to copy
+	 * @return - the copy of the Img
+	 */
+	public static Img<UnsignedByteType> copytoByteImage(final RandomAccessibleInterval<FloatType> input) {
+		// create a new Image with the same properties
+		// note that the input provides the size for the new image as it
+		// implements
+		// the Interval interface
+		RandomAccessibleInterval<FloatType> inputcopy = copyImage(input);
+		Normalize.normalize(Views.iterable(inputcopy), new FloatType(0), new FloatType(255));
+		final UnsignedByteType type = new UnsignedByteType();
+		final ImgFactory<UnsignedByteType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(inputcopy, type);
+		final Img<UnsignedByteType> output = factory.create(inputcopy, type);
+		// create a cursor for both images
+		RandomAccess<FloatType> ranac = inputcopy.randomAccess();
+		Cursor<UnsignedByteType> cursorOutput = output.cursor();
+
+		// iterate over the input
+		while (cursorOutput.hasNext()) {
+			// move both cursors forward by one pixel
+			cursorOutput.fwd();
+
+			ranac.setPosition(cursorOutput);
+
+			// set the value of this pixel of the output image to the same as
+			// the input,
+			// every Type supports T.set( T type )
+			cursorOutput.get().set((int) Math.round(ranac.get().get()));
+		}
+
+		// return the copy
+		return output;
+	}
+	public static Img<FloatType> copyImage(final RandomAccessibleInterval<FloatType> input) {
+		// create a new Image with the same dimensions but the other imgFactory
+		// note that the input provides the size for the new image by
+		// implementing the Interval interface
+		Img<FloatType> output = new ArrayImgFactory<FloatType>().create(input, Views.iterable(input).firstElement());
+
+		// create a cursor that automatically localizes itself on every move
+		Cursor<FloatType> cursorInput = Views.iterable(input).localizingCursor();
+		RandomAccess<FloatType> randomAccess = output.randomAccess();
+
+		// iterate over the input cursor
+		while (cursorInput.hasNext()) {
+			// move input cursor forward
+			cursorInput.fwd();
+
+			// set the output cursor to the position of the input cursor
+			randomAccess.setPosition(cursorInput);
+
+			// set the value of this pixel of the output image, every Type
+			// supports T.set( T type )
+			randomAccess.get().set(cursorInput.get());
+		}
+
+		// return the copy
+		return output;
+	}
 	public static  RandomAccessibleInterval<FloatType> getCurrentView(RandomAccessibleInterval<FloatType> originalimg, int thirdDimension, int thirdDimensionSize, int fourthDimension, int fourthDimensionSize) {
 
 		final FloatType type = originalimg.randomAccess().get().createVariable();
