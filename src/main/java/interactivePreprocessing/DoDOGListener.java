@@ -32,7 +32,38 @@ public class DoDOGListener implements ItemListener {
 			parent.showDOG = true;
 			parent.showMSER = false;
 			parent.showWatershed = false;
-			parent.updatePreview(ValueChange.DOG);
+			
+			parent.sigmaslider.setVisible(true);
+			parent.thresholdslider.setVisible(true);
+			parent.findmaxima.setVisible(true);
+			parent.findminima.setVisible(true);
+			
+			parent.deltaS.setVisible(false);
+			parent.Unstability_ScoreS.setVisible(false);
+			parent.minDiversityS.setVisible(false);
+			parent.minSizeS.setVisible(false);
+			parent.maxSizeS.setVisible(false);
+			parent.findminimaMser.setVisible(false);
+			parent.findmaximaMser.setVisible(false);
+			
+			parent.displayWater.setVisible(false);
+			parent.displayBinary.setVisible(false);
+			parent.displayDist.setVisible(false);
+			parent.autothreshold.setVisible(false);
+			parent.thresholdWaterslider.setVisible(false);
+			
+			parent.panelFirst.validate();
+			parent.panelFirst.repaint();
+			
+			
+			parent.DogPanel.validate();
+			parent.DogPanel.repaint();
+			
+			parent.MserPanel.validate();
+			parent.MserPanel.repaint();
+			
+			parent.WaterPanel.validate();
+			parent.WaterPanel.repaint();
 		}
 
 	}

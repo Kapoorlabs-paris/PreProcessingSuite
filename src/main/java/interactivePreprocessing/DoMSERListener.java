@@ -32,7 +32,41 @@ public class DoMSERListener implements ItemListener {
 			parent.showDOG = false;
 			parent.showMSER = true;
 			parent.showWatershed = false;
-			parent.updatePreview(ValueChange.MSER);
+			parent.sigmaslider.setVisible(false);
+			parent.thresholdslider.setVisible(false);
+			parent.findmaxima.setVisible(false);
+			parent.findminima.setVisible(false);
+			
+			
+			
+			
+			parent.deltaS.setVisible(true);
+			parent.Unstability_ScoreS.setVisible(true);
+			parent.minDiversityS.setVisible(true);
+			parent.minSizeS.setVisible(true);
+			parent.maxSizeS.setVisible(true);
+			parent.findminimaMser.setVisible(true);
+			parent.findmaximaMser.setVisible(true);
+			
+			
+			parent.displayWater.setVisible(false);
+			parent.displayBinary.setVisible(false);
+			parent.displayDist.setVisible(false);
+			parent.autothreshold.setVisible(false);
+			parent.thresholdWaterslider.setVisible(false);
+			
+			parent.panelFirst.validate();
+			parent.panelFirst.repaint();
+			
+			parent.DogPanel.validate();
+			parent.DogPanel.repaint();
+			
+			parent.MserPanel.validate();
+			parent.MserPanel.repaint();
+			
+			parent.WaterPanel.validate();
+			parent.WaterPanel.repaint();
+			
 		}
 
 	}

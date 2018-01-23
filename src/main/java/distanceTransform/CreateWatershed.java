@@ -2,6 +2,9 @@ package distanceTransform;
 
 import java.util.Iterator;
 
+import javax.swing.JProgressBar;
+
+import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.Cursor;
 import net.imglib2.KDTree;
 import net.imglib2.RandomAccess;
@@ -37,6 +40,8 @@ import net.imglib2.view.Views;
 		private final RandomAccessibleInterval<T> source;
 		
 		private final RandomAccessibleInterval<BitType> bitimg;
+		public final JProgressBar jpb;
+		public final InteractiveMethods parent;
 		private RandomAccessibleInterval<IntType> watershedimage;
 		RandomAccessibleInterval<UnsignedByteType> distimg;
 		/**
@@ -48,10 +53,13 @@ import net.imglib2.view.Views;
 		 * @param bitimg
 		 *              The image used to compute distance transform and seeds for watershedding.
 		 */
-		public CreateWatershed(final RandomAccessibleInterval<T> source, final RandomAccessibleInterval<BitType> bitimg){
+		public CreateWatershed(final InteractiveMethods parent, final RandomAccessibleInterval<T> source, final RandomAccessibleInterval<BitType> bitimg, final JProgressBar jpb){
 			
+			this.parent = parent;
 			this.source = source;
 			this.bitimg = bitimg;
+			this.jpb = jpb;
+			
 		}
 		
 
@@ -73,7 +81,9 @@ import net.imglib2.view.Views;
 			final T type = source.randomAccess().get().createVariable();
 			final ImgFactory<UnsignedByteType> factory = Util.getArrayOrCellImgFactory(source, new UnsignedByteType());
 			distimg = factory.create(source, new UnsignedByteType());
-
+			utility.ProgressBar.SetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
+			parent.panelFirst.validate();
+			parent.panelFirst.repaint();
 			DistanceTransformImage(source, distimg);
 			
 			// Prepare seed image for watershedding

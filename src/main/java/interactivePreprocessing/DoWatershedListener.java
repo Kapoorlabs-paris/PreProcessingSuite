@@ -32,7 +32,41 @@ public class DoWatershedListener implements ItemListener {
 			parent.showDOG = false;
 			parent.showMSER = false;
 			parent.showWatershed = true;
-			parent.updatePreview(ValueChange.WATER);
+			
+			parent.sigmaslider.setVisible(false);
+			parent.thresholdslider.setVisible(false);
+			parent.findmaxima.setVisible(false);
+			parent.findminima.setVisible(false);
+			
+			parent.deltaS.setVisible(false);
+			parent.Unstability_ScoreS.setVisible(false);
+			parent.minDiversityS.setVisible(false);
+			parent.minSizeS.setVisible(false);
+			parent.maxSizeS.setVisible(false);
+			parent.findminimaMser.setVisible(false);
+			parent.findmaximaMser.setVisible(false);
+			
+			
+			
+			parent.displayWater.setVisible(true);
+			parent.displayBinary.setVisible(true);
+			parent.displayDist.setVisible(true);
+			parent.autothreshold.setVisible(true);
+			parent.thresholdWaterslider.setVisible(true);
+			
+			parent.panelFirst.validate();
+			parent.panelFirst.repaint();
+			
+			
+			parent.DogPanel.validate();
+			parent.DogPanel.repaint();
+			
+			parent.MserPanel.validate();
+			parent.MserPanel.repaint();
+			
+			parent.WaterPanel.validate();
+			parent.WaterPanel.repaint();
+			
 		}
 
 	}

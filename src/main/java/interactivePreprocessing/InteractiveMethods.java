@@ -26,6 +26,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import distanceTransform.CreateWatershed;
+import distanceTransform.DistWatershed;
+import dogSeg.DOGSeg;
 import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
@@ -35,6 +38,7 @@ import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 
 import mpicbg.imglib.util.Util;
+import mserMethods.MSERSeg;
 import net.imglib2.Cursor;
 import net.imglib2.FinalInterval;
 import net.imglib2.Point;
@@ -42,10 +46,16 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.componenttree.mser.MserTree;
 import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.algorithm.localextrema.RefinedPeak;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+import preProcessing.GetLocalmaxminMT;
+import preProcessing.GlobalThresholding;
+import preProcessing.Kernels;
 import userTESTING.PreprocessingFileChooser;
 
 public class InteractiveMethods {
@@ -61,14 +71,19 @@ public class InteractiveMethods {
 	public int thirdDimensionsliderInit = 1;
 	public int fourthDimensionslider = 1;
 	public int fourthDimensionsliderInit = 1;
-	
+	public int Maxlabel;
 	public int sigmasliderInit = 0;
-	public int thresholdsliderInit = 0;
+	public int thresholdsliderInit = 125;
+	public int thresholdsliderWaterInit = 125;
 	
 	public ImagePlus imp;
 	public boolean showMSER = false;
 	public boolean showDOG = false;
 	public boolean showWatershed = false;
+	
+	public boolean displayWatershedimg = true;
+	public boolean displayBinaryimg = false;
+	public boolean displayDistTransimg = false;
 	public RandomAccessibleInterval<UnsignedByteType> newimg;
 	public RandomAccessibleInterval<FloatType> CurrentView;
 	public RoiManager roimanager;
@@ -78,6 +93,8 @@ public class InteractiveMethods {
 	public int alphaInit = 1;
 	public int betaInit = 0;
 
+	public boolean autothreshwater = false;
+	
 	public int Unstability_ScoreInit = 1;
 	public float Unstability_Score = Unstability_ScoreInit ;
 	
@@ -116,6 +133,10 @@ public class InteractiveMethods {
 	public int thresholdInit = 0;
 	
 	
+	public float thresholdMinWater = 0f;
+	public float thresholdMaxWater = 255f;
+	public int thresholdInitWater = 0;
+	
 	public static int standardSensitivity = 4;
 	public int sensitivity = standardSensitivity;
 	
@@ -140,6 +161,7 @@ public class InteractiveMethods {
 	
 	public float sigma2 = 0.5f;
 	public float threshold = 1f;
+	public float thresholdWater = 255f;
 	public boolean darktobright = false;
 	public boolean brighttodark = true;
 	public ArrayList<Roi> Rois;
@@ -161,6 +183,9 @@ public class InteractiveMethods {
 	
 	public float sigmaMin = 0.5f;
 	public float sigmaMax = 100f;
+	public RandomAccessibleInterval<BitType> bitimg;
+	public RandomAccessibleInterval<FloatType> bitimgFloat;
+	public RandomAccessibleInterval<IntType> intimg;
 	
 	
 	public float initialSearchradius = 10;
@@ -246,6 +271,25 @@ public class InteractiveMethods {
 		sigma = value;
 		sigmaInit = computeScrollbarPositionFromValue(sigma, sigmaMin, sigmaMax, scrollbarSize);
 	}
+	
+	public double getInitialThreshold() {
+		return threshold;
+	}
+
+	public void setInitialThreshold(final float value) {
+		threshold = value;
+		thresholdInit = computeScrollbarPositionFromValue(threshold, thresholdMin, thresholdMax, scrollbarSize);
+	}
+	
+	public double getInitialThresholdWater() {
+		return thresholdInitWater;
+	}
+
+	public void setInitialThresholdWater(final float value) {
+		thresholdWater = value;
+		thresholdInitWater = computeScrollbarPositionFromValue(thresholdWater, thresholdMinWater, thresholdMaxWater, scrollbarSize);
+	}
+	
 
 	public void setInitialDelta(final float value) {
 		delta = value;
@@ -444,84 +488,20 @@ public class InteractiveMethods {
 			
 			if (showMSER) {
 
-
-				if (darktobright)
+				MSERSeg computeMSER = new MSERSeg(this,jpb);
+				computeMSER.execute();
 					
-				newtree = MserTree.buildMserTree(newimg, delta, minSize, maxSize, Unstability_Score, minDiversity, true);
-				
-				else
-					
-				newtree = MserTree.buildMserTree(newimg, delta, minSize, maxSize, Unstability_Score, minDiversity, false);
-					
-				
-				Rois = utility.FinderUtils.getcurrentRois(newtree);
-				ArrayList<double[]> centerRoi = utility.FinderUtils.getRoiMean(newtree);
-				for (int index = 0; index < centerRoi.size(); ++index) {
-
-					double[] center = new double[] { centerRoi.get(index)[0], centerRoi.get(index)[1] };
-
-					Roi or = Rois.get(index);
-
-					or.setStrokeColor(colorDrawMser);
-					overlay.add(or);
-				}
-
-				imp.setOverlay(overlay);
-				imp.updateAndDraw();
+			
 			}
 
 			if (showDOG) {
 
-				if (imp == null) {
-					imp = ImageJFunctions.show(CurrentView);
-
-				}
-
-				else {
-
-					final float[] pixels = (float[]) imp.getProcessor().getPixels();
-					final Cursor<FloatType> c = Views.iterable(CurrentView).cursor();
-
-					for (int i = 0; i < pixels.length; ++i)
-						pixels[i] = c.next().get();
-
-					imp.updateAndDraw();
-
-				}
-
 			
-				imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
-
 				
-				newimg = utility.Slicer.copytoByteImage(CurrentView);
+			
 
-				final DogDetection.ExtremaType type;
-
-				if (lookForMaxima)
-					type = DogDetection.ExtremaType.MINIMA;
-				else
-					type = DogDetection.ExtremaType.MAXIMA;
-				sigma2 = utility.ScrollbarUtils.computeSigma2(sigma, sensitivity);
-				final DogDetection<FloatType> newdog = new DogDetection<FloatType>(Views.extendBorder(CurrentView),
-						interval, new double[] { 1, 1 }, sigma, sigma2, type, threshold, true);
-
-				peaks = newdog.getSubpixelPeaks();
-
-				Rois = utility.FinderUtils.getcurrentRois(peaks, sigma, sigma2);
-				
-				
-				for (int index = 0; index < peaks.size(); ++index) {
-
-					double[] center = new double[] { peaks.get(index).getDoublePosition(0),
-							peaks.get(index).getDoublePosition(1) };
-
-					Roi or = Rois.get(index);
-
-					or.setStrokeColor(colorDrawDog);
-					overlay.add(or);
-				}
-				imp.setOverlay(overlay);
-				imp.updateAndDraw();
+				DOGSeg computeDOG = new DOGSeg(this, jpb);
+				computeDOG.execute();
 			}
 
 			
@@ -552,63 +532,65 @@ public class InteractiveMethods {
 			if (overlay!=null)
 				overlay.clear();
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
-		     	if (darktobright)
-				
-				newtree = MserTree.buildMserTree(newimg, delta, minSize, maxSize, Unstability_Score, minDiversity, true);
-				
-				else
+		     
+			
+			MSERSeg computeMSER = new MSERSeg(this,jpb);
+			computeMSER.execute();
 					
-				newtree = MserTree.buildMserTree(newimg, delta, minSize, maxSize, Unstability_Score, minDiversity, false);
-					
-			Rois = utility.FinderUtils.getcurrentRois(newtree);
-			ArrayList<double[]> centerRoi = utility.FinderUtils.getRoiMean(newtree);
-			for (int index = 0; index < centerRoi.size(); ++index) {
-
-				double[] center = new double[] { centerRoi.get(index)[0], centerRoi.get(index)[1] };
-
-				Roi or = Rois.get(index);
-
-				or.setStrokeColor(colorDrawMser);
-				overlay.add(or);
-			}
-			imp.setOverlay(overlay);
-			imp.updateAndDraw();
+			
 
 	
 		}
 
+		
+		if (change == ValueChange.WATER) {
+		
+			if (overlay!=null)
+				overlay.clear();
+			
+			
+			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			bitimg = new ArrayImgFactory<BitType>().create(newimg, new BitType());
+			bitimgFloat = new ArrayImgFactory<FloatType>().create(newimg, new FloatType());
+			GetLocalmaxminMT.ThresholdingMTBit(CurrentView, bitimg, thresholdWater);
+			if (displayBinaryimg)
+				ImageJFunctions.show(bitimg);
+			DistWatershed<FloatType> WaterafterDisttransform = new DistWatershed<FloatType>(this, 
+					CurrentView, bitimg, jpb);
+			WaterafterDisttransform.execute();
+			
+		}
+		
 		if (change == ValueChange.DOG) {
+
+			if (imp == null) {
+				imp = ImageJFunctions.show(CurrentView);
+
+			}
+
+			else {
+
+				final float[] pixels = (float[]) imp.getProcessor().getPixels();
+				final Cursor<FloatType> c = Views.iterable(CurrentView).cursor();
+
+				for (int i = 0; i < pixels.length; ++i)
+					pixels[i] = c.next().get();
+
+				imp.updateAndDraw();
+
+			}
+
+		
+			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+
+			if (overlay!=null)
+				overlay.clear();
+			newimg = utility.Slicer.copytoByteImage(CurrentView);
 
 		
 
-			final DogDetection.ExtremaType type;
-			if (overlay!=null)
-				overlay.clear();
-			if (lookForMaxima)
-				type = DogDetection.ExtremaType.MINIMA;
-			else
-				type = DogDetection.ExtremaType.MAXIMA;
-			sigma2 = utility.ScrollbarUtils.computeSigma2(sigma, sensitivity);
-			final DogDetection<FloatType> newdog = new DogDetection<FloatType>(Views.extendBorder(CurrentView),
-					interval, new double[] { 1, 1 }, sigma, sigma2, type, threshold, true);
-
-			peaks = newdog.getSubpixelPeaks();
-
-			Rois = utility.FinderUtils.getcurrentRois(peaks, sigma, sigma2);
-			
-			
-			for (int index = 0; index < peaks.size(); ++index) {
-
-				double[] center = new double[] { peaks.get(index).getDoublePosition(0),
-						peaks.get(index).getDoublePosition(1) };
-
-				Roi or = Rois.get(index);
-
-				or.setStrokeColor(colorDrawDog);
-				overlay.add(or);
-			}
-			imp.setOverlay(overlay);
-			imp.updateAndDraw();
+			DOGSeg computeDOG = new DOGSeg(this, jpb);
+			computeDOG.execute();
 		}
 
 	}
@@ -621,6 +603,7 @@ public class InteractiveMethods {
 	public JPanel Zselect = new JPanel();
 	public JPanel DogPanel = new JPanel();
 	public JPanel MserPanel = new JPanel();
+	public JPanel WaterPanel = new JPanel();
 	
 	public JPanel DetectionPanel = new JPanel();
 	
@@ -639,15 +622,15 @@ public class InteractiveMethods {
 	final String minDivstring = "Minimum diversity b/w components of tree";
 	final String minSizestring = "Minimum size of MSER ellipses";
 	final String maxSizestring = "Maximum size of MSER ellipses";
+	final String waterstring = "Threshold for Watershedding";
+	
 
 	public Label timeText = new Label("Current T = " + 1, Label.CENTER);
 	public Label zText = new Label("Current Z = " + 1, Label.CENTER);
 	public Label zgenText = new Label("Current Z / T = " + 1, Label.CENTER);
 	
 
-	public Label sigmaText = new Label("Approximate object size = " + sigmaInit, Label.CENTER);
-	public Label thresholdText = new Label("Approximate peak intensity " + thresholdInit, Label.CENTER);
-	
+
 	
 	final Label deltaText = new Label( deltastring + " = " + deltaInit, Label.CENTER);
 	final Label Unstability_ScoreText = new Label(Unstability_Scorestring + " = " + Unstability_ScoreInit, Label.CENTER);
@@ -662,6 +645,15 @@ public class InteractiveMethods {
 	public CheckboxGroup minormaxMser = new CheckboxGroup();
 	final Checkbox findminimaMser = new Checkbox("Locate Maxima", minormaxMser, brighttodark );
 	final Checkbox findmaximaMser = new Checkbox("Locate Minima", minormaxMser, darktobright );
+	
+	
+	final Checkbox displayWater = new Checkbox("Display Watershed image", true);
+	
+	final Checkbox displayBinary = new Checkbox("Display Binary image");
+	
+	final Checkbox displayDist = new Checkbox("Display Distance transformed image");
+	
+	final Checkbox autothreshold = new Checkbox("Auto determine threshold intensity");
 	
 	
 	public CheckboxGroup detection = new CheckboxGroup();
@@ -684,7 +676,8 @@ public class InteractiveMethods {
 			scrollbarSize + 10);
 	public JScrollBar thresholdslider = new JScrollBar(Scrollbar.HORIZONTAL, thresholdInit, 10, 0,
 			10 + scrollbarSize);
-	
+	public JScrollBar thresholdWaterslider = new JScrollBar(Scrollbar.HORIZONTAL, thresholdsliderWaterInit, 10, 0,
+			10 + scrollbarSize);
 	
 	final JScrollBar deltaS = new JScrollBar(Scrollbar.HORIZONTAL, deltaInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar Unstability_ScoreS = new JScrollBar(Scrollbar.HORIZONTAL, Unstability_ScoreInit, 10, 0, 10 + scrollbarSize);
@@ -695,6 +688,9 @@ public class InteractiveMethods {
 	final JScrollBar maxSizeS = new JScrollBar(Scrollbar.HORIZONTAL, maxSizeInit, 10, 0, 10 + scrollbarSize);
 	
 	
+	public Label sigmaText = new Label("Approximate object size = " + sigmaInit, Label.CENTER);
+	public Label thresholdText = new Label("Approximate peak intensity " + thresholdInit, Label.CENTER);
+	public Label watertext = new Label(waterstring + " = "+ thresholdInitWater, Label.CENTER);
 	
 	
 	public TextField inputField = new TextField();
@@ -721,6 +717,39 @@ public class InteractiveMethods {
 		
 		sigmaslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(sigmaInit, sigmaMin, sigmaMax, scrollbarSize));
 		
+		thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(thresholdsliderWaterInit, thresholdMinWater, thresholdMaxWater, scrollbarSize));
+		
+		
+		thresholdslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(thresholdsliderInit, thresholdMin, thresholdMax, scrollbarSize));
+		
+		sigma = utility.ScrollbarUtils.computeValueFromScrollbarPosition(sigmaslider.getValue(), sigmaMin, sigmaMax,
+				scrollbarSize);
+		
+		threshold =  utility.ScrollbarUtils.computeValueFromScrollbarPosition(thresholdslider.getValue(), thresholdMin, thresholdMax,
+				scrollbarSize);
+		
+		thresholdWater = utility.ScrollbarUtils.computeValueFromScrollbarPosition(thresholdWaterslider.getValue(), thresholdMinWater, thresholdMaxWater,
+				scrollbarSize);
+
+		delta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(deltaS.getValue(), deltaMin, deltaMax,
+				scrollbarSize);
+		minDiversity = utility.ScrollbarUtils.computeValueFromScrollbarPosition(minDiversityS.getValue(), minDiversityMin, minDiversityMax,
+				scrollbarSize);
+		Unstability_Score = utility.ScrollbarUtils.computeValueFromScrollbarPosition(Unstability_ScoreS.getValue(), Unstability_ScoreMin, Unstability_ScoreMax,
+				scrollbarSize);
+		minSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(minSizeS.getValue(), minSizemin, minSizemax,
+				scrollbarSize);
+		
+		maxSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(maxSizeS.getValue(), maxSizemin, maxSizemax,
+				scrollbarSize);
+		
+		
+		sigmaText = new Label("Approximate object size = " + sigma , Label.CENTER);
+		thresholdText = new Label("Approximate peak intensity " + threshold, Label.CENTER);
+	    watertext = new Label(waterstring + " = "+ thresholdWater, Label.CENTER);
+	    
+	    
+		
 		CardLayout cl = new CardLayout();
 
 		c.insets = new Insets(5, 5, 5, 5);
@@ -737,6 +766,8 @@ public class InteractiveMethods {
 		MserPanel.setLayout(layout);
 		DetectionPanel.setLayout(layout);
 		
+		WaterPanel.setLayout(layout);
+		
 		inputFieldZ = new TextField();
 		inputFieldZ = new TextField(5);
 		inputFieldZ.setText(Integer.toString(thirdDimension));
@@ -751,7 +782,7 @@ public class InteractiveMethods {
 		Border zborder = new CompoundBorder(new TitledBorder("Select Z"), new EmptyBorder(c.insets));
 		Border dogborder = new CompoundBorder(new TitledBorder("Difference of Gaussian detection"), new EmptyBorder(c.insets));
 		Border mserborder = new CompoundBorder(new TitledBorder("MSER detection"), new EmptyBorder(c.insets));
-		
+		Border waterborder = new CompoundBorder(new TitledBorder("Watershed detection"), new EmptyBorder(c.insets));
 		c.anchor = GridBagConstraints.BOTH;
 		c.ipadx = 35;
 
@@ -812,6 +843,33 @@ public class InteractiveMethods {
 				panelFirst.add(DetectionPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 						GridBagConstraints.HORIZONTAL, insets, 0, 0));
 				
+			
+				
+				
+
+				WaterPanel.add(watertext, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+
+				WaterPanel.add(thresholdWaterslider, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				
+				
+				
+				WaterPanel.add(displayWater, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				WaterPanel.add(displayBinary, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				WaterPanel.add(displayDist, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				WaterPanel.add(autothreshold, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+
+				WaterPanel.setBorder(waterborder);
+				
+				
+				panelFirst.add(WaterPanel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				
 				
 				
 				DogPanel.add(sigmaText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -834,7 +892,7 @@ public class InteractiveMethods {
 				DogPanel.setBorder(dogborder);
 				DogPanel.setMinimumSize(new Dimension(SizeX, SizeYsmall));
 				DogPanel.setPreferredSize(new Dimension(SizeX, SizeYsmall));
-				panelFirst.add(DogPanel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				panelFirst.add(DogPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 						GridBagConstraints.HORIZONTAL, insets, 0, 0));
 				
 				
@@ -893,16 +951,24 @@ public class InteractiveMethods {
 				
 				sigmaslider.addAdjustmentListener(new PreSigmaListener(this, sigmaText, sigmastring, sigmaMin,
 						sigmaMax, scrollbarSize, sigmaslider));
+
+				thresholdWaterslider.addAdjustmentListener(new PreWaterListener(this, watertext, waterstring, thresholdMinWater,
+						thresholdMaxWater, scrollbarSize, thresholdWaterslider));
 			
 				Watershed.addItemListener(new DoWatershedListener(this));
 				DOG.addItemListener(new DoDOGListener(this));
 				MSER.addItemListener(new DoMSERListener(this));
+				autothreshold.addItemListener(new PREauto(this));
+				
 				
 				findminima.addItemListener(new FindMinimaListener(this));
 				findmaxima.addItemListener(new FindMaximaListener(this));
-				
 				findminimaMser.addItemListener(new FindMinimaMserListener(this));
 				findmaximaMser.addItemListener(new FindMaximaMserListener(this));
+				
+				displayBinary.addItemListener(new PREShowBinary(this));
+				displayWater.addItemListener(new PREShowWatershed(this));
+				displayDist.addItemListener(new PREShowDist(this));
 				
 				deltaS.addAdjustmentListener(new PREDeltaListener(this, deltaText, deltastring, deltaMin, deltaMax, 
 						scrollbarSize, deltaS));
@@ -923,7 +989,7 @@ public class InteractiveMethods {
 								scrollbarSize, maxSizeS));
 
 				
-				thresholdslider.addAdjustmentListener(new PreThresholdListener(this, thresholdText, thresholdstring, thresholdsliderInit, thresholdMax,
+				thresholdslider.addAdjustmentListener(new PreThresholdListener(this, thresholdText, thresholdstring, thresholdMin, thresholdMax,
 						scrollbarSize, thresholdslider));
 				timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
 						fourthDimensionSize, scrollbarSize, timeslider));
