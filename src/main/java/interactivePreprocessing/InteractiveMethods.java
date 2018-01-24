@@ -708,6 +708,9 @@ public class InteractiveMethods {
 	final Checkbox displayDist = new Checkbox("Display Distance transformed image");
 
 	final Checkbox autothreshold = new Checkbox("Auto determine threshold intensity");
+	
+
+	final Checkbox advanced = new Checkbox("Display advanced Snake parameters");
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
 	
@@ -750,9 +753,29 @@ public class InteractiveMethods {
 	public int SizeY = 200;
 	public int SizeYsmall = 200;
 	public int SizeYbig = 400;
-
+	public Label Snakelabel, gradientlabel, distlabel;
+	public TextField Snakeiter, gradientthresh, maxdist;
+	
 	public void Card() {
 
+		Snakelabel = new Label("Enter number of max snake iterations");
+		gradientlabel = new Label("Enter gradient threshold");
+		distlabel = new Label("Enter max distance to search for edges");
+		
+		
+		
+		Snakeiter = new TextField(5);
+		gradientthresh = new TextField(5);
+		maxdist = new TextField(5);
+		
+		Snakeiter.setText(Integer.toString(snakeiterations));
+		gradientthresh.setText(Integer.toString(Gradthresh));
+		maxdist.setText(Integer.toString(DistMax));
+		
+		
+		
+		
+		
 		Unstability_ScoreS.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(Unstability_ScoreInit,
 				Unstability_ScoreMin, Unstability_ScoreMax, scrollbarSize));
 
@@ -1024,15 +1047,36 @@ public class InteractiveMethods {
 			}
 		}));
 		
-		SnakePanel.add(Singlesnake, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		
+		SnakePanel.add(Snakelabel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-
-		SnakePanel.add(Zsnakes, new GridBagConstraints(5, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		SnakePanel.add(Snakeiter, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		
-		SnakePanel.add(Tsnakes, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		
+		
+		SnakePanel.add(gradientlabel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		SnakePanel.add(Allsnakes, new GridBagConstraints(5, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		SnakePanel.add(gradientthresh, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
+
+		SnakePanel.add(distlabel, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		SnakePanel.add(maxdist, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
+		
+		
+		SnakePanel.add(Singlesnake, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
+		SnakePanel.add(Zsnakes, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
+		SnakePanel.add(Tsnakes, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		SnakePanel.add(Allsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		SnakePanel.setBorder(snakeborder);
 		panelSecond.add(SnakePanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
@@ -1059,6 +1103,13 @@ public class InteractiveMethods {
 		displayWater.addItemListener(new PREShowWatershed(this));
 		displayDist.addItemListener(new PREShowDist(this));
          Singlesnake.addActionListener(new PRESinglesnakeListener(this));
+         
+         Snakeiter.addTextListener(new IterationListener(this));
+         gradientthresh.addTextListener(new GradientListener(this));
+         maxdist.addTextListener(new MaxdistListener(this));
+         
+         
+         
 		deltaS.addAdjustmentListener(
 				new PREDeltaListener(this, deltaText, deltastring, deltaMin, deltaMax, scrollbarSize, deltaS));
 
