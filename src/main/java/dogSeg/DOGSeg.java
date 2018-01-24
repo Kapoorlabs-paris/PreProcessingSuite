@@ -1,5 +1,7 @@
 package dogSeg;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JProgressBar;
@@ -10,6 +12,7 @@ import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+import utility.Roiobject;
 
 public class DOGSeg extends SwingWorker<Void, Void> {
 
@@ -27,7 +30,6 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 	protected Void doInBackground() throws Exception {
 
 		utility.ProgressBar.SetProgressBar(jpb, "Doing Difference of Gaussian Detection, Please Wait...");
-		
 
 		final DogDetection.ExtremaType type;
 		if (parent.lookForMaxima)
@@ -42,17 +44,16 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 
 		return null;
 	}
-	
-	
+
 	@Override
 	protected void done() {
-		
-		
+
+		parent.overlay.clear();
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
 
 		parent.Rois = utility.FinderUtils.getcurrentRois(parent.peaks, parent.sigma, parent.sigma2);
 		
-		
+
 		for (int index = 0; index < parent.peaks.size(); ++index) {
 
 			double[] center = new double[] { parent.peaks.get(index).getDoublePosition(0),
@@ -63,6 +64,8 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 			or.setStrokeColor(parent.colorDrawDog);
 			parent.overlay.add(or);
 		}
+
+	
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
 		try {
@@ -71,9 +74,8 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 
 		} catch (ExecutionException e) {
 
-		
 		}
-		
+
 	}
 
 }
