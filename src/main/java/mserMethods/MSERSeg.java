@@ -9,9 +9,11 @@ import javax.swing.SwingWorker;
 
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.componenttree.mser.MserTree;
 import net.imglib2.type.NativeType;
+import net.imglib2.util.Pair;
 import utility.Roiobject;
 
 public class MSERSeg extends SwingWorker<Void, Void> {
@@ -47,9 +49,10 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		
-		parent.overlay.clear();
+        parent.overlay.clear();
 		parent.Rois = utility.FinderUtils.getcurrentRois(parent.newtree);
 
+		parent.CurrentRoiobject = new ArrayList<Roiobject>();
 		ArrayList<double[]> centerRoi = utility.FinderUtils.getRoiMean(parent.newtree);
 		for (int index = 0; index < centerRoi.size(); ++index) {
 
@@ -61,10 +64,21 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 			parent.overlay.add(or);
 		}
 	
-
+		for (Roi currentroi: parent.Rois) {
+			
+			final double[] geocenter = currentroi.getContourCentroid();
+			final Pair<Double, Integer> Intensityandpixels = Roiobject.getIntensity(currentroi, parent.CurrentView);
+			final double intensity = Intensityandpixels.getA();
+			final double numberofpixels = Intensityandpixels.getB();
+			final double averageintensity = intensity / numberofpixels;
+			Roiobject currentobject = new Roiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			parent.CurrentRoiobject.add(currentobject);
+		}
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
+		parent.updatePreview(ValueChange.SNAKE);
+	
 		try {
 			get();
 		} catch (InterruptedException e) {

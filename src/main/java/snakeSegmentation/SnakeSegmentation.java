@@ -81,10 +81,10 @@ public class SnakeSegmentation {
 	// how far to look for edges
 	int DistMAX = 100;
 
-	double Displacement_min = 0.1;
-	double Displacement_max = 2.0;
-	double Threshold_dist_positive = 100;
-	double Threshold_dist_negative = 100;
+	double Displacement_min = 0.5;
+	double Displacement_max = 5.0;
+	double Threshold_dist_positive = 10;
+	double Threshold_dist_negative = 10;
 	double Inv_alpha_min = 0.2;
 	double Inv_alpha_max = 10.0;
 	double Reg_min = 1;
@@ -189,7 +189,6 @@ public class SnakeSegmentation {
 			roi = RoisOrig[i];
 
 			IJ.log("Processing Z slice no. " + thirdDimension + " with roi " + i);
-			System.out.println("Processing  Z slice no. " + thirdDimension + " with roi " + i);
 			IJ.selectWindow("Log");
 
 			IJ.saveAs("Text", usefolder + "//" + "Logsnakerun.txt");

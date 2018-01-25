@@ -37,7 +37,7 @@ public class PreStandardMouseListener implements MouseListener
 		
 		parent.updatePreview(change);
 		
-
+		
 		
 	}
 

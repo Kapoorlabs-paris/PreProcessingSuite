@@ -61,7 +61,12 @@ public class PreTlocListener implements TextListener {
 			    		ShowView show = new ShowView(parent);
 					show.shownewT();
 					parent.timeText.setText("Current T = " + parent.fourthDimension);
+					
+					if(!parent.snakeinprogress) {
 					parent.updatePreview(ValueChange.FOURTHDIMmouse);
+					}
+					else
+					parent.updatePreview(ValueChange.SNAKE);	
 					
 					parent.timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
 					parent.timeslider.repaint();

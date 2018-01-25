@@ -9,8 +9,10 @@ import javax.swing.SwingWorker;
 
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
 import utility.Roiobject;
 
@@ -47,13 +49,15 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 
 	@Override
 	protected void done() {
-
-		parent.overlay.clear();
+		
+	parent.overlay.clear();
+		
+		
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
 
 		parent.Rois = utility.FinderUtils.getcurrentRois(parent.peaks, parent.sigma, parent.sigma2);
 		
-
+		parent.CurrentRoiobject = new ArrayList<Roiobject>();
 		for (int index = 0; index < parent.peaks.size(); ++index) {
 
 			double[] center = new double[] { parent.peaks.get(index).getDoublePosition(0),
@@ -65,9 +69,22 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 			parent.overlay.add(or);
 		}
 
+		for (Roi currentroi: parent.Rois) {
+			
+			final double[] geocenter = currentroi.getContourCentroid();
+			final Pair<Double, Integer> Intensityandpixels = Roiobject.getIntensity(currentroi, parent.CurrentView);
+			final double intensity = Intensityandpixels.getA();
+			final double numberofpixels = Intensityandpixels.getB();
+			final double averageintensity = intensity / numberofpixels;
+			Roiobject currentobject = new Roiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			parent.CurrentRoiobject.add(currentobject);
+		}
 	
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
+		utility.ProgressBar.SetProgressBar(jpb, "Done");
+		parent.updatePreview(ValueChange.SNAKE);
+
 		try {
 			get();
 		} catch (InterruptedException e) {

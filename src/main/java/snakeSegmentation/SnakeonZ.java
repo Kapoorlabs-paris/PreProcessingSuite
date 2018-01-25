@@ -14,7 +14,7 @@ import net.imglib2.util.Pair;
 import utility.Roiobject;
 
 
-public class SnakeonView {
+public class SnakeonZ {
 
 	
 	final InteractiveMethods parent;
@@ -23,7 +23,7 @@ public class SnakeonView {
 	int nbRois, percent = 0;
 	ArrayList<Roiobject> resultrois;
 	Roi processRoi = null;
-	public SnakeonView(final InteractiveMethods parent, final RandomAccessibleInterval<FloatType> CurrentView, ArrayList<Roiobject> rois) {
+	public SnakeonZ(final InteractiveMethods parent, final RandomAccessibleInterval<FloatType> CurrentView, ArrayList<Roiobject> rois) {
 		
 		this.parent = parent;
 		this.CurrentView = CurrentView;
@@ -32,31 +32,33 @@ public class SnakeonView {
 	
 	
 	public boolean process() {
+		
 		parent.snakeinprogress = true;
 		resultrois = new ArrayList<Roiobject>();
 		boolean dialog;
 		boolean dialogAdvanced;
 		
+		
 		SnakeUtils snakes = new SnakeUtils(parent, CurrentView);
 		snakes.AdvancedParameters();
-		
+	
 		
 		if (parent.AutoSnake)
 			dialog = false;
 		else
 			dialog = snakes.Dialogue();
-		// many rois
-		
+	
 		
 		nbRois = rois.size();
 		ABSnakeFast snake;
+		
 		for(Roiobject currentroi: rois) {
 			
 			percent++;
 			
 			utility.ProgressBar.SetProgressBar(parent.jpb, 100 * percent / nbRois,
-					"Computing snake segmentation for " + parent.fourthDimension 
-							+ " Z = " + parent.thirdDimension);
+					"Computing snake segmentation for " +   " T = " + parent.fourthDimension 
+							+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
 			
 			
 			snake = snakes.processSnake(currentroi.rois, percent);

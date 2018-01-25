@@ -114,6 +114,7 @@ public class InteractiveMethods {
 
 	public float deltaMax = 255f;
 
+	public boolean snakeinprogress = false;
 	public int Progressmin = 0;
 	public int Progressmax = 100;
 	public int max = Progressmax;
@@ -123,11 +124,11 @@ public class InteractiveMethods {
 
 	public MserTree<UnsignedByteType> newtree;
 
-	public float thresholdMin = 0f;
+	public float thresholdMin = 1f;
 	public float thresholdMax = 255f;
 	public int thresholdInit = 0;
 
-	public float thresholdMinWater = 0f;
+	public float thresholdMinWater = 1f;
 	public float thresholdMaxWater = 255f;
 	public int thresholdInitWater = 0;
 
@@ -151,12 +152,13 @@ public class InteractiveMethods {
 	public float Unstability_ScoreMin = 0f;
 	public float Unstability_ScoreMax = 1f;
 
-	public float sigma2 = 0.5f;
+	public float sigma2 = 1.1f;
 	public float threshold = 1f;
 	public float thresholdWater = 255f;
 	public boolean darktobright = false;
 	public boolean brighttodark = true;
 	public ArrayList<Roi> Rois;
+	public ArrayList<Roiobject> CurrentRoiobject;
 	public ArrayList<Roi> NearestNeighbourRois;
 	public ArrayList<Roi> BiggerRois;
 
@@ -166,13 +168,13 @@ public class InteractiveMethods {
 	public Color colorDrawMser = Color.green;
 	public Color colorDrawDog = Color.red;
 	public Color colorConfirm = Color.blue;
-	public Color colorSnake = Color.GREEN;
+	public Color colorSnake = Color.YELLOW;
 	public Overlay overlay;
 	public FinalInterval interval;
 	public boolean lookForMaxima = false;
 	public boolean lookForMinima = true;
 
-	public float sigmaMin = 0.5f;
+	public float sigmaMin = 1f;
 	public float sigmaMax = 100f;
 	public RandomAccessibleInterval<BitType> bitimg;
 	public RandomAccessibleInterval<FloatType> bitimgFloat;
@@ -208,14 +210,15 @@ public class InteractiveMethods {
 	public double Threshold_dist_negative = 10;
 	public double Inv_alpha_min = 0.2;
 	public double Inv_alpha_max = 10.0;
-	public double Reg_min = 1;
-	public double Reg_max = 5;
+	
 	public double Mul_factor = 0.99;
 	// maximum displacement
 	public double force = 10;
 		// regulari1ation factors, min and max
 	public double reg = 5;
 	public double regmin, regmax;
+	
+	
 	public boolean AutoSnake = true;
 	public boolean advancedSnake = false;
 	public SnakeConfigDriver configDriver;
@@ -226,9 +229,10 @@ public class InteractiveMethods {
 	}
 
 	public void setTime(final int value) {
-		thirdDimensionslider = value;
-		thirdDimensionsliderInit = 1;
-		thirdDimension = 1;
+		
+		fourthDimensionslider = value;
+		fourthDimensionsliderInit = value;
+		fourthDimension = value;
 	}
 
 	public int getTimeMax() {
@@ -237,9 +241,9 @@ public class InteractiveMethods {
 	}
 
 	public void setZ(final int value) {
-		fourthDimensionslider = value;
-		fourthDimensionsliderInit = 1;
-		fourthDimension = 1;
+		thirdDimensionslider = value;
+		thirdDimensionsliderInit = value;
+		thirdDimension = value;
 	}
 
 	public void setInitialminDiversity(final float value) {
@@ -393,6 +397,7 @@ public class InteractiveMethods {
 		interval = new FinalInterval(originalimg.dimension(0), originalimg.dimension(1));
 		peaks = new ArrayList<RefinedPeak<Point>>();
 		ZTRois = new HashMap<String, ArrayList<Roiobject>>();
+		CurrentRoiobject = new ArrayList<Roiobject>();
 		configDriver = new SnakeConfigDriver();
 		ZTRoiobject = new ArrayList<Roiobject>();
 		setInitialUnstability_Score(Unstability_ScoreInit);
@@ -404,7 +409,8 @@ public class InteractiveMethods {
 		setInitialminSize(minSizeInit);
 		setInitialsearchradius(initialSearchradiusInit);
 		setInitialmaxsearchradius(maxSearchradius);
-
+		regmin = reg / 2.0;
+		regmax = reg;
 		if (ndims < 3) {
 
 			thirdDimensionSize = 0;
@@ -413,7 +419,8 @@ public class InteractiveMethods {
 
 		if (ndims == 3) {
 
-			fourthDimension = 1;
+			fourthDimension = 0;
+			fourthDimensionsliderInit = 0;
 			thirdDimension = 1;
 			fourthDimensionSize = 0;
 
@@ -475,8 +482,9 @@ public class InteractiveMethods {
 		
 		if (change == ValueChange.SNAKE) {
 			
-			if(overlay!=null)
-				overlay.clear();
+			
+			System.out.println(uniqueID);
+		
 				
 				for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
 
@@ -494,8 +502,17 @@ public class InteractiveMethods {
 				}
 				imp.setOverlay(overlay);
 				imp.updateAndDraw();
+				zText.setText("Current Z = " + thirdDimension);
+				zgenText.setText("Current Z / T = " + thirdDimension);
+				zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(thirdDimension, thirdDimensionsliderInit, thirdDimensionSize, scrollbarSize));
+				zslider.repaint();
+				zslider.validate();
 				
-			
+				
+				timeText.setText("Current T = " + fourthDimension);
+				timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(fourthDimension, fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
+				timeslider.repaint();
+				timeslider.validate();
 			
 		}
 
@@ -563,19 +580,37 @@ public class InteractiveMethods {
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			if(ZTRois.entrySet()!=null)
+			for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
 
-			if (showMSER) {
+				ArrayList<Roiobject> current = entry.getValue();
+				for (Roiobject currentroi : current) {
+				
+				if (currentroi.fourthDimension == fourthDimension
+						&& currentroi.thirdDimension == thirdDimension) {
+				
+						currentroi.rois.setStrokeColor(colorSnake);
+						overlay.add(currentroi.rois);
+					}
+
+				}
+			}
+			System.out.println(snakeinprogress);
+			if (showMSER && !snakeinprogress) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
 				computeMSER.execute();
 
 			}
 
-			if (showDOG) {
+			if (showDOG &&!snakeinprogress) {
 
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();
 			}
+			
+			if (snakeinprogress)
+				updatePreview(ValueChange.SNAKE);
 
 		}
 
@@ -653,7 +688,7 @@ public class InteractiveMethods {
 
 	}
 
-	public JFrame Cardframe = new JFrame("Computer Vision Segmentation Tools");
+	public JFrame Cardframe = new JFrame("Computer Vision Segmentation Tools (CoViSto)");
 	public JPanel panelCont = new JPanel();
 	public JPanel panelFirst = new JPanel();
 	public JPanel panelSecond = new JPanel();
@@ -865,8 +900,10 @@ public class InteractiveMethods {
 				new EmptyBorder(c.insets));
 		Border mserborder = new CompoundBorder(new TitledBorder("MSER detection"), new EmptyBorder(c.insets));
 		Border waterborder = new CompoundBorder(new TitledBorder("Watershed detection"), new EmptyBorder(c.insets));
-		Border roiborder = new CompoundBorder(new TitledBorder("MSER/DoG Conform Rois"), new EmptyBorder(c.insets));
+		Border roiborder = new CompoundBorder(new TitledBorder("MSER/DoG Confirm Rois"), new EmptyBorder(c.insets));
 		Border snakeborder = new CompoundBorder(new TitledBorder("Active Contour refinement"), new EmptyBorder(c.insets));
+		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"), new EmptyBorder(c.insets));
+		
 		c.anchor = GridBagConstraints.BOTH;
 		c.ipadx = 35;
 
@@ -923,6 +960,8 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		DetectionPanel.add(MSER, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		
+		DetectionPanel.setBorder(methodborder);
 		panelFirst.add(DetectionPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -1022,7 +1061,7 @@ public class InteractiveMethods {
 		final JButton Singlesnake = new JButton("Apply snakes to CurrentView");
 		final Button Zsnakes = new Button("Apply snakes to the third Dimension (usually Z)");
 		final Button Tsnakes = new Button("Apply snakes to the fourth Dimension (usually T)");
-		final Button Allsnakes = new Button("Apply snakes to all Dimensions");
+		final Button Allsnakes = new Button("Apply snakes to all Dimensions (Z and T)");
 		
 		
 		JPanel controlprev = new JPanel();
@@ -1070,14 +1109,23 @@ public class InteractiveMethods {
 		
 		SnakePanel.add(Singlesnake, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-
+		
+		
+		if (originalimg.numDimensions() > 2)
 		SnakePanel.add(Zsnakes, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+	
+		if (originalimg.numDimensions() > 3) {
+		SnakePanel.add(Tsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		
-		SnakePanel.add(Tsnakes, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		SnakePanel.add(Allsnakes, new GridBagConstraints(5, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		SnakePanel.add(Allsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		}
+		
+		SnakePanel.add(advanced, new GridBagConstraints(5, 5, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
 		SnakePanel.setBorder(snakeborder);
 		panelSecond.add(SnakePanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
@@ -1103,7 +1151,9 @@ public class InteractiveMethods {
 		displayWater.addItemListener(new PREShowWatershed(this));
 		displayDist.addItemListener(new PREShowDist(this));
          Singlesnake.addActionListener(new PRESinglesnakeListener(this));
-         
+         Zsnakes.addActionListener(new PREZSnakeListener(this));
+         Tsnakes.addActionListener(new PRETSnakeListener(this));
+         advanced.addItemListener(new AdvancedSnakeListener(this));
          Snakeiter.addTextListener(new IterationListener(this));
          gradientthresh.addTextListener(new GradientListener(this));
          maxdist.addTextListener(new MaxdistListener(this));
@@ -1131,6 +1181,8 @@ public class InteractiveMethods {
 		timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
 				fourthDimensionSize, scrollbarSize, timeslider));
 		Roibutton.addActionListener(new RoiListener(this));
+		
+		
 		if (ndims > 3)
 			zslider.addAdjustmentListener(new PreZListener(this, zText, zstring, thirdDimensionsliderInit,
 					thirdDimensionSize, scrollbarSize, zslider));

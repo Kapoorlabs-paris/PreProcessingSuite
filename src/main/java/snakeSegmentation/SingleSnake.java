@@ -8,6 +8,9 @@ import javax.swing.SwingWorker;
 
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import net.imglib2.Interval;
+import net.imglib2.util.Intervals;
+import net.imglib2.view.Views;
 import utility.Roiobject;
 
 public class SingleSnake extends SwingWorker<Void, Void> {
@@ -22,11 +25,16 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 	
 	@Override
 	protected Void doInBackground() throws Exception {
-		
+		parent.snakeinprogress = true;
 		String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(parent.fourthDimension);
 		
 		ArrayList<Roiobject> currentRoi = parent.ZTRois.get(uniqueID);	
-		
+		// Expand the image by 10 pixels
+
+		Interval spaceinterval = Intervals.createMinMax(
+				new long[] { parent.CurrentView.min(0), parent.CurrentView.min(1), parent.CurrentView.max(0), parent.CurrentView.max(1) });
+		Interval interval = Intervals.expand(spaceinterval, 10);
+		parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 		SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
 		applysnake.process();
 		ArrayList<Roiobject> resultrois = applysnake.getResult();
@@ -38,6 +46,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected void done() {
+		parent.snakeinprogress = false;
 		try {
 			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
 			get();
