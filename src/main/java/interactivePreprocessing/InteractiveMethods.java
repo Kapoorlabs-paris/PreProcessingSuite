@@ -28,6 +28,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -699,8 +701,6 @@ public class InteractiveMethods {
 	public JPanel WaterPanel = new JPanel();
 	public JPanel SnakePanel = new JPanel();
 	public JPanel RoiPanel = new JPanel();
-	
-	
 	public JPanel DetectionPanel = new JPanel();
 
 	final String timestring = "Current T";
@@ -783,7 +783,7 @@ public class InteractiveMethods {
 	public TextField inputField = new TextField();
 	public TextField inputFieldT, inputtrackField;
 	public TextField inputFieldZ;
-
+	
 	public int SizeX = 400;
 	public int SizeY = 200;
 	public int SizeYsmall = 200;
@@ -870,8 +870,6 @@ public class InteractiveMethods {
 		panelCont.add(panelSecond, "2");
 
 		panelFirst.setLayout(layout);
-
-		
 		panelSecond.setLayout(layout);
 		
 		Timeselect.setLayout(layout);
@@ -883,7 +881,9 @@ public class InteractiveMethods {
         SnakePanel.setLayout(layout);
 		WaterPanel.setLayout(layout);
 		RoiPanel.setLayout(layout);
-
+		
+		JScrollPane scrollPane = new JScrollPane(panelFirst,   ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	   // scrollPane.setPreferredSize(new Dimension(600, 600));
 		inputFieldZ = new TextField();
 		inputFieldZ = new TextField(5);
 		inputFieldZ.setText(Integer.toString(thirdDimension));
@@ -983,7 +983,7 @@ public class InteractiveMethods {
 		WaterPanel.setBorder(waterborder);
 
 		panelFirst.add(WaterPanel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+				GridBagConstraints.RELATIVE, insets, 0, 0));
 
 		DogPanel.add(sigmaText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
@@ -1047,7 +1047,7 @@ public class InteractiveMethods {
 		MserPanel.setBorder(mserborder);
 
 		panelFirst.add(MserPanel, new GridBagConstraints(3, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		
 		
 		RoiPanel.add(Roibutton, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -1158,8 +1158,9 @@ public class InteractiveMethods {
          gradientthresh.addTextListener(new GradientListener(this));
          maxdist.addTextListener(new MaxdistListener(this));
          
-         
-         
+        
+        
+
 		deltaS.addAdjustmentListener(
 				new PREDeltaListener(this, deltaText, deltastring, deltaMin, deltaMax, scrollbarSize, deltaS));
 
@@ -1192,17 +1193,19 @@ public class InteractiveMethods {
 
 		inputFieldZ.addTextListener(new PreZlocListener(this, false));
 		inputFieldT.addTextListener(new PreTlocListener(this, false));
-		panelFirst.setMinimumSize(new Dimension(SizeX, SizeY));
 
-		panelFirst.setVisible(true);
-		cl.show(panelCont, "1");
-		Cardframe.add(panelCont, "Center");
-		Cardframe.add(jpb, "Last");
+		
+		
        panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
        panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		Cardframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		cl.show(panelCont, "1");
+		Cardframe.add(panelCont, "Center");
+		Cardframe.add(scrollPane, "Center");
+		Cardframe.add(jpb, "Last");
+		 panelFirst.setVisible(true);
 		Cardframe.pack();
 		Cardframe.setVisible(true);
 	}
