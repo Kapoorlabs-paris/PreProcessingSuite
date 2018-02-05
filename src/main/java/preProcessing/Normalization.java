@@ -43,7 +43,7 @@ public class Normalization {
 		
 		new ImageJ();
 
-		String filepath = "/Users/aimachine/Google Drive/JLMData/IlastikTraining/LabelFOURHyperstack_ML7-10T7ZBackgroundTrain.tif";
+		String filepath = "/Users/aimachine/Documents/Tea_Data/Test.tif";
 		ImagePlus impA = new ImagePlus( filepath );
 		RandomAccessibleInterval<FloatType> img = ImageJFunctions.convertFloat(impA);
 		new Normalize();
@@ -77,7 +77,7 @@ public class Normalization {
 			
 			if (cursor.get().get() > 0) {
 				
-				intran.get().set(label);
+				intran.get().set(outterlabel);
 			}
 				
 			
