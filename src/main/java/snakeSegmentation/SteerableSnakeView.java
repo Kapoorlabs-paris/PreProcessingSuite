@@ -3,12 +3,15 @@ package snakeSegmentation;
 import java.util.ArrayList;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ColorProcessor;
 import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import net.imglib2.util.ValuePair;
 import utility.Convolvers;
+import utility.Interpolator;
 
 public class SteerableSnakeView implements Runnable {
 
@@ -132,6 +135,174 @@ public class SteerableSnakeView implements Runnable {
 		return orientation;
 	}
 
+	  public double[] computeRotations(int nIncrements)
+	  {
+	    double[] rotations = new double[size * nIncrements];
+	    double radiantStep = 6.283185307179586D / nIncrements;
+	    
+	    switch (order) {
+	    case 1: 
+	      for (int k = 0; k < nIncrements / 2; k++) {
+	        for (int i = 0; i < size; i++) {
+	          rotations[(i + k * size)] = pointRespM1(i, k * radiantStep);
+	          rotations[(i + (k + nIncrements / 2) * size)] = 
+	            (-rotations[(i + k * size)]);
+	        }
+	      }
+	      break;
+	    case 2: 
+	      for (int k = 0; k < nIncrements / 2; k++) {
+	        for (int i = 0; i < size; i++) {
+	          rotations[(i + k * size)] = pointRespM2(i, k * radiantStep);
+	          rotations[(i + (k + nIncrements / 2) * size)] = rotations[
+	            (i + k * size)];
+	        }
+	      }
+	      break;
+	    case 3: 
+	      for (int k = 0; k < nIncrements / 2; k++) {
+	        for (int i = 0; i < size; i++) {
+	          rotations[(i + k * size)] = pointRespM3(i, k * radiantStep);
+	          rotations[(i + (k + nIncrements / 2) * size)] = 
+	            (-rotations[(i + k * size)]);
+	        }
+	      }
+	      break;
+	    case 4: 
+	      for (int k = 0; k < nIncrements / 2; k++) {
+	        for (int i = 0; i < size; i++) {
+	          rotations[(i + k * size)] = pointRespM4(i, k * radiantStep);
+	          rotations[(i + (k + nIncrements / 2) * size)] = rotations[
+	            (i + k * size)];
+	        }
+	      }
+	      break;
+	    case 5: 
+	      int k = 0;
+	      for (;;) { for (int i = 0; i < size; i++) {
+	          rotations[(i + k * size)] = pointRespM5(i, k * radiantStep);
+	          rotations[(i + (k + nIncrements / 2) * size)] = 
+	            (-rotations[(i + k * size)]);
+	        }
+	        k++; if (k >= nIncrements / 2) {
+	          break;
+	        }
+	      }
+	    }
+	    
+	    
+
+
+
+
+	    return rotations;
+	  }
+	  
+	  
+
+	  public int getWidth() {
+	    return nx;
+	  }
+	  
+	  public int getHeight() {
+	    return ny;
+	  }
+	  
+	  public String getOrder()
+	  {
+	    switch (order) {
+	    case 1: 
+	      return "1st";
+	    case 2: 
+	      return "2nd";
+	    case 3: 
+	      return "3rd";
+	    case 4: 
+	    case 5: 
+	      return String.valueOf(order) + "th";
+	    }
+	    return "";
+	  }
+	  
+
+	  public void showColorOrientation(String title)
+	  {
+	    byte[] h = new byte[size];
+	    byte[] s = new byte[size];
+	    byte[] b = new byte[size];
+	    double min = Double.MAX_VALUE;
+	    double max = -1.7976931348623157E308D;
+	    for (int i = 0; i < size; i++) {
+	      if (response[i] > max) {
+	        max = response[i];
+	      }
+	      if (response[i] < min) {
+	        min = response[i];
+	      }
+	    }
+	    
+	    if (order % 2 != 0) {
+	      for (int i = 0; i < size; i++) {
+	        h[i] = ((byte)(int)((orientation[i] / 6.283185307179586D + 0.5D) * 255.0D));
+	        s[i] = -1;
+	        b[i] = ((byte)(int)((response[i] - min) / (max - min) * 255.0D));
+	      }
+	    } else {
+	      for (int i = 0; i < size; i++) {
+	        h[i] = ((byte)(int)((orientation[i] / 3.141592653589793D + 0.5D) * 255.0D));
+	        s[i] = -1;
+	        b[i] = ((byte)(int)((response[i] - min) / (max - min) * 255.0D));
+	      }
+	    }
+	    ColorProcessor cp = new ColorProcessor(nx, ny);
+	    cp.setHSB(h, s, b);
+	    ImagePlus ip = new ImagePlus(title, cp);
+	    ip.show();
+	  }
+	  public void showNMS()
+	  {
+	    IJ.showStatus("Computing non-maximum suppression");
+	    computeNMS();
+	  }
+	  
+
+	  public void showRotations(int nIncrements)
+	  {
+	    IJ.showStatus("Computing " + getOrder() + " order filter iterations");
+	   
+	      computeRotations(nIncrements);
+	  }
+	  
+
+
+
+	  public double[] computeNMS()
+	  {
+	    double[] output = new double[size];
+	    
+
+
+	    int idx = 0;
+	    Interpolator interpolator = new Interpolator(response, nx, ny, "linear");
+	    for (int y = 0; y < ny; y++) {
+	      for (int x = 0; x < nx; x++) {
+	        double angle = orientation[idx];
+	        double ux = -Math.sin(angle);
+	        double uy = Math.cos(angle);
+	        double GA1 = interpolator.getValue(x + ux, y + uy);
+	        double GA2 = interpolator.getValue(x - ux, y - uy);
+	        double GA = response[idx];
+	        if ((GA < GA1) || (GA < GA2)) {
+	          output[idx] = 0.0D;
+	        } else {
+	          output[idx] = GA;
+	        }
+	        idx++;
+	      }
+	    }
+	    return output;
+	  }
+	  
 	private void filterM5() {
 		filterM1();
 		double[] initialAngle = getOrientation();
@@ -322,6 +493,99 @@ public class SteerableSnakeView implements Runnable {
 			}
 		}
 	}
+	
+	private void structureTensor() {
+		double[] eigenValues = new double[2];
+
+		double[] eV = new double[2];
+
+		IJ.showStatus("Computing optimal orientation");
+		int iz = 0;
+
+		int wWidth = (int) (4.0D * sigma);
+		int kLength = wWidth + 1;
+		double[] g = new double[kLength];
+		double[] aKernel = new double[kLength];
+
+		double[] gx = new double[kLength];
+		double[] gy = new double[kLength];
+		double[] gx2 = new double[kLength];
+		double[] gxgy = new double[kLength];
+		double[] gy2 = new double[kLength];
+		double sigma2 = sigma * sigma;
+		double sigma4 = sigma2 * sigma2;
+
+		for (int i = 0; i < kLength; i++) {
+			g[i] = Math.exp(-(i * i) / (2.0D * sigma2));
+		}
+
+		double d = 6.283185307179586D * sigma4;
+		for (int i = 0; i < kLength; i++) {
+			aKernel[i] = (-i * g[i] / d);
+		}
+
+		gx = Convolvers.convolveOddX(input, aKernel, nx, ny);
+		gx = Convolvers.convolveEvenY(gx, g, nx, ny);
+		gy = Convolvers.convolveOddY(input, aKernel, nx, ny);
+		gy = Convolvers.convolveEvenX(gy, g, nx, ny);
+
+		for (int i = 0; i < size; i++) {
+			gx[i] *= gx[i];
+			gx[i] *= gy[i];
+			gy[i] *= gy[i];
+		}
+
+		gx2 = Convolvers.convolveEvenX(gx2, g, nx, ny);
+		gx2 = Convolvers.convolveEvenY(gx2, g, nx, ny);
+		gxgy = Convolvers.convolveEvenX(gxgy, g, nx, ny);
+		gxgy = Convolvers.convolveEvenY(gxgy, g, nx, ny);
+		gy2 = Convolvers.convolveEvenX(gy2, g, nx, ny);
+		gy2 = Convolvers.convolveEvenY(gy2, g, nx, ny);
+
+		for (int i = 0; (i < size) && (!stop); i++) {
+
+			gx2[i] = approxZero(gx2[i], 1.0E-13D);
+			gxgy[i] = approxZero(gxgy[i], 1.0E-13D);
+			gy2[i] = approxZero(gy2[i], 1.0E-13D);
+
+			if (gxgy[i] == 0.0D) {
+				eigenValues[0] = gx2[i];
+				eigenValues[1] = gy2[i];
+			} else {
+				
+				
+				ArrayList<Pair<Integer, Double>>	quarticRoots = numericalSolvers.Solvers.SolveQuartic(new double[] {gx2[i] * gy2[i] - gxgy[i] * gxgy[i],-gx2[i] - gy2[i], 1, 0 ,0   });
+				
+				eigenValues = new double[] {quarticRoots.get(0).getB(), quarticRoots.get(1).getB()};
+			}
+
+			double minEigenvalue = eigenValues[0];
+			if (eigenValues[1] < minEigenvalue) {
+				minEigenvalue = eigenValues[1];
+			}
+
+			if (gxgy[i] == 0.0D) {
+				if (minEigenvalue == gx2[i]) {
+					eV[0] = 1.0D;
+					eV[1] = 0.0D;
+					orientation[iz] = 0.0D;
+				} else {
+					eV[0] = 0.0D;
+					eV[1] = 1.0D;
+					orientation[iz] = 1.5707963267948966D;
+				}
+			} else {
+				eV[0] = 1.0D;
+				eV[1] = ((minEigenvalue - gx2[i]) / gxgy[i]);
+				normalize(eV);
+				orientation[iz] = Math.atan2(eV[1], eV[0]);
+			}
+
+			response[iz] = (gx2[i] + gy2[i]);
+			iz++;
+		}
+	}
+	
 	private static double[] complex(double paramDouble1, double paramDouble2)
 	  {
 	    double[] arrayOfDouble = { paramDouble1, paramDouble2 };

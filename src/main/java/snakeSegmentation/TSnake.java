@@ -29,20 +29,16 @@ public class TSnake extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		for (int t = parent.fourthDimensionsliderInit; t < parent.fourthDimensionSize; ++t) {
+		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
 
 			parent.fourthDimension = t;
+			System.out.println(t);
 			String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(t);
 			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, parent.thirdDimension,
 					parent.thirdDimensionSize, t, parent.fourthDimensionSize);
 			parent.updatePreview(ValueChange.FOURTHDIMmouse);
 
-			ArrayList<Roiobject> currentRoi;
-
-			if (parent.ZTRois.get(uniqueID) != null)
-				currentRoi = parent.ZTRois.get(uniqueID);
-			else
-				currentRoi = parent.CurrentRoiobject;
+			ArrayList<Roiobject> currentRoi = parent.CurrentRoiobject;
 
 			// Expand the image by 10 pixels
 

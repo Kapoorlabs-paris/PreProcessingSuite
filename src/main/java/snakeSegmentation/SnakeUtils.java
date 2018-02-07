@@ -62,7 +62,7 @@ public class SnakeUtils {
 			// each iteration
 			dist = snake.process();
 
-			if (Math.abs(dist0 - dist) < 0.1){
+			if (Math.abs(dist0 - dist) < 0.05){
 				
 				term++;
 			}

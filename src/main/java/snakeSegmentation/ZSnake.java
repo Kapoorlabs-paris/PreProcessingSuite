@@ -29,21 +29,20 @@ public class ZSnake extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		for (int z = parent.thirdDimensionsliderInit; z < parent.thirdDimensionSize; ++z) {
+		for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
 			parent.snakeinprogress = true;
 
 			parent.thirdDimension = z;
+			ArrayList<Roiobject> resultrois;
 			String uniqueID = Integer.toString(z) + Integer.toString(parent.fourthDimension);
+			
+			
+			
 			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize,
 					parent.fourthDimension, parent.fourthDimensionSize);
 			parent.updatePreview(ValueChange.THIRDDIMmouse);
 
-			ArrayList<Roiobject> currentRoi;
-
-			if (parent.ZTRois.get(uniqueID) != null)
-				currentRoi = parent.ZTRois.get(uniqueID);
-			else
-				currentRoi = parent.CurrentRoiobject;
+			ArrayList<Roiobject> currentRoi = parent.CurrentRoiobject;
 
 			// Expand the image by 10 pixels
 
@@ -54,9 +53,13 @@ public class ZSnake extends SwingWorker<Void, Void> {
 
 			SnakeonZ applysnake = new SnakeonZ(parent, parent.CurrentView, currentRoi);
 			applysnake.process();
-			ArrayList<Roiobject> resultrois = applysnake.getResult();
+			resultrois = applysnake.getResult();
+			
+			
 			parent.ZTRois.put(uniqueID, resultrois);
 
+			
+			
 			parent.updatePreview(ValueChange.SNAKE);
 
 		}

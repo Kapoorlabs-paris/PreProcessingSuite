@@ -127,7 +127,7 @@ public class InteractiveMethods {
 
 	public MserTree<UnsignedByteType> newtree;
 
-	public float thresholdMin = 1f;
+	public float thresholdMin = 0;
 	public float thresholdMax = 255f;
 	public int thresholdInit = 0;
 
@@ -485,9 +485,14 @@ public class InteractiveMethods {
 		
 		if (change == ValueChange.SNAKE) {
 			
-			
-			System.out.println(uniqueID);
-		
+			for (int i = 0; i < overlay.size(); ++i ) {
+				
+				if(overlay.get(i).getStrokeColor() == colorSnake) {
+					overlay.remove(i);
+				--i;	
+				}
+				
+			}
 				
 				for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
 
@@ -563,6 +568,7 @@ public class InteractiveMethods {
 
 		if (change == ValueChange.FOURTHDIMmouse || change == ValueChange.THIRDDIMmouse) {
 
+			
 			if (imp == null) {
 				imp = ImageJFunctions.show(CurrentView);
 
@@ -583,22 +589,7 @@ public class InteractiveMethods {
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
-			if(ZTRois.entrySet()!=null)
-			for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
-
-				ArrayList<Roiobject> current = entry.getValue();
-				for (Roiobject currentroi : current) {
-				
-				if (currentroi.fourthDimension == fourthDimension
-						&& currentroi.thirdDimension == thirdDimension) {
-				
-						currentroi.rois.setStrokeColor(colorSnake);
-						overlay.add(currentroi.rois);
-					}
-
-				}
-			}
-			System.out.println(snakeinprogress);
+		
 			if (showMSER && !snakeinprogress) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
@@ -900,7 +891,6 @@ public class InteractiveMethods {
 				new EmptyBorder(c.insets));
 		Border mserborder = new CompoundBorder(new TitledBorder("MSER detection"), new EmptyBorder(c.insets));
 		Border waterborder = new CompoundBorder(new TitledBorder("Watershed detection"), new EmptyBorder(c.insets));
-		Border roiborder = new CompoundBorder(new TitledBorder("MSER/DoG Confirm Rois"), new EmptyBorder(c.insets));
 		Border snakeborder = new CompoundBorder(new TitledBorder("Active Contour refinement"), new EmptyBorder(c.insets));
 		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"), new EmptyBorder(c.insets));
 		
@@ -925,7 +915,6 @@ public class InteractiveMethods {
 
 		Timeselect.setBorder(timeborder);
 		Timeselect.setMinimumSize(new Dimension(SizeX, SizeY));
-		Timeselect.setPreferredSize(new Dimension(SizeX, SizeY));
 		panelFirst.add(Timeselect, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -944,7 +933,6 @@ public class InteractiveMethods {
 
 		Zselect.setBorder(zborder);
 		Zselect.setMinimumSize(new Dimension(SizeX, SizeY));
-		Zselect.setPreferredSize(new Dimension(SizeX, SizeY));
 		panelFirst.add(Zselect, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -1042,18 +1030,13 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 	
 		MserPanel.setMinimumSize(new Dimension(SizeX, SizeYbig));
-		MserPanel.setPreferredSize(new Dimension(SizeX, SizeYbig));
 
 		MserPanel.setBorder(mserborder);
 
 		panelSecond.add(MserPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		
-		
-		RoiPanel.add(Roibutton, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		
-		RoiPanel.setBorder(roiborder);
+	
 		panelSecond.add(RoiPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
@@ -1153,6 +1136,7 @@ public class InteractiveMethods {
          Singlesnake.addActionListener(new PRESinglesnakeListener(this));
          Zsnakes.addActionListener(new PREZSnakeListener(this));
          Tsnakes.addActionListener(new PRETSnakeListener(this));
+         Allsnakes.addActionListener(new PREZTSnakeListener(this));
          advanced.addItemListener(new AdvancedSnakeListener(this));
          Snakeiter.addTextListener(new IterationListener(this));
          gradientthresh.addTextListener(new GradientListener(this));
@@ -1181,7 +1165,6 @@ public class InteractiveMethods {
 				thresholdMin, thresholdMax, scrollbarSize, thresholdslider));
 		timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
 				fourthDimensionSize, scrollbarSize, timeslider));
-		Roibutton.addActionListener(new RoiListener(this));
 		
 		
 		if (ndims > 3)

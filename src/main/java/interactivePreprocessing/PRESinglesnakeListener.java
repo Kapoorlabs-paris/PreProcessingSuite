@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import snakeSegmentation.SingleSnake;
 
 public class PRESinglesnakeListener implements ActionListener {
@@ -33,7 +34,7 @@ public class PRESinglesnakeListener implements ActionListener {
 
 	public void go() {
 
-	
+		parent.updatePreview(ValueChange.ROI);
 
 		SingleSnake dosnake = new SingleSnake(parent);
 		dosnake.execute();

@@ -14,35 +14,39 @@ import net.imglib2.view.Views;
 import utility.Roiobject;
 
 public class SingleSnake extends SwingWorker<Void, Void> {
-	
+
 	final InteractiveMethods parent;
 
 	public SingleSnake(final InteractiveMethods parent) {
-		
+
 		this.parent = parent;
-		
+
 	}
-	
+
 	@Override
 	protected Void doInBackground() throws Exception {
 		parent.snakeinprogress = true;
 		String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(parent.fourthDimension);
-		
-		ArrayList<Roiobject> currentRoi = parent.ZTRois.get(uniqueID);	
+
+		ArrayList<Roiobject> currentRoi = parent.ZTRois.get(uniqueID);
 		// Expand the image by 10 pixels
 
-		Interval spaceinterval = Intervals.createMinMax(
-				new long[] { parent.CurrentView.min(0), parent.CurrentView.min(1), parent.CurrentView.max(0), parent.CurrentView.max(1) });
+		Interval spaceinterval = Intervals.createMinMax(new long[] { parent.CurrentView.min(0),
+				parent.CurrentView.min(1), parent.CurrentView.max(0), parent.CurrentView.max(1) });
 		Interval interval = Intervals.expand(spaceinterval, 10);
 		parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
+		
+		
 		SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
 		applysnake.process();
 		ArrayList<Roiobject> resultrois = applysnake.getResult();
+		
+		
+		
 		parent.ZTRois.put(uniqueID, resultrois);
 		parent.updatePreview(ValueChange.SNAKE);
 		return null;
 	}
-	
 
 	@Override
 	protected void done() {
@@ -55,5 +59,5 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 		}
 
 	}
-	
+
 }
