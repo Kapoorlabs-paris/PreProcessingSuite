@@ -34,7 +34,7 @@ public class PRESinglesnakeListener implements ActionListener {
 
 	public void go() {
 
-		parent.updatePreview(ValueChange.ROI);
+		parent.updatePreview(ValueChange.PREROI);
 
 		SingleSnake dosnake = new SingleSnake(parent);
 		dosnake.execute();

@@ -14,7 +14,7 @@ import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
-import utility.Roiobject;
+import utility.PreRoiobject;
 
 public class DOGSeg extends SwingWorker<Void, Void> {
 
@@ -57,7 +57,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 
 		parent.Rois = utility.FinderUtils.getcurrentRois(parent.peaks, parent.sigma, parent.sigma2);
 		
-		parent.CurrentRoiobject = new ArrayList<Roiobject>();
+		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 		for (int index = 0; index < parent.peaks.size(); ++index) {
 
 			double[] center = new double[] { parent.peaks.get(index).getDoublePosition(0),
@@ -72,12 +72,12 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 		for (Roi currentroi: parent.Rois) {
 			
 			final double[] geocenter = currentroi.getContourCentroid();
-			final Pair<Double, Integer> Intensityandpixels = Roiobject.getIntensity(currentroi, parent.CurrentView);
+			final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi, parent.CurrentView);
 			final double intensity = Intensityandpixels.getA();
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
-			Roiobject currentobject = new Roiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
-			parent.CurrentRoiobject.add(currentobject);
+			PreRoiobject currentobject = new PreRoiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			parent.CurrentPreRoiobject.add(currentobject);
 		}
 	
 		parent.imp.setOverlay(parent.overlay);

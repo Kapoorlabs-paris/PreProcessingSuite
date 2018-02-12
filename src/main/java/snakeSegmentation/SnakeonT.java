@@ -11,7 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
-import utility.Roiobject;
+import utility.PreRoiobject;
 
 
 public class SnakeonT {
@@ -19,11 +19,11 @@ public class SnakeonT {
 	
 	final InteractiveMethods parent;
 	final RandomAccessibleInterval<FloatType> CurrentView;
-	final ArrayList<Roiobject> rois;
+	final ArrayList<PreRoiobject> rois;
 	int nbRois, percent = 0;
-	ArrayList<Roiobject> resultrois;
+	ArrayList<PreRoiobject> resultrois;
 	Roi processRoi = null;
-	public SnakeonT(final InteractiveMethods parent, final RandomAccessibleInterval<FloatType> CurrentView, ArrayList<Roiobject> rois) {
+	public SnakeonT(final InteractiveMethods parent, final RandomAccessibleInterval<FloatType> CurrentView, ArrayList<PreRoiobject> rois) {
 		
 		this.parent = parent;
 		this.CurrentView = CurrentView;
@@ -33,7 +33,7 @@ public class SnakeonT {
 	
 	public boolean process() {
 		parent.snakeinprogress = true;
-		resultrois = new ArrayList<Roiobject>();
+		resultrois = new ArrayList<PreRoiobject>();
 		boolean dialog;
 		boolean dialogAdvanced;
 		
@@ -50,7 +50,7 @@ public class SnakeonT {
 		
 		nbRois = rois.size();
 		ABSnakeFast snake;
-		for(Roiobject currentroi: rois) {
+		for(PreRoiobject currentroi: rois) {
 			
 			percent++;
 			
@@ -63,12 +63,12 @@ public class SnakeonT {
 			
 			Roi Roiresult = snake.createRoi();
 			double[] geometriccenter = Roiresult.getContourCentroid();
-			final Pair<Double, Integer> Intensityandpixels = Roiobject.getIntensity(currentroi.rois, CurrentView);
+			final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi.rois, CurrentView);
 			final double intensity = Intensityandpixels.getA();
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
 			
-			Roiobject currentobject = new Roiobject(Roiresult, geometriccenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			PreRoiobject currentobject = new PreRoiobject(Roiresult, geometriccenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
 			resultrois.add(currentobject);
 
 		}
@@ -80,7 +80,7 @@ public class SnakeonT {
 	}
 	
 	
-	public ArrayList<Roiobject> getResult(){
+	public ArrayList<PreRoiobject> getResult(){
 		
 		
 		return resultrois;

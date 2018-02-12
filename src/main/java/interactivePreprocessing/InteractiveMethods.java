@@ -67,7 +67,7 @@ import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
 import preProcessing.Kernels;
 import userTESTING.PreprocessingFileChooser;
-import utility.Roiobject;
+import utility.PreRoiobject;
 
 public class InteractiveMethods {
 
@@ -161,7 +161,7 @@ public class InteractiveMethods {
 	public boolean darktobright = false;
 	public boolean brighttodark = true;
 	public ArrayList<Roi> Rois;
-	public ArrayList<Roiobject> CurrentRoiobject;
+	public ArrayList<PreRoiobject> CurrentPreRoiobject;
 	public ArrayList<Roi> NearestNeighbourRois;
 	public ArrayList<Roi> BiggerRois;
 
@@ -183,8 +183,8 @@ public class InteractiveMethods {
 	public RandomAccessibleInterval<FloatType> bitimgFloat;
 	public RandomAccessibleInterval<IntType> intimg;
 
-	public ArrayList<Roiobject> ZTRoiobject;
-	public HashMap<String, ArrayList<Roiobject>> ZTRois;
+	public ArrayList<PreRoiobject> ZTPreRoiobject;
+	public HashMap<String, ArrayList<PreRoiobject>> ZTRois;
 	public float initialSearchradius = 10;
 	public float maxSearchradius = 15;
 	public int missedframes = 20;
@@ -227,7 +227,7 @@ public class InteractiveMethods {
 	public SnakeConfigDriver configDriver;
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, ROI;
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI;
 
 	}
 
@@ -399,10 +399,10 @@ public class InteractiveMethods {
 		overlay = new Overlay();
 		interval = new FinalInterval(originalimg.dimension(0), originalimg.dimension(1));
 		peaks = new ArrayList<RefinedPeak<Point>>();
-		ZTRois = new HashMap<String, ArrayList<Roiobject>>();
-		CurrentRoiobject = new ArrayList<Roiobject>();
+		ZTRois = new HashMap<String, ArrayList<PreRoiobject>>();
+		CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 		configDriver = new SnakeConfigDriver();
-		ZTRoiobject = new ArrayList<Roiobject>();
+		ZTPreRoiobject = new ArrayList<PreRoiobject>();
 		setInitialUnstability_Score(Unstability_ScoreInit);
 		setInitialDelta(deltaInit);
 		setInitialAlpha(alphaInit);
@@ -494,10 +494,10 @@ public class InteractiveMethods {
 				
 			}
 				
-				for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
+				for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
-					ArrayList<Roiobject> current = entry.getValue();
-					for (Roiobject currentroi : current) {
+					ArrayList<PreRoiobject> current = entry.getValue();
+					for (PreRoiobject currentroi : current) {
 					
 					if (currentroi.fourthDimension == fourthDimension
 							&& currentroi.thirdDimension == thirdDimension) {
@@ -524,30 +524,30 @@ public class InteractiveMethods {
 			
 		}
 
-		if (change == ValueChange.ROI) {
+		if (change == ValueChange.PREROI) {
 
-			ZTRoiobject.clear();
+			ZTPreRoiobject.clear();
 			for (Roi currentroi: Rois) {
 				
 				final double[] geocenter = currentroi.getContourCentroid();
-				final Pair<Double, Integer> Intensityandpixels = Roiobject.getIntensity(currentroi, CurrentView);
+				final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi, CurrentView);
 				final double intensity = Intensityandpixels.getA();
 				final double numberofpixels = Intensityandpixels.getB();
 				final double averageintensity = intensity / numberofpixels;
-				Roiobject currentobject = new Roiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, thirdDimension, fourthDimension);
-				ZTRoiobject.add(currentobject);
+				PreRoiobject currentobject = new PreRoiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, thirdDimension, fourthDimension);
+				ZTPreRoiobject.add(currentobject);
 			}
 		
-			ZTRois.put(uniqueID, ZTRoiobject);
+			ZTRois.put(uniqueID, ZTPreRoiobject);
 		
 			
 			if(overlay!=null)
 			overlay.clear();
 			
-			for (Map.Entry<String, ArrayList<Roiobject>> entry : ZTRois.entrySet()) {
+			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
-				ArrayList<Roiobject> current = entry.getValue();
-				for (Roiobject currentroi : current) {
+				ArrayList<PreRoiobject> current = entry.getValue();
+				for (PreRoiobject currentroi : current) {
 				
 				if (currentroi.fourthDimension == fourthDimension
 						&& currentroi.thirdDimension == thirdDimension) {
@@ -590,14 +590,14 @@ public class InteractiveMethods {
 
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
 		
-			if (showMSER && !snakeinprogress) {
+			if (showMSER) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
 				computeMSER.execute();
 
 			}
 
-			if (showDOG &&!snakeinprogress) {
+			if (showDOG) {
 
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();

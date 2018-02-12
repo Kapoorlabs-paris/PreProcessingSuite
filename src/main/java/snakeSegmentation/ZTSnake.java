@@ -14,7 +14,7 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import utility.Roiobject;
+import utility.PreRoiobject;
 
 public class ZTSnake extends SwingWorker<Void, Void> {
 
@@ -45,7 +45,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
-				ArrayList<Roiobject> currentRoi = parent.CurrentRoiobject;
+				ArrayList<PreRoiobject> currentRoi = parent.CurrentPreRoiobject;
 
 				// Expand the image by 10 pixels
 
@@ -56,7 +56,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 				SnakeonZT applysnake = new SnakeonZT(parent, parent.CurrentView, currentRoi);
 				applysnake.process();
-				ArrayList<Roiobject> resultrois = applysnake.getResult();
+				ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 				parent.ZTRois.put(uniqueID, resultrois);
 
 				

@@ -14,6 +14,7 @@ import net.imglib2.algorithm.labeling.AllConnectedComponents;
 import net.imglib2.algorithm.labeling.Watershed;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.labeling.DefaultROIStrategyFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingROIStrategy;
@@ -83,7 +84,6 @@ import net.imglib2.view.Views;
 					outputLabeling = GetlabeledImage(source, oldseedLabeling);
 					
 					watershedimage = outputLabeling.getStorageImg();
-			
 			
 			return true;
 		}

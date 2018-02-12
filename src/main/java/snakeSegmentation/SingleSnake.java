@@ -11,7 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Interval;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import utility.Roiobject;
+import utility.PreRoiobject;
 
 public class SingleSnake extends SwingWorker<Void, Void> {
 
@@ -28,7 +28,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 		parent.snakeinprogress = true;
 		String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(parent.fourthDimension);
 
-		ArrayList<Roiobject> currentRoi = parent.ZTRois.get(uniqueID);
+		ArrayList<PreRoiobject> currentRoi = parent.ZTRois.get(uniqueID);
 		// Expand the image by 10 pixels
 
 		Interval spaceinterval = Intervals.createMinMax(new long[] { parent.CurrentView.min(0),
@@ -39,7 +39,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 		
 		SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
 		applysnake.process();
-		ArrayList<Roiobject> resultrois = applysnake.getResult();
+		ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 		
 		
 		

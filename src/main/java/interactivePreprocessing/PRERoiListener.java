@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 
 
-public class RoiListener implements ActionListener {
+public class PRERoiListener implements ActionListener {
 	
 	final InteractiveMethods parent;
 	
-	public RoiListener(final InteractiveMethods parent) {
+	public PRERoiListener(final InteractiveMethods parent) {
 		
 		this.parent = parent;
 	}
@@ -19,7 +19,7 @@ public class RoiListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		parent.updatePreview(ValueChange.ROI);
+		parent.updatePreview(ValueChange.PREROI);
 		
 	}
 	

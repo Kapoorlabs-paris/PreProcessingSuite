@@ -10,7 +10,7 @@ import net.imglib2.util.Pair;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
-public class Roiobject {
+public class PreRoiobject {
 
 	
 	public Roi rois;
@@ -22,7 +22,7 @@ public class Roiobject {
 	public int fourthDimension;
 	
 	
-	public Roiobject(final Roi rois, final double[] geometriccenter, final double area, final double totalintensity, final double averageintensity, final int thirdDimension, final int fourthDimension) {
+	public PreRoiobject(final Roi rois, final double[] geometriccenter, final double area, final double totalintensity, final double averageintensity, final int thirdDimension, final int fourthDimension) {
 		
 		this.rois = rois;
 		this.geometriccenter = geometriccenter;
