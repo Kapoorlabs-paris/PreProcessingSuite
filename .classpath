@@ -23,5 +23,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/NumericalSolvers"/>
+	<classpathentry kind="src" path="/imagej-deprecated"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

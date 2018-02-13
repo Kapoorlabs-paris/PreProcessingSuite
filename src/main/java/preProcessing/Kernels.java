@@ -24,6 +24,7 @@ package preProcessing;
 
 import java.util.Random;
 
+import mpicbg.imglib.algorithm.math.ComputeMinMax;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
@@ -36,9 +37,12 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.Type;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.complex.ComplexFloatType;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
 public class Kernels {
@@ -558,7 +562,7 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 		return meanimg;
 	}
 	
-	public static RandomAccessibleInterval<FloatType> CannyEdgeandMeanBit(RandomAccessibleInterval<BitType> inputimg,
+	public static RandomAccessibleInterval<BitType> CannyEdgeandMeanBit(RandomAccessibleInterval<BitType> inputimg,
 			final double sigma) {
 		int n = inputimg.numDimensions();
 		RandomAccessibleInterval<BitType> cannyimage = new ArrayImgFactory<BitType>().create(inputimg,
@@ -664,10 +668,44 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 				new FloatType());
 		MeanFilter(Threshcannyimg, meanimg,  sigma);
 		
-		return Threshcannyimg;
+		Pair<Double, Double> minmax = computeMinMax(meanimg);
+		
+		RandomAccessibleInterval<BitType> copyoriginal = CreateBinary(meanimg, minmax.getA(), minmax.getB());
+		
+		
+		return copyoriginal;
 	}
 	
-	
+	 public static RandomAccessibleInterval<BitType> CreateBinary(RandomAccessibleInterval<FloatType> source, double lowprob, double highprob) {
+			
+			
+			RandomAccessibleInterval<BitType> copyoriginal = new ArrayImgFactory<BitType>().create(source, new BitType());
+			
+			final RandomAccess<BitType> ranac =  copyoriginal.randomAccess();
+			final Cursor<FloatType> cursor = Views.iterable(source).localizingCursor();
+			
+			while(cursor.hasNext()) {
+				
+				cursor.fwd();
+				
+				ranac.setPosition(cursor);
+				if(cursor.get().getRealDouble() > ( lowprob ) ) {
+					
+					ranac.get().setOne();
+				}
+				else {
+					ranac.get().setZero();
+				}
+				
+				
+			}
+			
+		
+			
+			
+			return copyoriginal;
+			
+		}
 	public static RandomAccessibleInterval<FloatType> Meanfilterandsupress(RandomAccessibleInterval<FloatType> inputimg, double sigma){
 		// Mean filtering for a given sigma
 		
@@ -874,4 +912,40 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 
 		return gradientimg;
 	}
+	
+	public static Pair<Double, Double> computeMinMax(RandomAccessibleInterval<FloatType> input){
+		
+		 final Cursor< FloatType > cursor = Views.iterable(input).cursor();
+		 
+	        // initialize min and max with the first image value
+		 FloatType type = cursor.next();
+		 FloatType min = type.copy();
+		 FloatType max = type.copy();
+	 
+	        // loop over the rest of the data and determine min and max value
+	        while ( cursor.hasNext() )
+	        {
+	            // we need this type more than once
+	            type = cursor.next();
+	 
+	            if ( type.compareTo( min ) < 0 )
+	            {
+	                min.set( type );
+	            }
+	 
+	            if ( type.compareTo( max ) > 0 )
+	            {
+	                max.set( type );
+	            }
+	        }
+	        
+	        return new ValuePair<Double, Double>(min.getRealDouble(), max.getRealDouble());
+	        
+		
+	}
+	
+	
+	
+	
+	
 }
