@@ -67,7 +67,8 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 
 	private final int radius;
 	
-	private final double[] psf;
+	private final int flatfieldradius;
+	
 	
 	private  JProgressBar jpb;
 
@@ -81,19 +82,19 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 	 *            determines the size of the neighborhood. In 2D or 3D, a radius
 	 *            of 1 will generate a 3x3 neighborhood.
 	 */
-	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final double[] psf )
+	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final int flatfieldradius )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.psf = psf;
+		this.flatfieldradius = flatfieldradius;
 	}
 	
 	
-	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final JProgressBar jpb, final double[] psf  )
+	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final int flatfieldradius, final JProgressBar jpb )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.psf = psf;
+		this.flatfieldradius = flatfieldradius;
 		this.jpb = jpb;
 	}
 
@@ -188,7 +189,7 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
         * @param out
         * 
         * Median filter is applied on the background corrected image generated from the previous step and is the pre-processed image to be
-        * used by the Line finders of the MTV tracker
+        * used by the Line finders of the M tracker
         * 
         */
 	private void processSlice( final RandomAccessibleInterval< FloatType > in, final IterableInterval< FloatType > out )
@@ -196,7 +197,7 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 		
 		double[] sigma = new double[in.numDimensions()];
 		for (int d = 0; d < in.numDimensions(); ++d) {
-			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / 20.0);
+			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / flatfieldradius);
 		}
 		
 		RandomAccessibleInterval<FloatType> gaussimg = Utils.copyImage(in);

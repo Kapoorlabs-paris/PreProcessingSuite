@@ -67,7 +67,6 @@ public class MedianFilterOnly extends BenchmarkAlgorithm implements OutputAlgori
 
 	private final int radius;
 	
-	private final double[] psf;
 	
 	private  JProgressBar jpb;
 
@@ -81,19 +80,17 @@ public class MedianFilterOnly extends BenchmarkAlgorithm implements OutputAlgori
 	 *            determines the size of the neighborhood. In 2D or 3D, a radius
 	 *            of 1 will generate a 3x3 neighborhood.
 	 */
-	public MedianFilterOnly( final RandomAccessibleInterval<FloatType> source, final int radius, final double[] psf )
+	public MedianFilterOnly( final RandomAccessibleInterval<FloatType> source, final int radius )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.psf = psf;
 	}
 	
 	
-	public MedianFilterOnly( final RandomAccessibleInterval<FloatType> source, final int radius, final JProgressBar jpb, final double[] psf  )
+	public MedianFilterOnly( final RandomAccessibleInterval<FloatType> source, final int radius, final JProgressBar jpb )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.psf = psf;
 		this.jpb = jpb;
 	}
 

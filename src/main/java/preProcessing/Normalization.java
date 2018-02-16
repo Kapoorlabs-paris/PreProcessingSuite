@@ -24,9 +24,13 @@ package preProcessing;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
+import net.imglib2.Cursor;
+import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.stats.Normalize;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
@@ -39,16 +43,49 @@ public class Normalization {
 		
 		new ImageJ();
 
-		String filepath = "/Users/varunkapoor/Google Drive/9MicroMolar/DRIFT2017-05-24_trops_cy5bovineseeds_cy3_9uM/"
-				+ "CORRECTED2017-05-24_trops_cy5bovineseeds_cy3_9uM.tif";
+		String filepath = "/Users/aimachine/Documents/Tea_Data/Test.tif";
 		ImagePlus impA = new ImagePlus( filepath );
 		RandomAccessibleInterval<FloatType> img = ImageJFunctions.convertFloat(impA);
 		new Normalize();
 		FloatType minval = new FloatType(0);
 		FloatType maxval = new FloatType(1);
+		
+		int boundarylabel = 1;
+		int outterlabel = 2;
+		int innerlabel = 3;
+		int backgroundlabel = 4;
+		
+		// Change the label here for creating a lebelled image
+		int label = backgroundlabel;
+		
 		Normalize.normalize(Views.iterable(img), minval, maxval); 
 		
-		ImageJFunctions.show(img);
+		// Make Labelled image
+		
+		
+		RandomAccessibleInterval<IntType> Intimg = new ArrayImgFactory<IntType>().create(img,
+				new IntType());
+		
+		RandomAccess<IntType> intran = Intimg.randomAccess();
+		Cursor<FloatType> cursor = Views.iterable(img).localizingCursor();
+		
+		while(cursor.hasNext()){
+
+			cursor.next();
+			
+			intran.setPosition(cursor);
+			
+			if (cursor.get().get() > 0) {
+				
+				intran.get().set(outterlabel);
+			}
+				
+			
+		
+		}		
+		
+		
+		ImageJFunctions.show(Intimg);
 	
 		
 	}

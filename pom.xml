@@ -11,7 +11,7 @@
 
 	<groupId>net.kapoor</groupId>
 	<artifactId>Preprocessing</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<name>PreprocessingSuite</name>
 	<description>Preprocessing and Segmentation Pipelines</description>
@@ -47,9 +47,9 @@
 	</developers>
 	<contributors>
 		<contributor>
-			<name></name>
-			<url></url>
-			<properties><id></id></properties>
+			<name>None</name>
+			<url>None</url>
+			<properties><id>None</id></properties>
 		</contributor>
 	</contributors>
 
@@ -60,11 +60,20 @@
 		</mailingList>
 	</mailingLists>
 
-	
+	<scm>
+		<connection>scm:git:git://github.com/kapoorlab</connection>
+		<developerConnection>scm:git:git@github.com:PreibischLab/MTrack</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/kapoorlab</url>
+	</scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/BDDImaging/PreProcessingSuite</url>
+		<url>https://github.com/kapoorlab/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/kapoorlab</url>
+	</ciManagement>
 
 	<properties>
 		<license.licenseName>gpl_v3</license.licenseName>
