@@ -64,15 +64,14 @@ public class PreZlocListener implements TextListener {
 					
 					parent.zText.setText("Current Z = " + parent.thirdDimension);
 					parent.zgenText.setText("Current Z / T = " + parent.thirdDimension);
-					if(!parent.snakeinprogress) {
+					if(!parent.snakeinprogress)
 					parent.updatePreview(ValueChange.THIRDDIMmouse);
-					}
-					else
-					parent.updatePreview(ValueChange.SNAKE);	
-					parent.zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.thirdDimension, parent.thirdDimensionsliderInit, parent.thirdDimensionSize, parent.scrollbarSize));
-					parent.zslider.repaint();
-					parent.zslider.validate();
+					
+					
 				}
+				parent.zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.thirdDimension, parent.thirdDimensionsliderInit, parent.thirdDimensionSize, parent.scrollbarSize));
+				parent.zslider.repaint();
+				parent.zslider.validate();
 
 			}
 		});

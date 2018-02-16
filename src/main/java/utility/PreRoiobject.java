@@ -55,6 +55,7 @@ public class PreRoiobject extends AbstractEuclideanSpace implements RealLocaliza
 		putFeature( Z,Double.valueOf( thirdDimension ) );
 		putFeature( XPOSITION, Double.valueOf( geometriccenter[0] ) );
 		putFeature( YPOSITION, Double.valueOf( geometriccenter[1] ) );
+		
 		putFeature( ZPOSITION, Double.valueOf( geometriccenter[2] ) );
 	}
 	/*

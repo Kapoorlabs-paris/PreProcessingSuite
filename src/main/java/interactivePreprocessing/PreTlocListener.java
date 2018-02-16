@@ -62,20 +62,14 @@ public class PreTlocListener implements TextListener {
 					show.shownewT();
 					parent.timeText.setText("Current T = " + parent.fourthDimension);
 					
-					if(!parent.snakeinprogress) {
+					if(!parent.snakeinprogress)
 					parent.updatePreview(ValueChange.FOURTHDIMmouse);
-					}
-					else
-					parent.updatePreview(ValueChange.SNAKE);	
 					
-					parent.timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
+					
+					 }
+			    	parent.timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
 					parent.timeslider.repaint();
 					parent.timeslider.validate();
-					
-					
-					
-			    		
-					 }
 
 			    }
 			});

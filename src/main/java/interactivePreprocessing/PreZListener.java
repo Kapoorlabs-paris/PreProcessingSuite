@@ -34,6 +34,7 @@ public class PreZListener implements AdjustmentListener {
 			this.deltaScrollbar = deltaScrollbar;
 			
 		//	deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
+			if(!parent.snakeinprogress)
 				deltaScrollbar.addMouseListener(new PreStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			
 				
@@ -51,16 +52,15 @@ public class PreZListener implements AdjustmentListener {
 
 
 
-		
 			label.setText(string +  " = "  + parent.thirdDimension);
 			parent.inputFieldZ.setText(Integer.toString((int)parent.thirdDimension));
 			parent.panelFirst.validate();
 			parent.panelFirst.repaint();
-		
 			
 			
 			ShowView show = new ShowView(parent);
 			show.shownewZ();
+			
 		}
 		
 	

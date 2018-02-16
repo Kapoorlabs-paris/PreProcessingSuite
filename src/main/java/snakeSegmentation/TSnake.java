@@ -29,6 +29,10 @@ public class TSnake extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
+		
+	
+		
+		
 		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
 
 			parent.fourthDimension = t;
@@ -63,6 +67,7 @@ public class TSnake extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		parent.snakeinprogress = false;
+		
 		try {
 			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
 			get();

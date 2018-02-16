@@ -33,6 +33,10 @@ public class SnakeonT {
 	
 	public boolean process() {
 		parent.snakeinprogress = true;
+		parent.zslider.setEnabled(false);
+		parent.timeslider.setEnabled(false);
+		parent.inputFieldT.setEnabled(false);
+		parent.inputFieldZ.setEnabled(false);
 		resultrois = new ArrayList<PreRoiobject>();
 		boolean dialog;
 		boolean dialogAdvanced;
@@ -62,18 +66,21 @@ public class SnakeonT {
 			snake = snakes.processSnake(currentroi.rois, percent);
 			
 			Roi Roiresult = snake.createRoi();
-			double[] geometriccenter = Roiresult.getContourCentroid();
+			double[] geocenter = Roiresult.getContourCentroid();
 			final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi.rois, CurrentView);
 			final double intensity = Intensityandpixels.getA();
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
 			
-			PreRoiobject currentobject = new PreRoiobject(Roiresult, geometriccenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			PreRoiobject currentobject = new PreRoiobject(Roiresult, new double [] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
 			resultrois.add(currentobject);
 
 		}
 		
-		
+		parent.zslider.setEnabled(true);
+		parent.timeslider.setEnabled(true);
+		parent.inputFieldT.setEnabled(true);
+		parent.inputFieldZ.setEnabled(true);
 		
 		
 		return true;

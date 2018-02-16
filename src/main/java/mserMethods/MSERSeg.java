@@ -56,14 +56,13 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 		ArrayList<double[]> centerRoi = utility.FinderUtils.getRoiMean(parent.newtree);
 		for (int index = 0; index < centerRoi.size(); ++index) {
 
-			double[] center = new double[] { centerRoi.get(index)[0], centerRoi.get(index)[1] };
+			double[] center = new double[] { centerRoi.get(index)[0], centerRoi.get(index)[1], parent.thirdDimension };
 
 			Roi or = parent.Rois.get(index);
 
 			or.setStrokeColor(parent.colorDrawMser);
 			parent.overlay.add(or);
 		}
-	
 		for (Roi currentroi: parent.Rois) {
 			
 			final double[] geocenter = currentroi.getContourCentroid();
@@ -71,14 +70,14 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 			final double intensity = Intensityandpixels.getA();
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
-			PreRoiobject currentobject = new PreRoiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			PreRoiobject currentobject = new PreRoiobject(currentroi, new double[] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
 			parent.CurrentPreRoiobject.add(currentobject);
 		}
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
 		parent.updatePreview(ValueChange.SNAKE);
-	
+		
 		try {
 			get();
 		} catch (InterruptedException e) {

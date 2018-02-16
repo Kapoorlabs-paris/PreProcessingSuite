@@ -112,6 +112,8 @@ public class InteractiveMethods {
 	public int minSizeInit = 1;
 	public int maxSizeInit = 100;
 
+	public int maxSearchInit = 100;
+
 	public int deltaInit = 10;
 	public float delta = deltaInit;
 
@@ -174,8 +176,8 @@ public class InteractiveMethods {
 	public Color colorSnake = Color.YELLOW;
 	public Overlay overlay;
 	public FinalInterval interval;
-	public boolean lookForMaxima = false;
-	public boolean lookForMinima = true;
+	public boolean lookForMaxima = true;
+	public boolean lookForMinima = false;
 
 	public float sigmaMin = 1f;
 	public float sigmaMax = 100f;
@@ -189,20 +191,20 @@ public class InteractiveMethods {
 	public float maxSearchradius = 15;
 	public int missedframes = 20;
 	public int initialSearchradiusInit = (int) initialSearchradius;
-	public float initialSearchradiusMin = 0;
-	public float initialSearchradiusMax = 100;
+	public float initialSearchradiusMin = 1;
+	public float initialSearchradiusMax = 1000;
 	public float alphaMin = 0;
 	public float alphaMax = 1;
 	public float betaMin = 0;
 	public float betaMax = 1;
 	public ArrayList<RefinedPeak<Point>> peaks;
 	public int maxSearchradiusInit = (int) maxSearchradius;
-	public float maxSearchradiusMin = 10;
-	public float maxSearchradiusMax = 500;
+	public float maxSearchradiusMin = 1;
+	public float maxSearchradiusMax = 5000;
 	public String uniqueID;
 	public float alpha = 0.5f;
 	public float beta = 0.5f;
-	
+
 	public int snakeiterations = 200;
 	public int displaysnake = snakeiterations / 2;
 	public int Gradthresh = 1;
@@ -213,26 +215,27 @@ public class InteractiveMethods {
 	public double Threshold_dist_negative = 10;
 	public double Inv_alpha_min = 0.2;
 	public double Inv_alpha_max = 10.0;
-	
+
 	public double Mul_factor = 0.99;
 	// maximum displacement
 	public double force = 10;
-		// regulari1ation factors, min and max
+	// regulari1ation factors, min and max
 	public double reg = 5;
 	public double regmin, regmax;
-	
-	
+
 	public boolean AutoSnake = true;
 	public boolean advancedSnake = false;
 	public SnakeConfigDriver configDriver;
+
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI;
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, 
+		THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman;
 
 	}
 
 	public void setTime(final int value) {
-		
+
 		fourthDimensionslider = value;
 		fourthDimensionsliderInit = value;
 		fourthDimension = value;
@@ -482,76 +485,77 @@ public class InteractiveMethods {
 		if (roimanager == null) {
 			roimanager = new RoiManager();
 		}
-		
+
 		if (change == ValueChange.SNAKE) {
-			
-			for (int i = 0; i < overlay.size(); ++i ) {
-				
-				if(overlay.get(i).getStrokeColor() == colorSnake) {
+
+			for (int i = 0; i < overlay.size(); ++i) {
+
+				if (overlay.get(i).getStrokeColor() == colorSnake) {
 					overlay.remove(i);
-				--i;	
+					--i;
 				}
-				
+
 			}
-				
-				for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
-					ArrayList<PreRoiobject> current = entry.getValue();
-					for (PreRoiobject currentroi : current) {
-					
-					if (currentroi.fourthDimension == fourthDimension
-							&& currentroi.thirdDimension == thirdDimension) {
-					
-							currentroi.rois.setStrokeColor(colorSnake);
-							overlay.add(currentroi.rois);
-						}
+			int localthirddim = thirdDimension, localfourthdim = fourthDimension;
+			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
+				ArrayList<PreRoiobject> current = entry.getValue();
+				for (PreRoiobject currentroi : current) {
+
+					if (currentroi.fourthDimension == fourthDimension && currentroi.thirdDimension == thirdDimension) {
+
+						currentroi.rois.setStrokeColor(colorSnake);
+						overlay.add(currentroi.rois);
+						localthirddim = currentroi.thirdDimension;
+						localfourthdim = currentroi.fourthDimension;
 					}
+
 				}
-				imp.setOverlay(overlay);
-				imp.updateAndDraw();
-				zText.setText("Current Z = " + thirdDimension);
-				zgenText.setText("Current Z / T = " + thirdDimension);
-				zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(thirdDimension, thirdDimensionsliderInit, thirdDimensionSize, scrollbarSize));
-				zslider.repaint();
-				zslider.validate();
-				
-				
-				timeText.setText("Current T = " + fourthDimension);
-				timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(fourthDimension, fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
-				timeslider.repaint();
-				timeslider.validate();
-			
+			}
+			imp.setOverlay(overlay);
+			imp.updateAndDraw();
+			zText.setText("Current Z = " + localthirddim);
+			zgenText.setText("Current Z / T = " + localthirddim);
+			zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(localthirddim, thirdDimensionsliderInit,
+					thirdDimensionSize, scrollbarSize));
+			zslider.repaint();
+			zslider.validate();
+
+			timeText.setText("Current T = " + localfourthdim);
+			timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(localfourthdim,
+					fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
+			timeslider.repaint();
+			timeslider.validate();
+
 		}
 
 		if (change == ValueChange.PREROI) {
 
 			ZTPreRoiobject.clear();
-			for (Roi currentroi: Rois) {
-				
+			for (Roi currentroi : Rois) {
+
 				final double[] geocenter = currentroi.getContourCentroid();
 				final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi, CurrentView);
 				final double intensity = Intensityandpixels.getA();
 				final double numberofpixels = Intensityandpixels.getB();
 				final double averageintensity = intensity / numberofpixels;
-				PreRoiobject currentobject = new PreRoiobject(currentroi, geocenter, numberofpixels, intensity, averageintensity, thirdDimension, fourthDimension);
+				PreRoiobject currentobject = new PreRoiobject(currentroi, new double [] {geocenter[0], geocenter[1], thirdDimension}, numberofpixels, intensity,
+						averageintensity, thirdDimension, fourthDimension);
 				ZTPreRoiobject.add(currentobject);
 			}
-		
+
 			ZTRois.put(uniqueID, ZTPreRoiobject);
-		
-			
-			if(overlay!=null)
-			overlay.clear();
-			
+
+			if (overlay != null)
+				overlay.clear();
+
 			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
 				ArrayList<PreRoiobject> current = entry.getValue();
 				for (PreRoiobject currentroi : current) {
-				
-				if (currentroi.fourthDimension == fourthDimension
-						&& currentroi.thirdDimension == thirdDimension) {
-				
+
+					if (currentroi.fourthDimension == fourthDimension && currentroi.thirdDimension == thirdDimension) {
 
 						currentroi.rois.setStrokeColor(colorConfirm);
 						overlay.add(currentroi.rois);
@@ -561,14 +565,12 @@ public class InteractiveMethods {
 			}
 			imp.setOverlay(overlay);
 			imp.updateAndDraw();
-			
-			
 
 		}
 
 		if (change == ValueChange.FOURTHDIMmouse || change == ValueChange.THIRDDIMmouse) {
 
-			
+			if(!snakeinprogress) {
 			if (imp == null) {
 				imp = ImageJFunctions.show(CurrentView);
 
@@ -589,7 +591,7 @@ public class InteractiveMethods {
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
-		
+
 			if (showMSER) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
@@ -602,8 +604,8 @@ public class InteractiveMethods {
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();
 			}
-			
-			if (snakeinprogress)
+			}
+			else
 				updatePreview(ValueChange.SNAKE);
 
 		}
@@ -628,7 +630,6 @@ public class InteractiveMethods {
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
-		
 			newimg = utility.Slicer.copytoByteImage(CurrentView);
 
 			MSERSeg computeMSER = new MSERSeg(this, jpb);
@@ -695,6 +696,9 @@ public class InteractiveMethods {
 	public JPanel RoiPanel = new JPanel();
 	public JPanel DetectionPanel = new JPanel();
 
+	public JPanel NearestNPanel = new JPanel();
+	public JPanel KalmanPanel = new JPanel();
+
 	final String timestring = "Current T";
 	final String zstring = "Current Z";
 	final String zgenstring = "Current Z / T";
@@ -708,6 +712,8 @@ public class InteractiveMethods {
 	final String minSizestring = "Minimum size of MSER ellipses";
 	final String maxSizestring = "Maximum size of MSER ellipses";
 	final String waterstring = "Threshold for Watershedding";
+	final String maxSearchstring = "Maximum search radius";
+	final String initialSearchstring = "Initial search radius";
 
 	public Label timeText = new Label("Current T = " + 1, Label.CENTER);
 	public Label zText = new Label("Current Z = " + 1, Label.CENTER);
@@ -719,7 +725,8 @@ public class InteractiveMethods {
 	final Label minDivText = new Label(minDivstring + " = " + minDiversityInit, Label.CENTER);
 	final Label minSizeText = new Label(minSizestring + " = " + minSizeInit, Label.CENTER);
 	final Label maxSizeText = new Label(maxSizestring + " = " + maxSizeInit, Label.CENTER);
-
+	Label maxSearchText = new Label(maxSearchstring + " = " + maxSearchInit, Label.CENTER);
+	Label iniSearchText = new Label(initialSearchstring + " = " + initialSearchradiusInit, Label.CENTER);
 	public CheckboxGroup minormax = new CheckboxGroup();
 	final Checkbox findminima = new Checkbox("Locate Minima", minormax, lookForMinima);
 	final Checkbox findmaxima = new Checkbox("Locate Maxima", minormax, lookForMaxima);
@@ -732,15 +739,14 @@ public class InteractiveMethods {
 
 	final Checkbox displayBinary = new Checkbox("Display Binary image");
 
-	final Checkbox displayDist = new Checkbox("Display Distance transformed image");
+	final Checkbox displayDist = new Checkbox("Display DTimage");
 
-	final Checkbox autothreshold = new Checkbox("Auto determine threshold intensity");
-	
+	final Checkbox autothreshold = new Checkbox("Auto Thresholding");
 
 	final Checkbox advanced = new Checkbox("Display advanced Snake parameters");
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
-	
+
 	public CheckboxGroup detection = new CheckboxGroup();
 	final Checkbox Watershed = new Checkbox("Do watershedding", detection, showWatershed);
 	final Checkbox DOG = new Checkbox("Do DoG detection", detection, showDOG);
@@ -767,7 +773,8 @@ public class InteractiveMethods {
 
 	final JScrollBar minSizeS = new JScrollBar(Scrollbar.HORIZONTAL, minSizeInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar maxSizeS = new JScrollBar(Scrollbar.HORIZONTAL, maxSizeInit, 10, 0, 10 + scrollbarSize);
-
+	final JScrollBar maxSearchS = new JScrollBar(Scrollbar.HORIZONTAL, maxSearchInit, 10, 0, 10 + scrollbarSize);
+	final JScrollBar initialSearchS = new JScrollBar(Scrollbar.HORIZONTAL, initialSearchradiusInit, 10, 0, 10 + scrollbarSize);
 	public Label sigmaText = new Label("Approximate object size = " + sigmaInit, Label.CENTER);
 	public Label thresholdText = new Label("Approximate peak intensity " + thresholdInit, Label.CENTER);
 	public Label watertext = new Label(waterstring + " = " + thresholdInitWater, Label.CENTER);
@@ -775,34 +782,29 @@ public class InteractiveMethods {
 	public TextField inputField = new TextField();
 	public TextField inputFieldT, inputtrackField;
 	public TextField inputFieldZ;
-	
+	public int SizeXbig = 400;
+	public int SizeXsmall = 200;
 	public int SizeX = 400;
 	public int SizeY = 200;
 	public int SizeYsmall = 200;
-	public int SizeYbig = 400;
+	public int SizeYbig = 500;
 	public Label Snakelabel, gradientlabel, distlabel;
 	public TextField Snakeiter, gradientthresh, maxdist;
-	
+
 	public void Card() {
 
 		Snakelabel = new Label("Enter number of max snake iterations");
 		gradientlabel = new Label("Enter gradient threshold");
 		distlabel = new Label("Enter max distance to search for edges");
-		
-		
-		
+
 		Snakeiter = new TextField(5);
 		gradientthresh = new TextField(5);
 		maxdist = new TextField(5);
-		
+
 		Snakeiter.setText(Integer.toString(snakeiterations));
 		gradientthresh.setText(Integer.toString(Gradthresh));
 		maxdist.setText(Integer.toString(DistMax));
-		
-		
-		
-		
-		
+
 		Unstability_ScoreS.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(Unstability_ScoreInit,
 				Unstability_ScoreMin, Unstability_ScoreMax, scrollbarSize));
 
@@ -847,34 +849,40 @@ public class InteractiveMethods {
 
 		maxSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(maxSizeS.getValue(), maxSizemin,
 				maxSizemax, scrollbarSize);
-
+		maxSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(maxSearchS.getValue(),
+				maxSearchradiusMin, maxSearchradiusMax, scrollbarSize);
+		initialSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(initialSearchS.getValue(),
+				initialSearchradiusMin, initialSearchradiusMax, scrollbarSize);
 		sigmaText = new Label("Approximate object size = " + sigma, Label.CENTER);
 		thresholdText = new Label("Approximate peak intensity " + threshold, Label.CENTER);
 		watertext = new Label(waterstring + " = " + thresholdWater, Label.CENTER);
-
+		maxSearchText = new Label(maxSearchstring + " = " + maxSearchradius, Label.CENTER);
+		iniSearchText = new Label(initialSearchstring + " = " + initialSearchradius, Label.CENTER);
 		CardLayout cl = new CardLayout();
 
 		c.insets = new Insets(5, 5, 5, 5);
 		panelCont.setLayout(cl);
 
 		panelCont.add(panelFirst, "1");
-		
+
 		panelCont.add(panelSecond, "2");
 
 		panelFirst.setLayout(layout);
 		panelSecond.setLayout(layout);
-		
+
 		Timeselect.setLayout(layout);
 
 		Zselect.setLayout(layout);
 		DogPanel.setLayout(layout);
 		MserPanel.setLayout(layout);
 		DetectionPanel.setLayout(layout);
-        SnakePanel.setLayout(layout);
+		SnakePanel.setLayout(layout);
 		WaterPanel.setLayout(layout);
 		RoiPanel.setLayout(layout);
-		
-	   // 
+		NearestNPanel.setLayout(layout);
+		KalmanPanel.setLayout(layout);
+
+		//
 		inputFieldZ = new TextField();
 		inputFieldZ = new TextField(5);
 		inputFieldZ.setText(Integer.toString(thirdDimension));
@@ -891,9 +899,15 @@ public class InteractiveMethods {
 				new EmptyBorder(c.insets));
 		Border mserborder = new CompoundBorder(new TitledBorder("MSER detection"), new EmptyBorder(c.insets));
 		Border waterborder = new CompoundBorder(new TitledBorder("Watershed detection"), new EmptyBorder(c.insets));
-		Border snakeborder = new CompoundBorder(new TitledBorder("Active Contour refinement"), new EmptyBorder(c.insets));
-		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"), new EmptyBorder(c.insets));
-		
+		Border snakeborder = new CompoundBorder(new TitledBorder("Active Contour refinement"),
+				new EmptyBorder(c.insets));
+		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"),
+				new EmptyBorder(c.insets));
+		Border NNborder = new CompoundBorder(new TitledBorder("NearestNeighbour Search in Z"),
+				new EmptyBorder(c.insets));
+		Border Kalmanborder = new CompoundBorder(new TitledBorder("Kalman Filter Search in T"),
+				new EmptyBorder(c.insets));
+
 		c.anchor = GridBagConstraints.BOTH;
 		c.ipadx = 35;
 
@@ -914,7 +928,6 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
 		Timeselect.setBorder(timeborder);
-		Timeselect.setMinimumSize(new Dimension(SizeX, SizeY));
 		panelFirst.add(Timeselect, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -932,7 +945,6 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
 		Zselect.setBorder(zborder);
-		Zselect.setMinimumSize(new Dimension(SizeX, SizeY));
 		panelFirst.add(Zselect, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -946,9 +958,9 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		DetectionPanel.add(DOG, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		DetectionPanel.add(MSER, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+		DetectionPanel.add(MSER, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		
+
 		DetectionPanel.setBorder(methodborder);
 		panelFirst.add(DetectionPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
@@ -961,11 +973,11 @@ public class InteractiveMethods {
 
 		WaterPanel.add(displayWater, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		WaterPanel.add(displayBinary, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+		WaterPanel.add(displayBinary, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		WaterPanel.add(displayDist, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		WaterPanel.add(autothreshold, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+		WaterPanel.add(autothreshold, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
 		WaterPanel.setBorder(waterborder);
@@ -989,10 +1001,9 @@ public class InteractiveMethods {
 
 		DogPanel.add(findmaxima, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-	
 		DogPanel.setBorder(dogborder);
-		
-		panelSecond.add(DogPanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+
+		panelFirst.add(DogPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
 		MserPanel.add(deltaText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
@@ -1028,25 +1039,19 @@ public class InteractiveMethods {
 
 		MserPanel.add(findmaximaMser, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-	
-		MserPanel.setMinimumSize(new Dimension(SizeX, SizeYbig));
+
+		MserPanel.setPreferredSize(new Dimension(SizeX, SizeYbig));
 
 		MserPanel.setBorder(mserborder);
 
-		panelSecond.add(MserPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		panelFirst.add(MserPanel, new GridBagConstraints(3, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
-		
-	
-		panelSecond.add(RoiPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
-		
 		final JButton Singlesnake = new JButton("Apply snakes to CurrentView");
 		final Button Zsnakes = new Button("Apply snakes to the third Dimension (usually Z)");
 		final Button Tsnakes = new Button("Apply snakes to the fourth Dimension (usually T)");
 		final Button Allsnakes = new Button("Apply snakes to all Dimensions (Z and T)");
-		
-		
+
 		JPanel controlprev = new JPanel();
 		JPanel controlnext = new JPanel();
 		controlprev.setLayout(layout);
@@ -1059,7 +1064,7 @@ public class InteractiveMethods {
 				cl.previous(panelCont);
 			}
 		}));
-		
+
 		controlnext.add(new JButton(new AbstractAction("Next\u22b3") {
 
 			@Override
@@ -1068,52 +1073,60 @@ public class InteractiveMethods {
 				cl.next(panelCont);
 			}
 		}));
-		
-		
+
 		SnakePanel.add(Snakelabel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		SnakePanel.add(Snakeiter, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
-		
-		
+
 		SnakePanel.add(gradientlabel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		SnakePanel.add(gradientthresh, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
 
 		SnakePanel.add(distlabel, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		SnakePanel.add(maxdist, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
-		
-		
+
 		SnakePanel.add(Singlesnake, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
-		
+
 		if (originalimg.numDimensions() > 2)
-		SnakePanel.add(Zsnakes, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-	
+			SnakePanel.add(Zsnakes, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
 		if (originalimg.numDimensions() > 3) {
-		SnakePanel.add(Tsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
-		SnakePanel.add(Allsnakes, new GridBagConstraints(5, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+			SnakePanel.add(Tsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
+			SnakePanel.add(Allsnakes, new GridBagConstraints(5, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		}
-		
+
 		SnakePanel.add(advanced, new GridBagConstraints(5, 5, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
 		SnakePanel.setBorder(snakeborder);
-		panelSecond.add(SnakePanel, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		panelSecond.add(SnakePanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
+		NearestNPanel.add(maxSearchText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		NearestNPanel.add(maxSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		NearestNPanel.setBorder(NNborder);
+		panelSecond.add(NearestNPanel, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
 		
-		
+		KalmanPanel.add(iniSearchText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		KalmanPanel.add(initialSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		KalmanPanel.setBorder(Kalmanborder);
+		panelSecond.add(KalmanPanel, new GridBagConstraints(2, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
 		sigmaslider.addAdjustmentListener(
 				new PreSigmaListener(this, sigmaText, sigmastring, sigmaMin, sigmaMax, scrollbarSize, sigmaslider));
 
@@ -1133,17 +1146,14 @@ public class InteractiveMethods {
 		displayBinary.addItemListener(new PREShowBinary(this));
 		displayWater.addItemListener(new PREShowWatershed(this));
 		displayDist.addItemListener(new PREShowDist(this));
-         Singlesnake.addActionListener(new PRESinglesnakeListener(this));
-         Zsnakes.addActionListener(new PREZSnakeListener(this));
-         Tsnakes.addActionListener(new PRETSnakeListener(this));
-         Allsnakes.addActionListener(new PREZTSnakeListener(this));
-         advanced.addItemListener(new AdvancedSnakeListener(this));
-         Snakeiter.addTextListener(new IterationListener(this));
-         gradientthresh.addTextListener(new GradientListener(this));
-         maxdist.addTextListener(new MaxdistListener(this));
-         
-        
-        
+		Singlesnake.addActionListener(new PRESinglesnakeListener(this));
+		Zsnakes.addActionListener(new PREZSnakeListener(this));
+		Tsnakes.addActionListener(new PRETSnakeListener(this));
+		Allsnakes.addActionListener(new PREZTSnakeListener(this));
+		advanced.addItemListener(new AdvancedSnakeListener(this));
+		Snakeiter.addTextListener(new IterationListener(this));
+		gradientthresh.addTextListener(new GradientListener(this));
+		maxdist.addTextListener(new MaxdistListener(this));
 
 		deltaS.addAdjustmentListener(
 				new PREDeltaListener(this, deltaText, deltastring, deltaMin, deltaMax, scrollbarSize, deltaS));
@@ -1163,9 +1173,15 @@ public class InteractiveMethods {
 
 		thresholdslider.addAdjustmentListener(new PreThresholdListener(this, thresholdText, thresholdstring,
 				thresholdMin, thresholdMax, scrollbarSize, thresholdslider));
+
 		timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
 				fourthDimensionSize, scrollbarSize, timeslider));
-		
+
+		maxSearchS.addAdjustmentListener(new PREMaxSearchListener(this, maxSearchText, maxSearchstring,
+				maxSearchradiusMin, maxSearchradiusMax, scrollbarSize, maxSearchS));
+
+		initialSearchS.addAdjustmentListener(new PREIniSearchListener(this, iniSearchText, initialSearchstring,
+				initialSearchradiusMin, initialSearchradiusMax, scrollbarSize, initialSearchS));
 		
 		if (ndims > 3)
 			zslider.addAdjustmentListener(new PreZListener(this, zText, zstring, thirdDimensionsliderInit,
@@ -1177,18 +1193,16 @@ public class InteractiveMethods {
 		inputFieldZ.addTextListener(new PreZlocListener(this, false));
 		inputFieldT.addTextListener(new PreTlocListener(this, false));
 
-		
-		
-       panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
-       panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		Cardframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		cl.show(panelCont, "1");
-		
+
 		Cardframe.add(panelCont, "Center");
 		Cardframe.add(jpb, "Last");
-		 panelFirst.setVisible(true);
+		panelFirst.setVisible(true);
 		Cardframe.pack();
 		Cardframe.setVisible(true);
 	}

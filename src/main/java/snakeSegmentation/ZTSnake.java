@@ -28,7 +28,10 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-
+		parent.zslider.setEnabled(false);
+		parent.timeslider.setEnabled(false);
+		parent.inputFieldT.setEnabled(false);
+		parent.inputFieldZ.setEnabled(false);
 		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
 
 			// For each T go in Z and make a 3D object to track with
@@ -39,7 +42,6 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 				parent.thirdDimension = z;
 				parent.fourthDimension = t;
-				System.out.println(z + " " + t);
 				String uniqueID = Integer.toString(z) + Integer.toString(t);
 				
 				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
@@ -71,6 +73,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		parent.snakeinprogress = false;
+		
 		try {
 			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
 			get();
