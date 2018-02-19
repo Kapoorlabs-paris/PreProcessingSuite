@@ -29,7 +29,8 @@ public class PreThresholdListener implements AdjustmentListener {
 		this.scrollbar = scrollbar;
 		this.scrollbarSize = scrollbarSize;
 		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.DOG ) );
-
+		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		
 	}
 
@@ -40,7 +41,7 @@ public class PreThresholdListener implements AdjustmentListener {
 				scrollbarSize);
 		scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.threshold, min, max, scrollbarSize));
 
-		label.setText(string +  " = "  + parent.threshold);
+		label.setText(string +  " = "  + parent.nf.format(parent.threshold));
 	
 	}
 }

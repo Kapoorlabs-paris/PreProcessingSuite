@@ -29,7 +29,8 @@ public class PREDeltaListener implements AdjustmentListener {
 		this.scrollbar = scrollbar;
 		
 		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.MSER ) );
-		
+		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 	
 	
@@ -40,7 +41,7 @@ public class PREDeltaListener implements AdjustmentListener {
 
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.delta, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.delta);
+			label.setText(string +  " = "  + parent.nf.format(parent.delta));
 
 	
 	}

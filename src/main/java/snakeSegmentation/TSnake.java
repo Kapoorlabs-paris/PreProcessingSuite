@@ -51,9 +51,10 @@ public class TSnake extends SwingWorker<Void, Void> {
 			Interval interval = Intervals.expand(spaceinterval, 10);
 			parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 
-			SnakeonT applysnake = new SnakeonT(parent, parent.CurrentView, currentRoi);
+			SnakeonT applysnake = new SnakeonT(parent, parent.CurrentView);
 			applysnake.process();
 			ArrayList<PreRoiobject> resultrois = applysnake.getResult();
+			currentRoi.clear();
 			parent.ZTRois.put(uniqueID, resultrois);
 
 			parent.updatePreview(ValueChange.SNAKE);

@@ -39,7 +39,7 @@ public class PreWaterListener implements AdjustmentListener {
 		
 			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.thresholdWater, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.thresholdWater);
+			label.setText(string +  " = "  + parent.nf.format(parent.thresholdWater));
 
 	
 	}

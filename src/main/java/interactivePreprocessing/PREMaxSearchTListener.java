@@ -8,7 +8,7 @@ import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 
-public class PREIniSearchListener implements AdjustmentListener {
+public class PREMaxSearchTListener implements AdjustmentListener {
 	
 	final Label label;
 	final String string;
@@ -18,7 +18,7 @@ public class PREIniSearchListener implements AdjustmentListener {
 	final JScrollBar scrollbar;
 	
 	
-	public PREIniSearchListener(final InteractiveMethods parent, final Label label, final String string, final float min, final float max, final int scrollbarSize, final JScrollBar scrollbar) {
+	public PREMaxSearchTListener(final InteractiveMethods parent, final Label label, final String string, final float min, final float max, final int scrollbarSize, final JScrollBar scrollbar) {
 		
 		this.parent = parent;
 		this.label = label;
@@ -36,12 +36,12 @@ public class PREIniSearchListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.initialSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    parent.maxSearchradiusS = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.initialSearchradius, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.maxSearchradiusS, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.initialSearchradius));
+			label.setText(string +  " = "  + parent.nf.format(parent.maxSearchradiusS));
 
 	
 	}

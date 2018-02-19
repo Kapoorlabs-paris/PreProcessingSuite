@@ -53,7 +53,6 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 	parent.overlay.clear();
 		
 		
-		utility.ProgressBar.SetProgressBar(jpb, "Done");
 
 		parent.Rois = utility.FinderUtils.getcurrentRois(parent.peaks, parent.sigma, parent.sigma2);
 		

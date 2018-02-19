@@ -29,7 +29,8 @@ public class PREMinSizeListener implements AdjustmentListener {
 		this.scrollbar = scrollbar;
 		
 		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.MSER ) );
-		
+		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 	
 	
@@ -41,7 +42,7 @@ public class PREMinSizeListener implements AdjustmentListener {
 		
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.minSize, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.minSize);
+			label.setText(string +  " = "  + parent.nf.format(parent.minSize));
 
 	
 	}

@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JProgressBar;
+
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -14,22 +16,24 @@ import net.imglib2.KDTree;
 import net.imglib2.RealPoint;
 import utility.PreRoiobject;
 
-public class NNsearch implements BlobTracker {
+public class PRENNsearch implements BlobTracker {
 
 	private final HashMap<String, ArrayList<PreRoiobject>> Allblobs;
 	private final double maxdistance;
 	private int T;
+	public JProgressBar jpb;
 	private SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > graph;
 	protected Logger logger = Logger.DEFAULT_LOGGER;
 	protected String errorMessage;
 	private HashMap<String, Integer> AccountedZ;
-	public NNsearch(
+	public PRENNsearch(
 			final HashMap<String, ArrayList<PreRoiobject>> Allblobs, final double maxdistance, final int T,
-			final long maxframe, final HashMap<String, Integer> AccountedZ){
+			 final HashMap<String, Integer> AccountedZ, JProgressBar jpb){
 		this.Allblobs = Allblobs;
 		this.maxdistance = maxdistance;
 		this.T = T;
 		this.AccountedZ = AccountedZ;
+		this.jpb = jpb;
 		
 		
 	}
@@ -43,13 +47,17 @@ public class NNsearch implements BlobTracker {
 		reset();
 		
 		Iterator<Map.Entry<String, Integer>> it = AccountedZ.entrySet().iterator();
-		
+		int percent = 0;
 		while(it.hasNext()) {
 		
-			
+           percent++;
+		
 			int Z = it.next().getValue();
 			
 			
+			utility.ProgressBar.SetProgressBar(jpb, 100 * percent / AccountedZ.size(),
+					"Computing Nearest Neighbours for " + " T = " + T 
+							+ " Z = " + Z);
 			while(it.hasNext()) {
 				
 				
@@ -163,7 +171,7 @@ public class NNsearch implements BlobTracker {
 		
 		graph = new SimpleWeightedGraph<PreRoiobject, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
-		if (Allblobs!=null) {
+		if (Allblobs!=null && Allblobs.size() > 0) {
 			
 		ArrayList<PreRoiobject> firstobject = 	Allblobs.entrySet().iterator().next().getValue();
 			

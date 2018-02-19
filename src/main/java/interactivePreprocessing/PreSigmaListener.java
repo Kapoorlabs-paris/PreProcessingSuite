@@ -39,7 +39,7 @@ public class PreSigmaListener implements AdjustmentListener {
 		
 			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.sigma, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.sigma);
+			label.setText(string +  " = "  + parent.nf.format(parent.sigma));
 
 	
 	}

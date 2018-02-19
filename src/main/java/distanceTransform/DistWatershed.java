@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+import ij.IJ;
 import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.Cursor;
 import net.imglib2.KDTree;
@@ -232,8 +233,8 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 	@Override
 	protected void done() {
 		parent.intimg = getResult();
+		if(parent.intimg!=null) {
 		parent.Maxlabel = GetMaxlabelsseeded(parent.intimg);
-
 		if (parent.displayWatershedimg)
 			ImageJFunctions.show(parent.intimg);
 		
@@ -242,6 +243,11 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 		
 		
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
+		}
+		else
+			IJ.error("Choose a different threshold, current value too high");
+
+		
 		try {
 			get();
 		} catch (InterruptedException e) {

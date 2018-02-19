@@ -3,6 +3,7 @@ package interactivePreprocessing;
 import java.awt.Label;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.text.DecimalFormat;
 
 import javax.swing.JScrollBar;
 
@@ -29,7 +30,8 @@ public class PREMaxSearchListener implements AdjustmentListener {
 		this.scrollbar = scrollbar;
 		
 		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.NearestN ) );
-		
+		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 	
 	
@@ -41,7 +43,7 @@ public class PREMaxSearchListener implements AdjustmentListener {
 		
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.maxSearchradius, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.maxSearchradius);
+			label.setText(string +  " = "  + parent.nf.format(parent.maxSearchradius));
 
 	
 	}

@@ -47,8 +47,6 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
-				ArrayList<PreRoiobject> currentRoi = parent.CurrentPreRoiobject;
-
 				// Expand the image by 10 pixels
 
 				Interval spaceinterval = Intervals.createMinMax(new long[] { parent.CurrentView.min(0),
@@ -56,7 +54,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 				Interval interval = Intervals.expand(spaceinterval, 10);
 				parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 
-				SnakeonZT applysnake = new SnakeonZT(parent, parent.CurrentView, currentRoi);
+				SnakeonZT applysnake = new SnakeonZT(parent, parent.CurrentView);
 				applysnake.process();
 				ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 				parent.ZTRois.put(uniqueID, resultrois);
