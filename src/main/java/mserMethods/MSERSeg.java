@@ -30,7 +30,7 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-
+		if(!parent.snakeinprogress)
 		utility.ProgressBar.SetProgressBar(jpb, "Computing Component Tree for MSER, Please Wait...");
 
 		if (parent.darktobright)
@@ -75,6 +75,7 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 		}
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
+		if(!parent.snakeinprogress)
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
 		parent.updatePreview(ValueChange.SNAKE);
 		

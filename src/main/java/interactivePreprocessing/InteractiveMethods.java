@@ -39,6 +39,7 @@ import javax.swing.border.TitledBorder;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
+import costMatrix.CostFunction;
 import distanceTransform.CreateWatershed;
 import distanceTransform.DistWatershed;
 import dogSeg.DOGSeg;
@@ -115,11 +116,11 @@ public class InteractiveMethods {
 	public int Unstability_ScoreInit = 1;
 	public float Unstability_Score = Unstability_ScoreInit;
 
-	public int minSizeInit = 1;
-	public int maxSizeInit = 100;
+	public int minSizeInit = 50;
+	public int maxSizeInit = 500;
 
 	public int maxSearchInit = 100;
-
+	public int maxframegap = 10;
 	public int deltaInit = 10;
 	public float delta = deltaInit;
 
@@ -175,7 +176,7 @@ public class InteractiveMethods {
 
 	public int sigmaInit = 30;
 	public float sigma = sigmaInit;
-
+	public CostFunction<ThreeDRoiobject, ThreeDRoiobject> UserchosenCostFunction;
 	public Color colorDrawMser = Color.green;
 	public Color colorDrawDog = Color.red;
 	public Color colorConfirm = Color.blue;
@@ -189,7 +190,7 @@ public class InteractiveMethods {
 	public RandomAccessibleInterval<BitType> bitimg;
 	public RandomAccessibleInterval<FloatType> bitimgFloat;
 	public RandomAccessibleInterval<IntType> intimg;
-
+	public HashMap<Integer, ArrayList<ThreeDRoiobject>> Timetracks;
 	public ArrayList<PreRoiobject> ZTPreRoiobject;
 	public HashMap<String, ArrayList<PreRoiobject>> ZTRois;
 	public HashMap<Integer, ArrayList<ThreeDRoiobject>> threeDTRois;
@@ -238,8 +239,7 @@ public class InteractiveMethods {
 
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, 
-		THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA;
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA;
 
 	}
 
@@ -409,7 +409,7 @@ public class InteractiveMethods {
 		System.out.println(minSizeInit + " " + maxSizeInit + " " + Unstability_ScoreInit + " " + minDiversityInit);
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
-		
+
 		jpb = new JProgressBar();
 		overlay = new Overlay();
 		interval = new FinalInterval(originalimg.dimension(0), originalimg.dimension(1));
@@ -419,6 +419,7 @@ public class InteractiveMethods {
 		CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 		configDriver = new SnakeConfigDriver();
 		ZTPreRoiobject = new ArrayList<PreRoiobject>();
+		Timetracks = new HashMap<Integer, ArrayList<ThreeDRoiobject>>();
 		setInitialUnstability_Score(Unstability_ScoreInit);
 		setInitialDelta(deltaInit);
 		setInitialAlpha(alphaInit);
@@ -501,11 +502,8 @@ public class InteractiveMethods {
 			roimanager = new RoiManager();
 		}
 
-	
-		
-		
 		if (change == ValueChange.SNAKE) {
-			
+
 			Accountedframes.put(TID, fourthDimension);
 
 			AccountedZ.put(ZID, thirdDimension);
@@ -561,7 +559,8 @@ public class InteractiveMethods {
 				final double intensity = Intensityandpixels.getA();
 				final double numberofpixels = Intensityandpixels.getB();
 				final double averageintensity = intensity / numberofpixels;
-				PreRoiobject currentobject = new PreRoiobject(currentroi, new double [] {geocenter[0], geocenter[1], thirdDimension}, numberofpixels, intensity,
+				PreRoiobject currentobject = new PreRoiobject(currentroi,
+						new double[] { geocenter[0], geocenter[1], thirdDimension }, numberofpixels, intensity,
 						averageintensity, thirdDimension, fourthDimension);
 				ZTPreRoiobject.add(currentobject);
 			}
@@ -626,7 +625,7 @@ public class InteractiveMethods {
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();
 			}
-		
+
 		}
 
 		if (change == ValueChange.MSER) {
@@ -734,9 +733,9 @@ public class InteractiveMethods {
 	final String maxSearchstring = "Maximum search radius";
 	final String maxSearchstringS = "Maximum search radius";
 	final String initialSearchstring = "Initial search radius";
-	
+
 	final String alphastring = "Weightage for distance based cost";
-	final String betastring = "Weightage for Intensity based cost";
+	final String betastring = "Weightage for pixel ratio based cost";
 
 	public Label timeText = new Label("Current T = " + 1, Label.CENTER);
 	public Label zText = new Label("Current Z = " + 1, Label.CENTER);
@@ -753,7 +752,7 @@ public class InteractiveMethods {
 	Label iniSearchText = new Label(initialSearchstring + " = " + initialSearchradiusInit, Label.CENTER);
 	Label alphaText = new Label(alphastring + " = " + alphaInit, Label.CENTER);
 	Label betaText = new Label(betastring + " = " + betaInit, Label.CENTER);
-	
+
 	public CheckboxGroup minormax = new CheckboxGroup();
 	final Checkbox findminima = new Checkbox("Locate Minima", minormax, lookForMinima);
 	final Checkbox findmaxima = new Checkbox("Locate Maxima", minormax, lookForMaxima);
@@ -802,10 +801,11 @@ public class InteractiveMethods {
 	final JScrollBar maxSizeS = new JScrollBar(Scrollbar.HORIZONTAL, maxSizeInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar maxSearchS = new JScrollBar(Scrollbar.HORIZONTAL, maxSearchInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar maxSearchSS = new JScrollBar(Scrollbar.HORIZONTAL, maxSearchInit, 10, 0, 10 + scrollbarSize);
-	final JScrollBar initialSearchS = new JScrollBar(Scrollbar.HORIZONTAL, initialSearchradiusInit, 10, 0, 10 + scrollbarSize);
+	final JScrollBar initialSearchS = new JScrollBar(Scrollbar.HORIZONTAL, initialSearchradiusInit, 10, 0,
+			10 + scrollbarSize);
 	final JScrollBar alphaS = new JScrollBar(Scrollbar.HORIZONTAL, alphaInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar betaS = new JScrollBar(Scrollbar.HORIZONTAL, betaInit, 10, 0, 10 + scrollbarSize);
-	
+
 	public Label sigmaText = new Label("Approximate object size = " + sigmaInit, Label.CENTER);
 	public Label thresholdText = new Label("Approximate peak intensity " + thresholdInit, Label.CENTER);
 	public Label watertext = new Label(waterstring + " = " + thresholdInitWater, Label.CENTER);
@@ -837,14 +837,13 @@ public class InteractiveMethods {
 		Snakeiter.setText(Integer.toString(snakeiterations));
 		gradientthresh.setText(Integer.toString(Gradthresh));
 		maxdist.setText(Integer.toString(DistMax));
-		lostframe.setText(Integer.toString(10));
+		lostframe.setText(Integer.toString(maxframegap));
 
-		
-		alphaS.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(alphaInit,
-				alphaMin, alphaMax, scrollbarSize));
-		betaS.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(betaInit,
-				betaMin, betaMax, scrollbarSize));
-		
+		alphaS.setValue(
+				utility.ScrollbarUtils.computeScrollbarPositionFromValue(alphaInit, alphaMin, alphaMax, scrollbarSize));
+		betaS.setValue(
+				utility.ScrollbarUtils.computeScrollbarPositionFromValue(betaInit, betaMin, betaMax, scrollbarSize));
+
 		Unstability_ScoreS.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(Unstability_ScoreInit,
 				Unstability_ScoreMin, Unstability_ScoreMax, scrollbarSize));
 
@@ -893,11 +892,11 @@ public class InteractiveMethods {
 				maxSearchradiusMin, maxSearchradiusMax, scrollbarSize);
 		initialSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(initialSearchS.getValue(),
 				initialSearchradiusMin, initialSearchradiusMax, scrollbarSize);
-		alpha = utility.ScrollbarUtils.computeValueFromScrollbarPosition(alphaS.getValue(),
-				alphaMin, alphaMax, scrollbarSize);
-		beta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(betaS.getValue(),
-				betaMin, betaMax, scrollbarSize);
-		
+		alpha = utility.ScrollbarUtils.computeValueFromScrollbarPosition(alphaS.getValue(), alphaMin, alphaMax,
+				scrollbarSize);
+		beta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(betaS.getValue(), betaMin, betaMax,
+				scrollbarSize);
+
 		sigmaText = new Label("Approximate object size = " + sigma, Label.CENTER);
 		thresholdText = new Label("Approximate peak intensity " + threshold, Label.CENTER);
 		watertext = new Label(waterstring + " = " + thresholdWater, Label.CENTER);
@@ -905,7 +904,7 @@ public class InteractiveMethods {
 		iniSearchText = new Label(initialSearchstring + " = " + initialSearchradius, Label.CENTER);
 		alphaText = new Label(alphastring + " = " + alpha, Label.CENTER);
 		betaText = new Label(betastring + " = " + beta, Label.CENTER);
-		
+
 		CardLayout cl = new CardLayout();
 
 		c.insets = new Insets(5, 5, 5, 5);
@@ -1102,6 +1101,7 @@ public class InteractiveMethods {
 
 		final JButton SinglethreeD = new JButton("Track in Z for currrent T");
 		final JButton AllthreeD = new JButton("Track in Z for all T");
+		final JButton Timetrack = new JButton("Link 3D objects in T");
 		JPanel controlprev = new JPanel();
 		JPanel controlnext = new JPanel();
 		controlprev.setLayout(layout);
@@ -1164,38 +1164,40 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		NearestNPanel.add(maxSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
+
 		NearestNPanel.add(SinglethreeD, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		NearestNPanel.add(AllthreeD, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
+
 		NearestNPanel.setBorder(NNborder);
 		panelSecond.add(NearestNPanel, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
-		
 		KalmanPanel.add(iniSearchText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.add(initialSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
+
 		KalmanPanel.add(alphaText, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.add(alphaS, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		
+
 		KalmanPanel.add(betaText, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.add(betaS, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+
+		KalmanPanel.add(lostlabel, new GridBagConstraints(5, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		KalmanPanel.add(lostframe, new GridBagConstraints(5, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.add(maxSearchTextS, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.add(maxSearchSS, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		KalmanPanel.add(lostlabel, new GridBagConstraints(5, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		KalmanPanel.add(lostframe, new GridBagConstraints(5, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
+		KalmanPanel.add(Timetrack, new GridBagConstraints(5, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.setBorder(Kalmanborder);
 		panelSecond.add(KalmanPanel, new GridBagConstraints(2, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
@@ -1222,6 +1224,7 @@ public class InteractiveMethods {
 		displayDist.addItemListener(new PREShowDist(this));
 		SinglethreeD.addActionListener(new PRESingleZTrackListener(this));
 		AllthreeD.addActionListener(new PREAllZTrackListener(this));
+		Timetrack.addActionListener(new PRE3DTListener(this));
 		Singlesnake.addActionListener(new PRESinglesnakeListener(this));
 		Zsnakes.addActionListener(new PREZSnakeListener(this));
 		Tsnakes.addActionListener(new PRETSnakeListener(this));
@@ -1231,13 +1234,11 @@ public class InteractiveMethods {
 		gradientthresh.addTextListener(new GradientListener(this));
 		maxdist.addTextListener(new MaxdistListener(this));
 
-		
 		alphaS.addAdjustmentListener(
 				new PREAlphaListener(this, alphaText, alphastring, alphaMin, alphaMax, scrollbarSize, alphaS));
 		betaS.addAdjustmentListener(
 				new PREBetaListener(this, betaText, betastring, betaMin, betaMax, scrollbarSize, betaS));
-		
-		
+
 		deltaS.addAdjustmentListener(
 				new PREDeltaListener(this, deltaText, deltastring, deltaMin, deltaMax, scrollbarSize, deltaS));
 
@@ -1266,7 +1267,7 @@ public class InteractiveMethods {
 				maxSearchradiusMinS, maxSearchradiusMaxS, scrollbarSize, maxSearchSS));
 		initialSearchS.addAdjustmentListener(new PREIniSearchListener(this, iniSearchText, initialSearchstring,
 				initialSearchradiusMin, initialSearchradiusMax, scrollbarSize, initialSearchS));
-		
+
 		if (ndims > 3)
 			zslider.addAdjustmentListener(new PreZListener(this, zText, zstring, thirdDimensionsliderInit,
 					thirdDimensionSize, scrollbarSize, zslider));

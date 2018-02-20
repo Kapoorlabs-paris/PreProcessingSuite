@@ -10,7 +10,7 @@ import net.imglib2.RealLocalizable;
 import net.imglib2.util.Pair;
 import net.imglib2.util.ValuePair;
 
-public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocalizable, Comparable<PreRoiobject> {
+public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocalizable, Comparable<ThreeDRoiobject> {
 
 	
 	
@@ -289,7 +289,7 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 	}
 
 	@Override
-	public int compareTo(PreRoiobject o) {
+	public int compareTo(ThreeDRoiobject o) {
 
 		return hashCode() - o.hashCode();
 	}

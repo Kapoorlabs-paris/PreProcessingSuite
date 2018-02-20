@@ -30,7 +30,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-
+		if(!parent.snakeinprogress)
 		utility.ProgressBar.SetProgressBar(jpb, "Doing Difference of Gaussian Detection, Please Wait...");
 
 		final DogDetection.ExtremaType type;
@@ -81,6 +81,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 	
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
+		if(!parent.snakeinprogress)
 		utility.ProgressBar.SetProgressBar(jpb, "Done");
 		parent.updatePreview(ValueChange.SNAKE);
 		try {

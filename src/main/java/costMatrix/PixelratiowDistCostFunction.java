@@ -1,8 +1,9 @@
 package costMatrix;
 
 import utility.PreRoiobject;
+import utility.ThreeDRoiobject;
 
-public class PixelratiowDistCostFunction implements CostFunction< PreRoiobject, PreRoiobject >
+public class PixelratiowDistCostFunction implements CostFunction< ThreeDRoiobject, ThreeDRoiobject >
 	{
 
 	
@@ -33,7 +34,7 @@ public class PixelratiowDistCostFunction implements CostFunction< PreRoiobject, 
 		
 		
 	@Override
-	public double linkingCost( final PreRoiobject source, final PreRoiobject target )
+	public double linkingCost( final ThreeDRoiobject source, final ThreeDRoiobject target )
 	{
 		return source.NormalizedPixelratioandDistanceTo(target, alpha, beta);
 	}

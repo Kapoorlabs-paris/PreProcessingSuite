@@ -148,7 +148,7 @@ public class PreRoiobject extends AbstractEuclideanSpace implements RealLocaliza
 
 		
 
-		double IntensityDistance = 1 -  Math.pow((totalintensity / target.totalintensity), 2);
+		double IntensityDistance =  Math.pow((totalintensity - target.totalintensity), 2);
 
 		return IntensityDistance;
 	}

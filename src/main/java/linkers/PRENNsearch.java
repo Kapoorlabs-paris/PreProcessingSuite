@@ -55,15 +55,14 @@ public class PRENNsearch implements BlobTracker {
 			int Z = it.next().getValue();
 			
 			
-			utility.ProgressBar.SetProgressBar(jpb, 100 * percent / AccountedZ.size(),
-					"Computing Nearest Neighbours for " + " T = " + T 
-							+ " Z = " + Z);
 			while(it.hasNext()) {
 				
-				
+
+				utility.ProgressBar.SetProgressBar(jpb, 100 * percent / AccountedZ.size(),
+						"Computing Nearest Neighbours for " + " T = " + T 
+								+ " Z = " + Z);
 				int nextZ = it.next().getValue();
 			
-				
 
 				String uniqueID = Integer.toString(Z) + Integer.toString(T);
 				String uniqueIDnext = Integer.toString(nextZ) + Integer.toString(T);
@@ -131,9 +130,11 @@ public class PRENNsearch implements BlobTracker {
 		       
 			}
 			
-			System.out.println("NN detected, moving to next time point!");
+			System.out.println("NN detected at Z = " + Z + " Time " + T);
 		}
 		}
+			
+			Z = nextZ;
 		}
 	}
 			return true;

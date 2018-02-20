@@ -8,27 +8,28 @@ import java.util.List;
 
 import net.imglib2.algorithm.Benchmark;
 import net.imglib2.algorithm.OutputAlgorithm;
-import utility.PreRoiobject;
+import utility.ThreeDRoiobject;
+import utility.ThreeDRoiobject;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-public class FromContinuousBranches implements OutputAlgorithm< SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > >, Benchmark
+public class FromContinuousBranches implements OutputAlgorithm< SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > >, Benchmark
 {
 
 	private static final String BASE_ERROR_MSG = "[FromContinuousBranches] ";
 
 	private long processingTime;
 
-	private final Collection< List< PreRoiobject >> branches;
+	private final Collection< List< ThreeDRoiobject >> branches;
 
-	private final Collection< List< PreRoiobject >> links;
+	private final Collection< List< ThreeDRoiobject >> links;
 
 	private String errorMessage;
 
-	private SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > graph;
+	private SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > graph;
 
-	public FromContinuousBranches( final Collection< List< PreRoiobject >> branches, final Collection< List< PreRoiobject >> links )
+	public FromContinuousBranches( final Collection< List< ThreeDRoiobject >> branches, final Collection< List< ThreeDRoiobject >> links )
 	{
 		this.branches = branches;
 		this.links = links;
@@ -54,21 +55,21 @@ public class FromContinuousBranches implements OutputAlgorithm< SimpleWeightedGr
 			errorMessage = BASE_ERROR_MSG + "links are null.";
 			return false;
 		}
-		for ( final List< PreRoiobject > link : links )
+		for ( final List< ThreeDRoiobject > link : links )
 		{
 			if ( link.size() != 2 )
 			{
-				errorMessage = BASE_ERROR_MSG + "A link is not made of two PreRoiobjects.";
+				errorMessage = BASE_ERROR_MSG + "A link is not made of two ThreeDRoiobjects.";
 				return false;
 			}
 			if ( !checkIfInBranches( link.get( 0 ) ) )
 			{
-				errorMessage = BASE_ERROR_MSG + "A PreRoiobject in a link is not present in the branch collection: " + link.get( 0 ) + " in the link " + link.get( 0 ) + "-" + link.get( 1 ) + ".";
+				errorMessage = BASE_ERROR_MSG + "A ThreeDRoiobject in a link is not present in the branch collection: " + link.get( 0 ) + " in the link " + link.get( 0 ) + "-" + link.get( 1 ) + ".";
 				return false;
 			}
 			if ( !checkIfInBranches( link.get( 1 ) ) )
 			{
-				errorMessage = BASE_ERROR_MSG + "A PreRoiobject in a link is not present in the branch collection: " + link.get( 1 ) + " in the link " + link.get( 0 ) + "-" + link.get( 1 ) + ".";
+				errorMessage = BASE_ERROR_MSG + "A ThreeDRoiobject in a link is not present in the branch collection: " + link.get( 1 ) + " in the link " + link.get( 0 ) + "-" + link.get( 1 ) + ".";
 				return false;
 			}
 		}
@@ -82,28 +83,28 @@ public class FromContinuousBranches implements OutputAlgorithm< SimpleWeightedGr
 	{
 		final long start = System.currentTimeMillis();
 
-		graph = new SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge >( DefaultWeightedEdge.class );
-		for ( final List< PreRoiobject > branch : branches )
+		graph = new SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge >( DefaultWeightedEdge.class );
+		for ( final List< ThreeDRoiobject > branch : branches )
 		{
-			for ( final PreRoiobject PreRoiobject : branch )
+			for ( final ThreeDRoiobject ThreeDRoiobject : branch )
 			{
-				graph.addVertex( PreRoiobject );
+				graph.addVertex( ThreeDRoiobject );
 			}
 		}
 
-		for ( final List< PreRoiobject > branch : branches )
+		for ( final List< ThreeDRoiobject > branch : branches )
 		{
-			final Iterator< PreRoiobject > it = branch.iterator();
-			PreRoiobject previous = it.next();
+			final Iterator< ThreeDRoiobject > it = branch.iterator();
+			ThreeDRoiobject previous = it.next();
 			while ( it.hasNext() )
 			{
-				final PreRoiobject PreRoiobject = it.next();
-				graph.addEdge( previous, PreRoiobject );
-				previous = PreRoiobject;
+				final ThreeDRoiobject ThreeDRoiobject = it.next();
+				graph.addEdge( previous, ThreeDRoiobject );
+				previous = ThreeDRoiobject;
 			}
 		}
 
-		for ( final List< PreRoiobject > link : links )
+		for ( final List< ThreeDRoiobject > link : links )
 		{
 			graph.addEdge( link.get( 0 ), link.get( 1 ) );
 		}
@@ -120,16 +121,16 @@ public class FromContinuousBranches implements OutputAlgorithm< SimpleWeightedGr
 	}
 
 	@Override
-	public SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > getResult()
+	public SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > getResult()
 	{
 		return graph;
 	}
 
-	private final boolean checkIfInBranches( final PreRoiobject PreRoiobject )
+	private final boolean checkIfInBranches( final ThreeDRoiobject ThreeDRoiobject )
 	{
-		for ( final List< PreRoiobject > branch : branches )
+		for ( final List< ThreeDRoiobject > branch : branches )
 		{
-			if ( branch.contains( PreRoiobject ) ) { return true; }
+			if ( branch.contains( ThreeDRoiobject ) ) { return true; }
 		}
 		return false;
 	}
