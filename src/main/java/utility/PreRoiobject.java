@@ -129,6 +129,8 @@ public class PreRoiobject extends AbstractEuclideanSpace implements RealLocaliza
 
 		}
 
+		
+		
 		return new ValuePair<Double, Integer>(Intensity, NumberofPixels);
 
 	}

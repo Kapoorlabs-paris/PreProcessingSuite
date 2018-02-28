@@ -58,8 +58,9 @@ public class SnakeonView {
 			percent++;
 			
 			utility.ProgressBar.SetProgressBar(parent.jpb, 100 * percent / nbRois,
-					"Computing snake segmentation for " + parent.fourthDimension 
-							+ " Z = " + parent.thirdDimension);
+					"Computing snake segmentation for " +   " T = " + parent.fourthDimension  + "/" + parent.fourthDimensionSize
+							+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
+			
 			
 			
 			snake = snakes.processSnake(currentroi.rois, percent);

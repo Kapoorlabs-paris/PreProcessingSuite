@@ -52,9 +52,8 @@ public class ZSnake extends SwingWorker<Void, Void> {
 			Interval interval = Intervals.expand(spaceinterval, 10);
 			parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 
-			SnakeonZ applysnake = new SnakeonZ(parent, parent.CurrentView);
+			SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
 			applysnake.process();
-			currentRoi.clear();
 			resultrois = applysnake.getResult();
 			
 			

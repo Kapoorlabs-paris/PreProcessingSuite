@@ -14,6 +14,8 @@ import java.awt.Label;
 import java.awt.Scrollbar;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
@@ -143,15 +146,17 @@ public class InteractiveMethods {
 	public float thresholdMinWater = 1f;
 	public float thresholdMaxWater = 255f;
 	public int thresholdInitWater = 0;
-
+	public Roi nearestRoiCurr;
+	public int rowchoice;
 	public static int standardSensitivity = 4;
 	public int sensitivity = standardSensitivity;
-
+	public Color colorChange = Color.RED;
 	public float minDiversityMin = 0;
 	public float minDiversityMax = 1;
 	public int minDiversityInit = 1;
 	public float minDiversity = minDiversityInit;
-
+	public MouseMotionListener ml;
+	public MouseListener mvl;
 	public int timeMin = 1;
 	public long minSize = 1;
 	public long maxSize = maxSizeInit;
@@ -163,7 +168,7 @@ public class InteractiveMethods {
 
 	public float Unstability_ScoreMin = 0f;
 	public float Unstability_ScoreMax = 1f;
-
+	public int tablesize;
 	public float sigma2 = 1.1f;
 	public float threshold = 1f;
 	public float thresholdWater = 255f;
@@ -173,7 +178,8 @@ public class InteractiveMethods {
 	public ArrayList<PreRoiobject> CurrentPreRoiobject;
 	public ArrayList<Roi> NearestNeighbourRois;
 	public ArrayList<Roi> BiggerRois;
-
+	public JTable table;
+	public int row;
 	public int sigmaInit = 30;
 	public float sigma = sigmaInit;
 	public CostFunction<ThreeDRoiobject, ThreeDRoiobject> UserchosenCostFunction;
@@ -239,7 +245,8 @@ public class InteractiveMethods {
 
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA;
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, 
+		MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay;
 
 	}
 
@@ -502,6 +509,13 @@ public class InteractiveMethods {
 			roimanager = new RoiManager();
 		}
 
+		if (change == ValueChange.ThreeDTrackDisplay) {
+			
+			
+			
+			
+			
+		}
 		if (change == ValueChange.SNAKE) {
 
 			Accountedframes.put(TID, fourthDimension);
@@ -705,6 +719,7 @@ public class InteractiveMethods {
 	public JPanel panelCont = new JPanel();
 	public JPanel panelFirst = new JPanel();
 	public JPanel panelSecond = new JPanel();
+	public JPanel panelThird = new JPanel();
 	public JPanel Timeselect = new JPanel();
 	public JPanel Zselect = new JPanel();
 	public JPanel DogPanel = new JPanel();
@@ -821,7 +836,11 @@ public class InteractiveMethods {
 	public int SizeYbig = 500;
 	public Label Snakelabel, gradientlabel, distlabel, lostlabel;
 	public TextField Snakeiter, gradientthresh, maxdist, lostframe;
-
+	public JScrollPane scrollPane;
+	public JPanel PanelSelectFile = new JPanel();
+	public Border selectfile = new CompoundBorder(new TitledBorder("Select Track"), new EmptyBorder(c.insets));
+	public JPanel controlnextthird = new JPanel();
+	public JPanel controlprevthird = new JPanel();
 	public void Card() {
 
 		Snakelabel = new Label("Enter number of max snake iterations");
@@ -914,9 +933,12 @@ public class InteractiveMethods {
 
 		panelCont.add(panelSecond, "2");
 
+		panelCont.add(panelThird, "3");
+		
+		
 		panelFirst.setLayout(layout);
 		panelSecond.setLayout(layout);
-
+		panelThird.setLayout(layout);
 		Timeselect.setLayout(layout);
 
 		Zselect.setLayout(layout);
@@ -1104,8 +1126,11 @@ public class InteractiveMethods {
 		final JButton Timetrack = new JButton("Link 3D objects in T");
 		JPanel controlprev = new JPanel();
 		JPanel controlnext = new JPanel();
+		
 		controlprev.setLayout(layout);
 		controlnext.setLayout(layout);
+		controlnextthird.setLayout(layout);
+		controlprevthird.setLayout(layout);
 		controlprev.add(new JButton(new AbstractAction("\u22b2Prev") {
 
 			@Override
@@ -1124,6 +1149,23 @@ public class InteractiveMethods {
 			}
 		}));
 
+		controlnextthird.add(new JButton(new AbstractAction("Next\u22b3") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) panelCont.getLayout();
+				cl.next(panelCont);
+			}
+		}));
+		controlprevthird.add(new JButton(new AbstractAction("\u22b2Prev") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) panelCont.getLayout();
+				cl.previous(panelCont);
+			}
+		}));
+		
 		SnakePanel.add(Snakelabel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		SnakePanel.add(Snakeiter, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
@@ -1200,7 +1242,7 @@ public class InteractiveMethods {
 		KalmanPanel.add(Timetrack, new GridBagConstraints(5, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		KalmanPanel.setBorder(Kalmanborder);
-		panelSecond.add(KalmanPanel, new GridBagConstraints(2, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+		panelThird.add(KalmanPanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
 		sigmaslider.addAdjustmentListener(
@@ -1280,8 +1322,16 @@ public class InteractiveMethods {
 
 		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
+		panelSecond.add(controlnextthird, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
+		controlnextthird.setEnabled(false);
 		panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
+		panelThird.add(PanelSelectFile, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		panelThird.add(controlprevthird, new GridBagConstraints(0, 6, 3, 1, 0.0, 0.0, GridBagConstraints.ABOVE_BASELINE,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
 		Cardframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		cl.show(panelCont, "1");
 

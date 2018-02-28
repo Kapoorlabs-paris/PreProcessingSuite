@@ -1,6 +1,10 @@
 package utility;
 
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,11 +54,38 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 		putFeature( YPOSITION, Double.valueOf( geometriccenter[1] ) );
 		
 		putFeature( ZPOSITION, Double.valueOf( geometriccenter[2] ) );
+	
+			this.name = "ID" + ID;
 	}
 	/*
 	 * STATIC KEYS
 	 */
+	/**
+	 * Set the name of this Spot.
+	 * 
+	 * @param name
+	 *            the name to use.
+	 */
+	public void setName( final String name )
+	{
+		this.name = name;
+	}
 
+	public int ID()
+	{
+		return ID;
+	}
+
+	@Override
+	public String toString()
+	{
+		String str;
+		if ( null == name || name.equals( "" ) )
+			str = "ID" + ID;
+		else
+			str = name;
+		return str;
+	}
 
 	/** The name of the blob X position feature. */
 	public static final String XPOSITION = "XPOSITION";
@@ -64,7 +95,8 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 	
 	/** The name of the blob Y position feature. */
 	public static final String ZPOSITION = "ZPOSITION";
-	
+	/** The name of the blob Y position feature. */
+	public static final String Size = "Size";
 	
 	/** The label of the blob position feature. */
 	public static final String LABEL = "LABEL";
@@ -72,12 +104,94 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 	/** The name of the frame feature. */
 	public static final String Time = "Time";
 	
+	
+	
+	/** The position features. */
+	public final static String[] POSITION_FEATURES = new String[] { XPOSITION, YPOSITION, ZPOSITION };
+	
 	/** The name of the Z feature. */
 	public static final String Z = "Z";
 	
 	public final Double getFeature( final String feature )
 	{
 		return features.get( feature );
+	}
+	/**
+	 * The 7 privileged spot features that must be set by a spot detector:
+	 * {@link #QUALITY}, {@link #POSITION_X}, {@link #POSITION_Y},
+	 * {@link #POSITION_Z}, {@link #POSITION_Z}, {@link #RADIUS}, {@link #FRAME}
+	 * .
+	 */
+	public final static Collection< String > FEATURES = new ArrayList< >( 4 );
+
+	/** The 7 privileged spot feature names. */
+	public final static Map< String, String > FEATURE_NAMES = new HashMap< >( 4 );
+
+	/** The 7 privileged spot feature short names. */
+	public final static Map< String, String > FEATURE_SHORT_NAMES = new HashMap< >( 4 );
+
+	/** The 7 privileged spot feature dimensions. */
+	public final static Map< String, linkers.Dimension > FEATURE_DIMENSIONS = new HashMap< >( 4 );
+
+	/** The 7 privileged spot feature isInt flags. */
+	public final static Map< String, Boolean > IS_INT = new HashMap< >( 7 );
+
+	static
+	{
+		FEATURES.add( XPOSITION );
+		FEATURES.add( YPOSITION );
+		FEATURES.add( ZPOSITION );
+		FEATURES.add( Size );
+		FEATURES.add( Time );
+
+		FEATURE_NAMES.put( XPOSITION, "X" );
+		FEATURE_NAMES.put( YPOSITION, "Y" );
+		FEATURE_NAMES.put( ZPOSITION, "Z" );
+		FEATURE_NAMES.put( Size, "S" );
+		FEATURE_NAMES.put( Time, "T" );
+		
+
+		FEATURE_SHORT_NAMES.put( XPOSITION, "X" );
+		FEATURE_SHORT_NAMES.put( YPOSITION, "Y" );
+		FEATURE_SHORT_NAMES.put( ZPOSITION, "Z" );
+		FEATURE_SHORT_NAMES.put( Size, "S" );
+		FEATURE_SHORT_NAMES.put( Time, "T" );
+		
+
+		FEATURE_DIMENSIONS.put( XPOSITION, linkers.Dimension.POSITION );
+		FEATURE_DIMENSIONS.put( YPOSITION, linkers.Dimension.POSITION );
+		FEATURE_DIMENSIONS.put( ZPOSITION, linkers.Dimension.POSITION );
+		FEATURE_DIMENSIONS.put( Size, linkers.Dimension.LENGTH );
+		FEATURE_DIMENSIONS.put( Time, linkers.Dimension.TIME );
+		
+
+		IS_INT.put( XPOSITION, Boolean.FALSE );
+		IS_INT.put( YPOSITION, Boolean.FALSE );
+		IS_INT.put( ZPOSITION, Boolean.FALSE );
+		IS_INT.put( Size, Boolean.FALSE );
+		IS_INT.put( Time, Boolean.FALSE );
+		
+	}
+
+	/**
+	 * Blank constructor meant to be used when loading a spot collection from a
+	 * file. <b>Will</b> mess with the {@link #IDcounter} field, so this
+	 * constructor <u>should not be used for normal spot creation</u>.
+	 *
+	 * @param ID
+	 *            the spot ID to set
+	 */
+	public ThreeDRoiobject( final int ID )
+	{
+		super( 3 );
+		this.ID = ID;
+		synchronized ( IDcounter )
+		{
+			if ( IDcounter.get() < ID )
+			{
+				IDcounter.set( ID );
+			}
+		}
 	}
 	
 	/**
@@ -104,7 +218,7 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 			
 			for (int i= 0; i < ndims; ++i) {
 				centroid[i]+=current.geometriccenter[i] * current.area;
-			    centroid[i]/=roiobject.size();
+			    centroid[i]/=current.area;
 			}
 		}
 

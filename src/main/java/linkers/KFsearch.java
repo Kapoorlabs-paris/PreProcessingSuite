@@ -142,7 +142,7 @@ public class KFsearch implements ThreeDBlobTracker {
 			itSec.next();
 		while (itSec.hasNext()) {
 			percent++;
-			utility.ProgressBar.SetProgressBar(jpb, 100 * percent / AccountedT.size(),
+			utility.ProgressBar.SetProgressBar(jpb, 100 * percent / (AccountedT.size() - 1),
 					"Kalman Filter Search for " + " T = " + T);
 			int currentT = itSec.next().getValue();
 			uniqueID = currentT;

@@ -58,7 +58,7 @@ public class PRENNsearch implements BlobTracker {
 			while(it.hasNext()) {
 				
 
-				utility.ProgressBar.SetProgressBar(jpb, 100 * percent / AccountedZ.size(),
+				utility.ProgressBar.SetProgressBar(jpb, 100 * percent / (AccountedZ.size() - 1),
 						"Computing Nearest Neighbours for " + " T = " + T 
 								+ " Z = " + Z);
 				int nextZ = it.next().getValue();
@@ -66,6 +66,8 @@ public class PRENNsearch implements BlobTracker {
 
 				String uniqueID = Integer.toString(Z) + Integer.toString(T);
 				String uniqueIDnext = Integer.toString(nextZ) + Integer.toString(T);
+				
+				System.out.println(uniqueID);
 				
 			ArrayList<PreRoiobject> Spotmaxbase = Allblobs.get(uniqueID);
 			
@@ -104,16 +106,20 @@ public class PRENNsearch implements BlobTracker {
 			final NNFlagsearchKDtree<PreRoiobject> Search = new NNFlagsearchKDtree<PreRoiobject>(Tree);
 			
 			
-			
 			while(baseobjectiterator.hasNext()){
 				
 				final PreRoiobject source = baseobjectiterator.next();
 				final RealPoint sourceCoords = new RealPoint(source.geometriccenter);
 				Search.search(sourceCoords);
 				final double squareDist = Search.getSquareDistance();
-				final FlagNode<PreRoiobject> targetNode = Search.getSampler().get();
+				
 				if (squareDist > maxdistance)
 					continue;
+				
+				
+				System.out.println(squareDist);
+				final FlagNode<PreRoiobject> targetNode = Search.getSampler().get();
+				
 
 				targetNode.setVisited(true);
 				
