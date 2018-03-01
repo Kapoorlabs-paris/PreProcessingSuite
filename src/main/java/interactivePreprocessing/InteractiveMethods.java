@@ -77,6 +77,7 @@ import preProcessing.Kernels;
 import userTESTING.PreprocessingFileChooser;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
+import visualization.Draw3DLines;
 
 public class InteractiveMethods {
 
@@ -187,6 +188,7 @@ public class InteractiveMethods {
 	public Color colorDrawDog = Color.red;
 	public Color colorConfirm = Color.blue;
 	public Color colorSnake = Color.YELLOW;
+	public Color colorTrack = Color.GREEN;
 	public Overlay overlay;
 	public FinalInterval interval;
 	public boolean lookForMaxima = true;
@@ -231,14 +233,14 @@ public class InteractiveMethods {
 	public double Threshold_dist_negative = 10;
 	public double Inv_alpha_min = 0.2;
 	public double Inv_alpha_max = 10.0;
-
+	ImageStack prestack;
 	public double Mul_factor = 0.99;
 	// maximum displacement
 	public double force = 10;
 	// regulari1ation factors, min and max
 	public double reg = 5;
 	public double regmin, regmax;
-
+     
 	public boolean AutoSnake = true;
 	public boolean advancedSnake = false;
 	public SnakeConfigDriver configDriver;
@@ -463,6 +465,8 @@ public class InteractiveMethods {
 			thirdDimensionSize = (int) originalimg.dimension(2);
 			fourthDimensionSize = (int) originalimg.dimension(3);
 
+			prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
+					java.awt.image.ColorModel.getRGBdefault());
 		}
 
 		setTime(fourthDimension);
@@ -511,9 +515,39 @@ public class InteractiveMethods {
 
 		if (change == ValueChange.ThreeDTrackDisplay) {
 			
+			prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
+					java.awt.image.ColorModel.getRGBdefault());
+			
+			Integer ID = (Integer) table.getValueAt(rowchoice, 0);
+			HashMap<Integer, ArrayList<double[]>> resultlist = new HashMap<Integer, ArrayList<double[]>>();
+			ArrayList<double[]> preresultlist = new ArrayList<double[]>();
 			
 			
+			for(Map.Entry<Integer, ArrayList<ThreeDRoiobject>> current : Timetracks.entrySet()) {
+				
+				int mapID = current.getKey();
+				
+				if(ID.equals(mapID)) {
+					
+					ArrayList<ThreeDRoiobject> currentlist = current.getValue();
+					
+				for (ThreeDRoiobject object: currentlist) {
+					
+					//ID, XYZ and T co-ordinates
+					preresultlist.add(new double[] {object.geometriccenter[0],object.geometriccenter[1], object.geometriccenter[2]  , object.fourthDimension});
+					
+		
+					
+				}
+					
+				}
+				
+				   resultlist.put( mapID,preresultlist);
+			}
 			
+			// Draw 3D lines
+			Draw3DLines draw = new Draw3DLines(this);
+			draw.DrawLines(resultlist);
 			
 		}
 		if (change == ValueChange.SNAKE) {

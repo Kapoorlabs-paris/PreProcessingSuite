@@ -52,7 +52,6 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 		putFeature( Time,Double.valueOf( fourthDimension ) );
 		putFeature( XPOSITION, Double.valueOf( geometriccenter[0] ) );
 		putFeature( YPOSITION, Double.valueOf( geometriccenter[1] ) );
-		
 		putFeature( ZPOSITION, Double.valueOf( geometriccenter[2] ) );
 	
 			this.name = "ID" + ID;
@@ -134,7 +133,7 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 	public final static Map< String, linkers.Dimension > FEATURE_DIMENSIONS = new HashMap< >( 4 );
 
 	/** The 7 privileged spot feature isInt flags. */
-	public final static Map< String, Boolean > IS_INT = new HashMap< >( 7 );
+	public final static Map< String, Boolean > IS_INT = new HashMap< >( 4 );
 
 	static
 	{

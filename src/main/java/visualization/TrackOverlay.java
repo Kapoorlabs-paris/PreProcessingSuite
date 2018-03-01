@@ -389,7 +389,6 @@ public class TrackOverlay extends Roi
 		final int y0 = ( int ) Math.round( y0s );
 		final int x1 = ( int ) Math.round( x1s );
 		final int y1 = ( int ) Math.round( y1s );
-
 		g2d.drawLine( x0, y0, x1, y1 );
 	}
 

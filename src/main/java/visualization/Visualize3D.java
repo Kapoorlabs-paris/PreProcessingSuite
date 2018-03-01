@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import ij.gui.ImageCanvas;
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
 
@@ -43,12 +44,9 @@ public class Visualize3D {
 	
 	public void CreateTable() {
 		
-		if(parent.scrollPane!=null) {
+	
+			if(parent.scrollPane!=null)
 			parent.panelThird.remove(parent.scrollPane);
-		    parent.panelThird.remove(parent.table);
-		    parent.panelThird.validate();
-			parent.panelThird.repaint();
-		}
 		Object[] colnames = new Object[] { "Track Id", "SLocation X", "SLocation Y", "SLocation Z", "Volume", "Intensity Total", "Intenstiy Average" };
 
 		Object[][] rowvalues = new Object[0][colnames.length];
@@ -74,9 +72,7 @@ public class Visualize3D {
 
 		parent.scrollPane.getViewport().add(parent.table);
 		parent.scrollPane.setAutoscrolls(true);
-		parent.PanelSelectFile.add(parent.scrollPane, BorderLayout.CENTER);
 
-		parent.PanelSelectFile.setBorder(parent.selectfile);
 		
 		for (Map.Entry<Integer, ArrayList<ThreeDRoiobject>> entry: parent.Timetracks.entrySet()) {
 			
@@ -85,24 +81,16 @@ public class Visualize3D {
 			parent.table.getModel().setValueAt(f.format(currententry.get(currententry.size() - 1).geometriccenter[0]), parent.row, 1);
 			parent.table.getModel().setValueAt(f.format(currententry.get(currententry.size() - 1).geometriccenter[1]), parent.row, 2);
 			parent.table.getModel().setValueAt(f.format(currententry.get(currententry.size() - 1).geometriccenter[2]), parent.row, 3);
-			
 			parent.table.getModel().setValueAt(f.format(currententry.get(currententry.size() - 1).totalintensity), parent.row, 4);
 			parent.table.getModel().setValueAt(f.format(currententry.get(currententry.size() - 1).averageintensity), parent.row, 5);
 			parent.row++;
 			
 			
-			
-			
 			parent.tablesize = parent.row;
 			
 		}
-		parent.table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 
-		parent.scrollPane = new JScrollPane(parent.table);
-
-		parent.scrollPane.getViewport().add(parent.table);
-		parent.scrollPane.setAutoscrolls(true);
 		parent.PanelSelectFile.add(parent.scrollPane, BorderLayout.CENTER);
 
 		Border trackborder = new CompoundBorder(new TitledBorder("Select track"), new EmptyBorder(parent.c.insets));
@@ -115,15 +103,56 @@ public class Visualize3D {
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		
 		
+		
+		
+		
 		parent.controlnextthird.setEnabled(true);
 		
 		parent.panelThird.validate();
 		parent.panelThird.repaint();
 		
-		
 	}
 	
-	
+	public void set() {
+		
+
+		if (parent.mvl != null)
+			parent.imp.getCanvas().removeMouseListener(parent.mvl);
+		parent.imp.getCanvas().addMouseListener(parent.mvl = new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				if (SwingUtilities.isLeftMouseButton(e) && e.isShiftDown()) {
+					parent.updatePreview(ValueChange.ThreeDTrackDisplay);
+				}
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+		});
+
+		
+		
+	}
 	
 	public void mark() {
 		
@@ -137,7 +166,7 @@ public class Visualize3D {
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
-
+				
 				int x = canvas.offScreenX(e.getX());
 				int y = canvas.offScreenY(e.getY());
 

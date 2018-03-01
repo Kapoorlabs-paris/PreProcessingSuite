@@ -2,6 +2,7 @@ package snakeSegmentation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -14,15 +15,19 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import costMatrix.PixelratiowDistCostFunction;
+import ij.ImagePlus;
 import interactivePreprocessing.InteractiveMethods;
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import linkers.FeatureModel3D;
 import linkers.KFsearch;
 import linkers.Model3D;
 import linkers.TrackModel3D;
+import net.imglib2.img.display.imagej.ImageJFunctions;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
 import visualization.AbstractCovistoModelView;
 import visualization.CovistoModelView;
+import visualization.Draw3DLines;
 import visualization.DummyTrackColorGenerator;
 import visualization.HyperStackDisplayer;
 import visualization.SelectionModel;
@@ -52,21 +57,29 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 		Visualize3D vis = new Visualize3D(parent);
 		
 		vis.CreateTable();
+		vis.mark();
+		vis.set();
 		
 		
 		// Trackmate style track display
-		
+		/*
 		Model3D model = new Model3D();
 		model.setTracks(Tgraph, true);
 		SelectionModel selmode = new SelectionModel(model); 
-		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, parent.imp );
+		
+		ImagePlus imp =  ImageJFunctions.show(parent.originalimg);
+		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, imp );
 		
 		System.out.println(model.getTrackModel().nTracks(true));
 		modelview.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
-	    TrackOverlay overlay = new TrackOverlay(model, parent.imp, modelview.getDisplaySettings());
-		
-	    overlay.drawOverlay(parent.imp.getCanvas().getGraphics());
-		
+	    TrackOverlay overlay = new TrackOverlay(model, imp, modelview.getDisplaySettings());
+	    overlay.setTrackColorGenerator(new DummyTrackColorGenerator());
+	    
+	  
+	    Graphics g = imp.getCanvas().getGraphics();
+	   System.out.println(g);
+	    overlay.drawOverlay(g);
+		*/
 	
 		
 		return null;
