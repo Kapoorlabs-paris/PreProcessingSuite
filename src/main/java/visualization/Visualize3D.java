@@ -49,10 +49,7 @@ public class Visualize3D {
 			parent.panelThird.remove(parent.scrollPane);
 		Object[] colnames = new Object[] { "Track Id", "SLocation X", "SLocation Y", "SLocation Z", "Volume", "Intensity Total", "Intenstiy Average" };
 
-		Object[][] rowvalues = new Object[0][colnames.length];
-		
-		
-		rowvalues = new Object[parent.Timetracks.size()][colnames.length];
+		Object[][] rowvalues =  new Object[parent.Timetracks.size()][colnames.length];
 
 		parent.table = new JTable(rowvalues, colnames);
 		parent.row = 0;

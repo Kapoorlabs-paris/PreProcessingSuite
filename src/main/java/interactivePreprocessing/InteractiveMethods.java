@@ -53,6 +53,7 @@ import ij.ImageStack;
 import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
+import ij.process.ColorProcessor;
 import linkers.PRENNsearch;
 import mpicbg.imglib.util.Util;
 import mserMethods.MSERSeg;
@@ -233,7 +234,9 @@ public class InteractiveMethods {
 	public double Threshold_dist_negative = 10;
 	public double Inv_alpha_min = 0.2;
 	public double Inv_alpha_max = 10.0;
-	ImageStack prestack;
+	public ImageStack prestack;
+	 
+	public ColorProcessor cp = null;
 	public double Mul_factor = 0.99;
 	// maximum displacement
 	public double force = 10;
@@ -247,7 +250,7 @@ public class InteractiveMethods {
 
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, 
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, THIRDDIM,
 		MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay;
 
 	}
@@ -414,7 +417,8 @@ public class InteractiveMethods {
 	}
 
 	public void run(String arg0) {
-
+		prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
+				java.awt.image.ColorModel.getRGBdefault());
 		System.out.println(minSizeInit + " " + maxSizeInit + " " + Unstability_ScoreInit + " " + minDiversityInit);
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
@@ -638,6 +642,32 @@ public class InteractiveMethods {
 
 		}
 
+		if (change == ValueChange.THIRDDIM) {
+
+			if (imp == null) {
+				imp = ImageJFunctions.show(CurrentView);
+
+			}
+
+			else {
+
+				final float[] pixels = (float[]) imp.getProcessor().getPixels();
+				final Cursor<FloatType> c = Views.iterable(CurrentView).cursor();
+
+				for (int i = 0; i < pixels.length; ++i)
+					pixels[i] = c.next().get();
+
+				imp.updateAndDraw();
+
+			}
+
+			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+
+			newimg = utility.Slicer.copytoByteImage(CurrentView);
+
+			
+		}
+		
 		if (change == ValueChange.FOURTHDIMmouse || change == ValueChange.THIRDDIMmouse) {
 
 			if (imp == null) {
@@ -821,6 +851,7 @@ public class InteractiveMethods {
 	final Checkbox advanced = new Checkbox("Display advanced Snake parameters");
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
+	public JButton AllMser = new JButton("Apply and Show stack"); 
 
 	public CheckboxGroup detection = new CheckboxGroup();
 	final Checkbox Watershed = new Checkbox("Do watershedding", detection, showWatershed);
@@ -1142,7 +1173,8 @@ public class InteractiveMethods {
 
 		MserPanel.add(findmaximaMser, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
+		MserPanel.add(AllMser, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		MserPanel.setPreferredSize(new Dimension(SizeX, SizeYbig));
 
 		MserPanel.setBorder(mserborder);
@@ -1305,6 +1337,7 @@ public class InteractiveMethods {
 		Zsnakes.addActionListener(new PREZSnakeListener(this));
 		Tsnakes.addActionListener(new PRETSnakeListener(this));
 		Allsnakes.addActionListener(new PREZTSnakeListener(this));
+		AllMser.addActionListener(new PREZMserListener(this));
 		advanced.addItemListener(new AdvancedSnakeListener(this));
 		Snakeiter.addTextListener(new IterationListener(this));
 		gradientthresh.addTextListener(new GradientListener(this));
