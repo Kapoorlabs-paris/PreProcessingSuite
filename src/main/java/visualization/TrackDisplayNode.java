@@ -152,7 +152,7 @@ public class TrackDisplayNode extends ContentNode implements TimelapseListener
 		this.displayDepth = displayDepth;
 	}
 
-	void refresh()
+	public void refresh()
 	{
 		// Holder for passing values
 		final Color4f color = new Color4f();

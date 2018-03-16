@@ -62,7 +62,7 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/kapoorlab</connection>
-		<developerConnection>scm:git:git@github.com:PreibischLab/MTrack</developerConnection>
+		<developerConnection>scm:git:git@github.com:kapoorlab/PreprocessingSuite</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/kapoorlab</url>
 	</scm>
@@ -111,7 +111,7 @@
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-roi</artifactId>
 		</dependency>
-
+     
 		<!-- ImageJ dependencies -->
 		<dependency>
 			<groupId>net.imagej</groupId>

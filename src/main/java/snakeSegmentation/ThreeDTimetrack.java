@@ -62,24 +62,23 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 		
 		
 		// Trackmate style track display
-		/*
+		
 		Model3D model = new Model3D();
 		model.setTracks(Tgraph, true);
 		SelectionModel selmode = new SelectionModel(model); 
 		
 		ImagePlus imp =  ImageJFunctions.show(parent.originalimg);
+		
 		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, imp );
 		
 		System.out.println(model.getTrackModel().nTracks(true));
 		modelview.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
-	    TrackOverlay overlay = new TrackOverlay(model, imp, modelview.getDisplaySettings());
-	    overlay.setTrackColorGenerator(new DummyTrackColorGenerator());
-	    
+		modelview.render();
+		
+		
+		
 	  
-	    Graphics g = imp.getCanvas().getGraphics();
-	   System.out.println(g);
-	    overlay.drawOverlay(g);
-		*/
+		
 	
 		
 		return null;
