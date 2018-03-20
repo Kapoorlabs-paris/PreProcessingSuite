@@ -53,9 +53,12 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 		putFeature( XPOSITION, Double.valueOf( geometriccenter[0] ) );
 		putFeature( YPOSITION, Double.valueOf( geometriccenter[1] ) );
 		putFeature( ZPOSITION, Double.valueOf( geometriccenter[2] ) );
+		putFeature( Size, Double.valueOf( volume ) );
 	
 			this.name = "ID" + ID;
 	}
+	
+	
 	/*
 	 * STATIC KEYS
 	 */
@@ -193,6 +196,7 @@ public class ThreeDRoiobject extends AbstractEuclideanSpace implements RealLocal
 		}
 	}
 	
+
 	/**
 	 * Stores the specified feature value for this spot.
 	 *

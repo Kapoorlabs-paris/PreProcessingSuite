@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JScrollPane;
@@ -16,6 +17,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 
 import costMatrix.PixelratiowDistCostFunction;
 import ij.ImagePlus;
+import ij3d.Image3DUniverse;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import linkers.FeatureModel3D;
@@ -23,8 +25,10 @@ import linkers.KFsearch;
 import linkers.Model3D;
 import linkers.TrackModel3D;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import threeDViewer.ThreeDRoiobjectDisplayer;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
+import utility.ThreeDRoiobjectCollection;
 import visualization.AbstractCovistoModelView;
 import visualization.CovistoModelView;
 import visualization.Draw3DLines;
@@ -49,7 +53,23 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 	protected Void doInBackground() throws Exception {
 		
 		parent.UserchosenCostFunction = new PixelratiowDistCostFunction(parent.alpha, parent.beta);
-		KFsearch Tsearch = new KFsearch(parent.threeDTRois, parent.UserchosenCostFunction, parent.maxSearchradius, parent.initialSearchradius, parent.maxframegap, parent.Accountedframes, parent.jpb);
+		ThreeDRoiobjectCollection coll = new ThreeDRoiobjectCollection();
+		for(Map.Entry<Integer, ArrayList<ThreeDRoiobject>> entry : parent.threeDTRois.entrySet()) {
+			
+			int time = entry.getKey();
+			ArrayList<ThreeDRoiobject> bloblist = entry.getValue();
+			
+			for (ThreeDRoiobject blobs: bloblist) {
+				
+				coll.add(blobs, time);
+				
+			}
+			
+			
+		}
+		
+		
+		KFsearch Tsearch = new KFsearch(coll, parent.UserchosenCostFunction, parent.maxSearchradius, parent.initialSearchradius, parent.maxframegap, parent.Accountedframes, parent.jpb);
 		Tsearch.process();
 		SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > Tgraph = Tsearch.getResult();
 		
@@ -64,16 +84,26 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 		// Trackmate style track display
 		
 		Model3D model = new Model3D();
+		model.setThreeDRoiobjects(coll, false);
 		model.setTracks(Tgraph, true);
+		
 		SelectionModel selmode = new SelectionModel(model); 
 		
 		ImagePlus imp =  ImageJFunctions.show(parent.originalimg);
 		
-		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, imp );
+		Image3DUniverse universe = new Image3DUniverse((int)parent.originalimg.dimension(0), (int)parent.originalimg.dimension(1));
 		
-		System.out.println(model.getTrackModel().nTracks(true));
+		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, imp );
 		modelview.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
 		modelview.render();
+		
+		
+		
+		ThreeDRoiobjectDisplayer displaymodel = new ThreeDRoiobjectDisplayer(model, selmode, universe); 
+		
+		displaymodel.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
+		displaymodel.render();
+		
 		
 		
 		

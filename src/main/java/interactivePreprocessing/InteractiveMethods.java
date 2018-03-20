@@ -1183,12 +1183,12 @@ public class InteractiveMethods {
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 
 		final JButton Singlesnake = new JButton("Apply snakes to CurrentView");
-		final JButton Zsnakes = new JButton("Apply snakes to the third Dimension (usually Z)");
-		final JButton Tsnakes = new JButton("Apply snakes to the fourth Dimension (usually T)");
-		final JButton Allsnakes = new JButton("Apply snakes to all Dimensions (Z and T)");
+		final JButton Zsnakes = new JButton("Apply snakes in Z");
+		final JButton Tsnakes = new JButton("Apply snakes in T");
+		final JButton Allsnakes = new JButton("Apply snakes in Z & T");
 
 		final JButton SinglethreeD = new JButton("Track in Z for currrent T");
-		final JButton AllthreeD = new JButton("Track in Z for all T");
+		final JButton AllthreeD = new JButton("Track in Z");
 		final JButton Timetrack = new JButton("Link 3D objects in T");
 		JPanel controlprev = new JPanel();
 		JPanel controlnext = new JPanel();
@@ -1273,8 +1273,8 @@ public class InteractiveMethods {
 		NearestNPanel.add(maxSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
-		NearestNPanel.add(SinglethreeD, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		//NearestNPanel.add(SinglethreeD, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+	//			GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		NearestNPanel.add(AllthreeD, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 

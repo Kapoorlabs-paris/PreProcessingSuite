@@ -42,5 +42,10 @@
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/ffmpeg-2.6.1-0.11-macosx-x86_64.jar"/>
+	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/gluegen-rt-2.3.2-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/joal-2.3.2-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/jocl-2.3.2-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/jogl-all-2.3.2-natives-macosx-universal.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

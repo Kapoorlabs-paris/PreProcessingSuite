@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
+	<parent> 
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
 		<version>17.1.1</version>
@@ -94,6 +94,26 @@
 	</repositories>
 
 	<dependencies>
+		<!-- Fiji dependencies -->
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>3D_Viewer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>fiji-lib</artifactId>
+		</dependency>
+
+		<!-- ImageJ dependencies -->
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-deprecated</artifactId>
+		</dependency>
+
 		<!-- ImgLib2 dependencies -->
 		<dependency>
 			<groupId>net.imglib2</groupId>
@@ -105,66 +125,75 @@
 		</dependency>
 		<dependency>
 			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-algorithm-gpl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-ij</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.imglib2</groupId>
-			<artifactId>imglib2-roi</artifactId>
-		</dependency>
-     
-		<!-- ImageJ dependencies -->
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij</artifactId>
+			<artifactId>imglib2-realtransform</artifactId>
 		</dependency>
 
-		<!-- Fiji dependencies -->
+		<!-- SciJava dependencies -->
 		<dependency>
-			<!-- NB: dependency:analyze erroneously flags this, but it's required -->
-			<groupId>sc.fiji</groupId>
-			<artifactId>Fiji_Plugins</artifactId>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-common</artifactId>
+		</dependency>
+
+		<!-- Java3D dependencies -->
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>j3dcore</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>fiji-lib</artifactId>
+			<groupId>org.scijava</groupId>
+			<artifactId>j3dutils</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>legacy-imglib1</artifactId>
+			<groupId>org.scijava</groupId>
+			<artifactId>vecmath</artifactId>
 		</dependency>
 
 		<!-- Third party dependencies -->
 		<dependency>
-			<!-- NB: dependency:analyze erroneously flags this, but it's required -->
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>gov.nist.math</groupId>
 			<artifactId>jama</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>mpicbg</groupId>
-			<artifactId>mpicbg</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>net.sf.jgrapht</groupId>
 			<artifactId>jgrapht</artifactId>
 		</dependency>
 		<dependency>
-			<!-- NB: dependency:analyze erroneously flags this, but it's required -->
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>${poi.version}</version>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-dom</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jcommon</artifactId>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-svggen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.tinyjee.jgraphx</groupId>
+			<artifactId>jgraphx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

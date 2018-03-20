@@ -476,12 +476,16 @@ public class TrackDisplayNode extends ContentNode implements TimelapseListener
 
 		// Instantiate refs fields
 		final int nframes = model.getThreeDRoiobjects().keySet().size();
+		System.out.println("Nframes" + nframes);
+		
 		frameIndices = new HashMap< >( nframes, 1 ); // optimum
 		for ( final int frameIndex : model.getThreeDRoiobjects().keySet() )
 		{
 			frameIndices.put( frameIndex, new HashMap< Integer, ArrayList< Integer > >( ntracks ) );
 			for ( final Integer trackID : model.getTrackModel().trackIDs( true ) )
 			{
+				
+				System.out.println("frame index" + " " + frameIndex);
 				frameIndices.get( frameIndex ).put( trackID, new ArrayList< Integer >() );
 			}
 		}
@@ -552,7 +556,15 @@ public class TrackDisplayNode extends ContentNode implements TimelapseListener
 
 				// Keep refs
 				edgeIndices.get( trackID ).put( edge, edgeIndex - 2 );
+				
 				final int frame = source.getFeature( ThreeDRoiobject.Time ).intValue();
+				System.out.println(frameIndices.get( frame ));
+				
+				System.out.println(" Fail " + frame + " " + trackID);
+				
+				System.out.println(frameIndices.get( frame ).get( trackID ));
+				
+				
 				frameIndices.get( frame ).get( trackID ).add( edgeIndex - 2 );
 
 			} // Finished building this track's line

@@ -273,17 +273,28 @@ public class ThreeDRoiobjectDisplayer extends AbstractCovistoModelView
 		blobs = new TreeMap<>();
 		contentAllFrames = new TreeMap< >();
 		final double radiusRatio = ( Double ) displaySettings.get( KEY_ThreeDRoiobject_RADIUS_RATIO );
+		
+		
+		
 		final ThreeDRoiobjectCollection ThreeDRoiobjectS = model.getThreeDRoiobjects();
+		
+		
+		
+		
 		@SuppressWarnings( "unchecked" )
 		final FeatureColorGenerator< ThreeDRoiobject > ThreeDRoiobjectColorGenerator = ( FeatureColorGenerator< ThreeDRoiobject > ) displaySettings.get( KEY_ThreeDRoiobject_COLORING );
-
+		System.out.println("What can be null:" + radiusRatio + " " + ThreeDRoiobjectS.getNumThreads() + " " + ThreeDRoiobjectColorGenerator );
 		for ( final int frame : ThreeDRoiobjectS.keySet() )
 		{
 			if ( ThreeDRoiobjectS.getNThreeDRoiobjects( frame, false ) == 0 )
 			{
 				continue; // Do not create content for empty frames
 			}
+			
+			System.out.println(frame);
 			buildFrameContent( ThreeDRoiobjectS, frame, radiusRatio, ThreeDRoiobjectColorGenerator );
+			
+			
 		}
 
 		ThreeDRoiobjectContent = new Content( ThreeDRoiobject_CONTENT_NAME, contentAllFrames );
@@ -303,6 +314,8 @@ public class ThreeDRoiobjectDisplayer extends AbstractCovistoModelView
 			final ThreeDRoiobject ThreeDRoiobject = it.next();
 			utility.ViewUtils.localize( ThreeDRoiobject, coords );
 			final Double radius = ThreeDRoiobject.getFeature( ThreeDRoiobject.Size );
+			System.out.println("what is my radius" + " " + radius);
+			
 			final double[] pos = new double[] { coords[ 0 ], coords[ 1 ], coords[ 2 ], radius * radiusRatio };
 			centers.put( ThreeDRoiobject, new Point4d( pos ) );
 			final Color4f col = new Color4f( ThreeDRoiobjectColorGenerator.color( ThreeDRoiobject ) );

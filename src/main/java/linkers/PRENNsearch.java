@@ -67,7 +67,6 @@ public class PRENNsearch implements BlobTracker {
 				String uniqueID = Integer.toString(Z) + Integer.toString(T);
 				String uniqueIDnext = Integer.toString(nextZ) + Integer.toString(T);
 				
-				System.out.println(uniqueID);
 				
 			ArrayList<PreRoiobject> Spotmaxbase = Allblobs.get(uniqueID);
 			
@@ -117,7 +116,6 @@ public class PRENNsearch implements BlobTracker {
 					continue;
 				
 				
-				System.out.println(squareDist);
 				final FlagNode<PreRoiobject> targetNode = Search.getSampler().get();
 				
 
@@ -136,7 +134,6 @@ public class PRENNsearch implements BlobTracker {
 		       
 			}
 			
-			System.out.println("NN detected at Z = " + Z + " Time " + T);
 		}
 		}
 			
