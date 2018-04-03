@@ -33,7 +33,6 @@ import visualization.AbstractCovistoModelView;
 import visualization.CovistoModelView;
 import visualization.Draw3DLines;
 import visualization.DummyTrackColorGenerator;
-import visualization.HyperStackDisplayer;
 import visualization.SelectionModel;
 import visualization.TrackColorGenerator;
 import visualization.TrackDisplayNode;
@@ -75,35 +74,47 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 		
 		parent.Timetracks = utility.AnalyzeTTrack.get3DTracks(Tgraph);
 		Visualize3D vis = new Visualize3D(parent);
+
+		Object[] colnames = new Object[] { "Track Id", "SLocation X", "SLocation Y", "SLocation Z", "Volume", "Intensity Total", "Intenstiy Average" };
+
+		Object[][] rowvalues =  new Object[parent.Timetracks.size()][colnames.length];
+
+		parent.table = new JTable(rowvalues, colnames);
+
+		parent.table.setFillsViewportHeight(true);
+
+	
+		parent.table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		parent.table.setMinimumSize(new Dimension(800, 500));
+
+		parent.scrollPane = new JScrollPane(parent.table);
+		parent.scrollPane.setMinimumSize(new Dimension(800, 500));
+
+		parent.scrollPane.getViewport().add(parent.table);
+		parent.scrollPane.setAutoscrolls(true);
 		
 		vis.CreateTable();
 		vis.mark();
 		vis.set();
 		
 		
-		// Trackmate style track display
-		
-		Model3D model = new Model3D();
-		model.setThreeDRoiobjects(coll, false);
-		model.setTracks(Tgraph, true);
-		
-		SelectionModel selmode = new SelectionModel(model); 
-		
-		ImagePlus imp =  ImageJFunctions.show(parent.originalimg);
-		
-		Image3DUniverse universe = new Image3DUniverse((int)parent.originalimg.dimension(0), (int)parent.originalimg.dimension(1));
-		
-		HyperStackDisplayer modelview = new HyperStackDisplayer( model, selmode, imp );
-		modelview.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
-		modelview.render();
+	// Trackmate style track display
 		
 		
+		parent.model.setThreeDRoiobjects(coll, false);
+		parent.model.setTracks(Tgraph, true);
 		
-		ThreeDRoiobjectDisplayer displaymodel = new ThreeDRoiobjectDisplayer(model, selmode, universe); 
+		parent.selmode = new SelectionModel(parent.model); 
 		
-		displaymodel.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator());
-		displaymodel.render();
+	 
+
+	
 		
+		
+	
+		
+	
 		
 		
 		

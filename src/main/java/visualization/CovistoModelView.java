@@ -247,8 +247,9 @@ public interface CovistoModelView
 	 * Initializes this displayer and render it according to its concrete
 	 * implementation.
 	 */
-	public void render();
 
+	
+	public void render(final int trackID);
 	/**
 	 * Refreshes the displayer display with current model. If the underlying
 	 * model was modified, or the display settings were changed, calling this
@@ -281,12 +282,11 @@ public interface CovistoModelView
 	 * @param value
 	 *            the value for the display parameter
 	 */
-	public void setDisplaySettings( final String key, final Object value );
 
 	/**
 	 * Returns the value of a specific display parameter.
 	 */
-	public Object getDisplaySettings( final String key );
+	public Object getDisplaySettings( final String key);
 
 	/**
 	 * Returns the model displayed in this view.
@@ -303,5 +303,9 @@ public interface CovistoModelView
 	 * @return the key, as a String.
 	 */
 	public String getKey();
+
+	void setDisplaySettings(String key, Object value, int trackID);
+
+
 
 }

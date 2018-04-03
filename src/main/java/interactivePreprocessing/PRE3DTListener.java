@@ -36,9 +36,10 @@ public class PRE3DTListener implements ActionListener {
 
 	public void go() {
 
-
-		ThreeDTimetrack dosnake = new ThreeDTimetrack(parent);
-		dosnake.execute();
+		SingleAllTrack dosnakeZ = new SingleAllTrack(parent);
+		dosnakeZ.execute();
+		
+		
 
 	}
 

@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import ij.gui.ImageCanvas;
 import ij.gui.Roi;
+import ij3d.Image3DUniverse;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import utility.PreRoiobject;
@@ -45,31 +46,20 @@ public class Visualize3D {
 	public void CreateTable() {
 		
 	
-			if(parent.scrollPane!=null)
-			parent.panelThird.remove(parent.scrollPane);
-		Object[] colnames = new Object[] { "Track Id", "SLocation X", "SLocation Y", "SLocation Z", "Volume", "Intensity Total", "Intenstiy Average" };
-
-		Object[][] rowvalues =  new Object[parent.Timetracks.size()][colnames.length];
-
-		parent.table = new JTable(rowvalues, colnames);
+		
 		parent.row = 0;
 		NumberFormat f = NumberFormat.getInstance();
 
 	
 
-		parent.table.setFillsViewportHeight(true);
-
-	
-		parent.table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		parent.table.setMinimumSize(new Dimension(800, 500));
-
-		parent.scrollPane = new JScrollPane(parent.table);
-		parent.scrollPane.setMinimumSize(new Dimension(800, 500));
-
-		parent.scrollPane.getViewport().add(parent.table);
-		parent.scrollPane.setAutoscrolls(true);
-
+		parent.panelThird.remove(parent.PanelSelectFile);
+		parent.PanelSelectFile.removeAll();
+		parent.panelThird.remove(parent.controlprevthird);
+		
+		parent.PanelSelectFile.repaint();
+		parent.PanelSelectFile.validate();
+        parent.panelThird.repaint();
+        parent.panelThird.validate();
 		
 		for (Map.Entry<Integer, ArrayList<ThreeDRoiobject>> entry: parent.Timetracks.entrySet()) {
 			
@@ -121,8 +111,16 @@ public class Visualize3D {
 			public void mouseClicked(MouseEvent e) {
 
 				if (SwingUtilities.isLeftMouseButton(e) && e.isShiftDown()) {
+					
+					parent.universe = new Image3DUniverse();
+					parent.universe.show();
+					
 					parent.updatePreview(ValueChange.ThreeDTrackDisplay);
+					
+					
+					
 				}
+		
 
 			}
 

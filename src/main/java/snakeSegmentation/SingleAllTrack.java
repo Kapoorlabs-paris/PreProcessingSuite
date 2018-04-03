@@ -63,6 +63,8 @@ public class SingleAllTrack extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		try {
+			ThreeDTimetrack dosnake = new ThreeDTimetrack(parent);
+			dosnake.execute();
 			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {

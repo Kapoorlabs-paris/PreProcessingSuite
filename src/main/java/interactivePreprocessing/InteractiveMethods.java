@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import snakeSegmentation.*;
+import threeDViewer.ThreeDRoiobjectDisplayer;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -54,6 +55,8 @@ import ij.gui.Overlay;
 import ij.gui.Roi;
 import ij.plugin.frame.RoiManager;
 import ij.process.ColorProcessor;
+import ij3d.Image3DUniverse;
+import linkers.Model3D;
 import linkers.PRENNsearch;
 import mpicbg.imglib.util.Util;
 import mserMethods.MSERSeg;
@@ -78,7 +81,10 @@ import preProcessing.Kernels;
 import userTESTING.PreprocessingFileChooser;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
+import visualization.CovistoModelView;
 import visualization.Draw3DLines;
+import visualization.DummyTrackColorGenerator;
+import visualization.SelectionModel;
 
 public class InteractiveMethods {
 
@@ -223,7 +229,11 @@ public class InteractiveMethods {
 	public String uniqueID, ZID, TID;
 	public float alpha = 0.5f;
 	public float beta = 0.5f;
-
+	public Image3DUniverse universe;
+	
+	public Model3D model = new Model3D();
+	public SelectionModel selmode = new SelectionModel(model); 
+	
 	public int snakeiterations = 200;
 	public int displaysnake = snakeiterations / 2;
 	public int Gradthresh = 1;
@@ -251,7 +261,7 @@ public class InteractiveMethods {
 	public static enum ValueChange {
 
 		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, THIRDDIM,
-		MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay;
+		MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay, ThreeDTrackDisplayALL;
 
 	}
 
@@ -422,7 +432,7 @@ public class InteractiveMethods {
 		System.out.println(minSizeInit + " " + maxSizeInit + " " + Unstability_ScoreInit + " " + minDiversityInit);
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
-
+		universe = new Image3DUniverse((int)originalimg.dimension(0), (int)originalimg.dimension(1));
 		jpb = new JProgressBar();
 		overlay = new Overlay();
 		interval = new FinalInterval(originalimg.dimension(0), originalimg.dimension(1));
@@ -518,42 +528,32 @@ public class InteractiveMethods {
 		}
 
 		if (change == ValueChange.ThreeDTrackDisplay) {
-			
-			prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
-					java.awt.image.ColorModel.getRGBdefault());
+		
 			
 			Integer ID = (Integer) table.getValueAt(rowchoice, 0);
-			HashMap<Integer, ArrayList<double[]>> resultlist = new HashMap<Integer, ArrayList<double[]>>();
-			ArrayList<double[]> preresultlist = new ArrayList<double[]>();
 			
 			
-			for(Map.Entry<Integer, ArrayList<ThreeDRoiobject>> current : Timetracks.entrySet()) {
-				
-				int mapID = current.getKey();
-				
-				if(ID.equals(mapID)) {
-					
-					ArrayList<ThreeDRoiobject> currentlist = current.getValue();
-					
-				for (ThreeDRoiobject object: currentlist) {
-					
-					//ID, XYZ and T co-ordinates
-					preresultlist.add(new double[] {object.geometriccenter[0],object.geometriccenter[1], object.geometriccenter[2]  , object.fourthDimension});
-					
-		
-					
-				}
-					
-				}
-				
-				   resultlist.put( mapID,preresultlist);
-			}
+			ThreeDRoiobjectDisplayer displaymodel = new ThreeDRoiobjectDisplayer(model, selmode, universe); 
+
 			
-			// Draw 3D lines
-			Draw3DLines draw = new Draw3DLines(this);
-			draw.DrawLines(resultlist);
+			
+			displaymodel.setDisplaySettings(CovistoModelView.KEY_TRACK_COLORING, new DummyTrackColorGenerator(), ID);
+			
+            for(int trackID: model.getTrackModel().trackIDs(true)) {
+			
+			if (ID == trackID)
+				model.setTrackVisibility(trackID, true);
+			else
+				model.setTrackVisibility(trackID, false);
 			
 		}
+			displaymodel.render(ID);
+			displaymodel.refresh();
+		
+			
+			
+		}
+		
 		if (change == ValueChange.SNAKE) {
 
 			Accountedframes.put(TID, fourthDimension);
@@ -1279,8 +1279,8 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
 		NearestNPanel.setBorder(NNborder);
-		panelSecond.add(NearestNPanel, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+	//	panelSecond.add(NearestNPanel, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+	//			GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
 		KalmanPanel.add(iniSearchText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
@@ -1387,12 +1387,14 @@ public class InteractiveMethods {
 		inputFieldZ.addTextListener(new PreZlocListener(this, false));
 		inputFieldT.addTextListener(new PreTlocListener(this, false));
 
-		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		panelSecond.add(controlnextthird, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
+		
+		panelSecond.setPreferredSize(SnakePanel.getPreferredSize());
 		controlnextthird.setEnabled(false);
-		panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 		panelThird.add(PanelSelectFile, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));

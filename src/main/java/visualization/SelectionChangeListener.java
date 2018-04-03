@@ -16,5 +16,7 @@ public interface SelectionChangeListener extends EventListener {
 	 */
 	public void selectionChanged(SelectionChangeEvent event);
 
+	public void selectionChanged(SelectionChangeEvent event, int trackID);
+
 
 }

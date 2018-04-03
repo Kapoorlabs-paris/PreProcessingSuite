@@ -87,10 +87,10 @@ public class KFsearch implements ThreeDBlobTracker {
 		 * Outputs
 		 */
 
+		
 		System.out.println(AccountedT.size());
 		graph = new SimpleWeightedGraph<ThreeDRoiobject, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		predictionsCollection = new ThreeDRoiobjectCollection();
-		Iterator<Map.Entry<String, Integer>> it = AccountedT.entrySet().iterator();
 		
 
 		
@@ -123,6 +123,7 @@ public class KFsearch implements ThreeDBlobTracker {
 		double meanSpotRadius = 0d;
 		for (final ThreeDRoiobject Blob : Secondorphan) {
 
+			
 			meanSpotRadius += Blob.volume;
 		}
 		meanSpotRadius /= Secondorphan.size();

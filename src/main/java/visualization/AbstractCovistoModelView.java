@@ -50,7 +50,7 @@ public abstract class AbstractCovistoModelView implements SelectionChangeListene
 	 */
 
 	@Override
-	public void setDisplaySettings( final String key, final Object value )
+	public void setDisplaySettings( final String key, final Object value, final int trackID )
 	{
 		displaySettings.put( key, value );
 	}
@@ -118,5 +118,7 @@ public abstract class AbstractCovistoModelView implements SelectionChangeListene
 		lDisplaySettings.put( KEY_DRAWING_DEPTH, DEFAULT_DRAWING_DEPTH );
 		return lDisplaySettings;
 	}
+
+	
 
 }
