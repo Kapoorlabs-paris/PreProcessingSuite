@@ -73,32 +73,7 @@ public class IlastikConnectedComponents {
 		return oldseedLabeling;
 	}
 
-	public static NativeImgLabeling<Integer, IntType> GetlabeledImage(
-			RandomAccessibleInterval<BitType> inputimg, NativeImgLabeling<Integer, IntType> seedLabeling) {
-
-		int n = inputimg.numDimensions();
-		long[] dimensions = new long[n];
-
-		for (int d = 0; d < n; ++d)
-			dimensions[d] = inputimg.dimension(d);
-		final NativeImgLabeling<Integer, IntType> outputLabeling = new NativeImgLabeling<Integer, IntType>(
-				new ArrayImgFactory<IntType>().create(inputimg, new IntType()));
-
-		final Watershed<BitType, Integer> watershed = new Watershed<BitType, Integer>();
-
-		watershed.setSeeds(seedLabeling);
-		watershed.setIntensityImage(inputimg);
-		watershed.setStructuringElement(AllConnectedComponents.getStructuringElement(2));
-		watershed.setOutputLabeling(outputLabeling);
-		watershed.process();
-		DefaultROIStrategyFactory<Integer> deffactory = new DefaultROIStrategyFactory<Integer>();
-		LabelingROIStrategy<Integer, Labeling<Integer>> factory = deffactory
-				.createLabelingROIStrategy(watershed.getResult());
-		outputLabeling.setLabelingCursorStrategy(factory);
-
-		return outputLabeling;
-
-	}
+	
 	public static RandomAccessibleInterval<BitType> CreateBinaryImage(RandomAccessibleInterval<FloatType> inputimage,
 			final FloatType threshold) {
 
@@ -133,7 +108,7 @@ public class IlastikConnectedComponents {
 		String directory = "/Users/aimachine/Documents/IlastikJLM/datasets_for_ilastic_training/Stage3Training/BoundarySegmentation/";
 		
 		// Input filename of the map
-		String fileName = "20171027_stage3_2-normalized_Probabilitiesexported_data.tif";
+		String fileName = "20171027_stage3_1-normalized_Probabilitiesexported_data.tif";
 		
 		// Scifio logger
 		org.apache.log4j.BasicConfigurator.configure();
