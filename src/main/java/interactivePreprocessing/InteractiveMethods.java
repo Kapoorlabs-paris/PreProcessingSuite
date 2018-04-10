@@ -794,7 +794,7 @@ public class InteractiveMethods {
 	public JPanel DetectionPanel = new JPanel();
 
 	public JPanel NearestNPanel = new JPanel();
-	public JPanel KalmanPanel = new JPanel();
+	public  JPanel KalmanPanel = new JPanel();
 
 	final String timestring = "Current T";
 	final String zstring = "Current Z";
@@ -1322,6 +1322,7 @@ public class InteractiveMethods {
 		MSER.addItemListener(new DoMSERListener(this));
 		autothreshold.addItemListener(new PREauto(this));
 
+		lostframe.addTextListener(new PRELostFrameListener(this));
 		findminima.addItemListener(new FindMinimaListener(this));
 		findmaxima.addItemListener(new FindMaximaListener(this));
 		findminimaMser.addItemListener(new FindMinimaMserListener(this));

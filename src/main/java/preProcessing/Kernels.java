@@ -22,6 +22,7 @@
 
 package preProcessing;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import mpicbg.imglib.algorithm.math.ComputeMinMax;
@@ -31,14 +32,18 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.gauss3.Gauss3;
+import net.imglib2.algorithm.neighborhood.Neighborhood;
+import net.imglib2.algorithm.neighborhood.RectangleShape;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.algorithm.region.hypersphere.HyperSphereCursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.complex.ComplexFloatType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
@@ -706,41 +711,41 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 			return copyoriginal;
 			
 		}
-	public static RandomAccessibleInterval<FloatType> Meanfilterandsupress(RandomAccessibleInterval<FloatType> inputimg, double sigma){
+	public static < T extends RealType< T > & NativeType< T >> RandomAccessibleInterval<T> Meanfilterandsupress(RandomAccessibleInterval<T> inputimg, double sigma){
 		// Mean filtering for a given sigma
 		
-		RandomAccessibleInterval<FloatType> outimg = new ArrayImgFactory<FloatType>().create(inputimg,
-				new FloatType());
-				Cursor<FloatType> cursorInput = Views.iterable(inputimg).cursor();
-				Cursor<FloatType> cursorOutput = Views.iterable(outimg).cursor();
-				FloatType mean = Views.iterable(inputimg).firstElement().createVariable();
-				while (cursorInput.hasNext()) {
-					cursorInput.fwd();
+		RandomAccessibleInterval<T> outimg = inputimg;
+				Cursor<T> cursorOutput = Views.iterable(outimg).cursor();
+				
+				final RectangleShape shape = new RectangleShape( (int)sigma, false );
+				final net.imglib2.algorithm.neighborhood.RectangleShape.NeighborhoodsAccessible<T> nracessible = shape.neighborhoodsRandomAccessible( Views.extendZero( inputimg ) );
+				final RandomAccess< Neighborhood< T >> nra = nracessible.randomAccess( inputimg );
+
+				final int size = ( int ) nra.get().size();
+				final double[] values = new double[ size ];
+
+				double mean = 0;
+				// Fill buffer with median values.
+				while ( cursorOutput.hasNext() )
+				{
 					cursorOutput.fwd();
-					HyperSphere<FloatType> hyperSphere = new HyperSphere<FloatType>(Views.extendMirrorSingle(inputimg),
-							cursorInput, (long) sigma);
-					HyperSphereCursor<FloatType> cursorsphere = hyperSphere.cursor();
-					cursorsphere.fwd();
-					mean.set(cursorsphere.get());
-					int n = 1;
-					while (cursorsphere.hasNext()) {
-						cursorsphere.fwd();
-						n++;
-						mean.add(cursorsphere.get());
+					nra.setPosition( cursorOutput );
+					int index = 0;
+					for ( final T pixel : nra.get() )
+					{
+						values[ index++ ] = pixel.getRealDouble();
+						mean+= pixel.getRealDouble();
 					}
-					mean.div(new FloatType(n));
-					cursorOutput.get().set(mean);
-				}
-				final Float Lowthreshold = GlobalThresholding.AutomaticThresholding(inputimg);
-				Cursor<FloatType> inputcursor = Views.iterable(inputimg).localizingCursor();
-				RandomAccess<FloatType> outputran = outimg.randomAccess();
-				while(inputcursor.hasNext()){
-					inputcursor.fwd();
-					outputran.setPosition(inputcursor);
-					if (inputcursor.get().get()<=  0.5 * Lowthreshold)
-						outputran.get().setZero();
-					else
-						outputran.get().set(inputcursor.get());
+					mean = mean / index;
+
+					
+					// Median values
+				//	Arrays.sort( values, 0, index );
+				//	cursorOutput.get().setReal( values[ ( index - 1 ) / 2 ] );
+					
+					// Mean values
+					cursorOutput.get().setReal( mean );
+					
 				}
 			return outimg;
 		
