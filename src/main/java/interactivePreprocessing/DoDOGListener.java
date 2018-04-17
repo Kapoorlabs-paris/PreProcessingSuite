@@ -51,6 +51,8 @@ public class DoDOGListener implements ItemListener {
 			parent.displayDist.setVisible(false);
 			parent.autothreshold.setVisible(false);
 			parent.thresholdWaterslider.setVisible(false);
+			
+			parent.SnakePanel.setVisible(true);
 		
 		}
 

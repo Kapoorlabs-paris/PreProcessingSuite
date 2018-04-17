@@ -54,6 +54,7 @@ public class DoWatershedListener implements ItemListener {
 			parent.autothreshold.setVisible(true);
 			parent.thresholdWaterslider.setVisible(true);
 			
+			parent.SnakePanel.setVisible(false);
 		
 			
 		}

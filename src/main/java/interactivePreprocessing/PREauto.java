@@ -29,7 +29,7 @@ final InteractiveMethods parent;
 		    parent.watertext.setText(parent.waterstring +  " = "  + parent.thresholdWater );
 			parent.thresholdslider.validate();
 			parent.thresholdslider.repaint();
-			parent.updatePreview(ValueChange.WATER);
+			
 			
 		}
 

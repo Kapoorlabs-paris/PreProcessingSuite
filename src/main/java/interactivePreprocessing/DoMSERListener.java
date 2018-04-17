@@ -55,7 +55,7 @@ public class DoMSERListener implements ItemListener {
 			parent.autothreshold.setVisible(false);
 			parent.thresholdWaterslider.setVisible(false);
 			
-			
+			parent.SnakePanel.setVisible(true);
 			
 		}
 

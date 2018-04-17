@@ -13,14 +13,16 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import interactivePreprocessing.InteractiveMethods;
 
-public class Slicer {
+public class Slicer  {
 	
 	public static  RandomAccessibleInterval<FloatType> getCurrentViewLarge(RandomAccessibleInterval<FloatType> originalimg, int thirdDimension) {
 		
@@ -102,12 +104,12 @@ public class Slicer {
 		// return the copy
 		return output;
 	}
-	public static  RandomAccessibleInterval<FloatType> getCurrentView(RandomAccessibleInterval<FloatType> originalimg, int thirdDimension, int thirdDimensionSize, int fourthDimension, int fourthDimensionSize) {
+	public static < T extends RealType< T > & NativeType< T >>  RandomAccessibleInterval<T> getCurrentView(RandomAccessibleInterval<T> originalimg, int thirdDimension, int thirdDimensionSize, int fourthDimension, int fourthDimensionSize) {
 
-		final FloatType type = originalimg.randomAccess().get().createVariable();
+		final T type = originalimg.randomAccess().get().createVariable();
 		long[] dim = { originalimg.dimension(0), originalimg.dimension(1) };
-		final ImgFactory<FloatType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(originalimg, type);
-		RandomAccessibleInterval<FloatType> totalimg = factory.create(dim, type);
+		final ImgFactory<T> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(originalimg, type);
+		RandomAccessibleInterval<T> totalimg = factory.create(dim, type);
 
 		if (thirdDimensionSize == 0) {
 
@@ -122,7 +124,7 @@ public class Slicer {
 		
 		if (fourthDimensionSize > 0) {
 			
-			RandomAccessibleInterval<FloatType> pretotalimg = Views.hyperSlice(originalimg, 2, thirdDimension - 1);
+			RandomAccessibleInterval<T> pretotalimg = Views.hyperSlice(originalimg, 2, thirdDimension - 1);
 			
 			totalimg = Views.hyperSlice(pretotalimg, 2, fourthDimension - 1);
 		}

@@ -54,7 +54,7 @@ public class Kernels {
 
 	
 	public static enum ProcessingType {
-		Gradientmag, NaiveEdge, Meanfilter, SupressThresh, CannyEdge
+		Gradientmag, NaiveEdge, SupressThresh, CannyEdge
 	}
 	      // Any preprocessing
 
@@ -68,9 +68,7 @@ public class Kernels {
 				switch(edge){
 				
 				
-				case Meanfilter:
-					imgout = Meanfilterandsupress(inputimg, 1.0);
-					break;
+				
 				case NaiveEdge:
 					imgout = NaiveEdge(inputimg, new double[]{1,1});
 					break;
@@ -671,7 +669,7 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 
 		RandomAccessibleInterval<FloatType> meanimg = new ArrayImgFactory<FloatType>().create(inputimg,
 				new FloatType());
-		MeanFilter(Threshcannyimg, meanimg,  sigma);
+		meanimg = MedianFilter(Threshcannyimg, sigma);
 		
 		Pair<Double, Double> minmax = computeMinMax(meanimg);
 		
@@ -711,7 +709,7 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 			return copyoriginal;
 			
 		}
-	public static < T extends RealType< T > & NativeType< T >> RandomAccessibleInterval<T> Meanfilterandsupress(RandomAccessibleInterval<T> inputimg, double sigma){
+	public static < T extends RealType< T > & NativeType< T >> RandomAccessibleInterval<T> MedianFilter(RandomAccessibleInterval<T> inputimg, double sigma){
 		// Mean filtering for a given sigma
 		
 		RandomAccessibleInterval<T> outimg = inputimg;
@@ -736,15 +734,15 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 						values[ index++ ] = pixel.getRealDouble();
 						mean+= pixel.getRealDouble();
 					}
-					mean = mean / index;
+				//	mean = mean / index;
 
 					
 					// Median values
-				//	Arrays.sort( values, 0, index );
-				//	cursorOutput.get().setReal( values[ ( index - 1 ) / 2 ] );
+					Arrays.sort( values, 0, index );
+					cursorOutput.get().setReal( values[ ( index - 1 ) / 2 ] );
 					
 					// Mean values
-					cursorOutput.get().setReal( mean );
+				//	cursorOutput.get().setReal( mean );
 					
 				}
 			return outimg;

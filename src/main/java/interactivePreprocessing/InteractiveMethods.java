@@ -67,6 +67,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.componenttree.mser.MserTree;
 import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.algorithm.localextrema.RefinedPeak;
+import net.imglib2.algorithm.stats.Normalize;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.logic.BitType;
@@ -174,6 +175,9 @@ public class InteractiveMethods {
 	public long maxSizemax = 10000;
 	public float deltaMin = 0;
 
+	public boolean onlySeg = true;
+	
+	public boolean TrackandSeg = false;
 	public float Unstability_ScoreMin = 0f;
 	public float Unstability_ScoreMax = 1f;
 	public int tablesize;
@@ -230,7 +234,7 @@ public class InteractiveMethods {
 	public float alpha = 0.5f;
 	public float beta = 0.5f;
 	public Image3DUniverse universe;
-	
+	public boolean apply3D = false;
 	public Model3D model = new Model3D();
 	public SelectionModel selmode = new SelectionModel(model); 
 	
@@ -427,6 +431,9 @@ public class InteractiveMethods {
 	}
 
 	public void run(String arg0) {
+		FloatType minval = new FloatType(0);
+		FloatType maxval = new FloatType(255);
+		Normalize.normalize(Views.iterable(originalimg), minval, maxval);
 		prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
 				java.awt.image.ColorModel.getRGBdefault());
 		System.out.println(minSizeInit + " " + maxSizeInit + " " + Unstability_ScoreInit + " " + minDiversityInit);
@@ -452,6 +459,11 @@ public class InteractiveMethods {
 		setInitialminSize(minSizeInit);
 		setInitialsearchradius(initialSearchradiusInit);
 		setInitialmaxsearchradius(maxSearchradius);
+		
+		
+		
+		
+		
 		regmin = reg / 2.0;
 		regmax = reg;
 		if (ndims < 3) {
@@ -742,11 +754,18 @@ public class InteractiveMethods {
 			bitimg = new ArrayImgFactory<BitType>().create(newimg, new BitType());
 			bitimgFloat = new ArrayImgFactory<FloatType>().create(newimg, new FloatType());
 			GetLocalmaxminMT.ThresholdingMTBit(CurrentView, bitimg, thresholdWater);
-			if (displayBinaryimg)
+			if (displayBinaryimg && !apply3D)
 				ImageJFunctions.show(bitimg);
 			DistWatershed<FloatType> WaterafterDisttransform = new DistWatershed<FloatType>(this, CurrentView, bitimg,
-					jpb);
+					jpb, false);
 			WaterafterDisttransform.execute();
+			if(displayWatershedimg && !apply3D)
+				ImageJFunctions.show(WaterafterDisttransform.getResult());
+			
+			if(displayDistTransimg && !apply3D)
+				ImageJFunctions.show(WaterafterDisttransform.getDistanceTransformedimg());
+		
+			
 
 		}
 
@@ -808,7 +827,7 @@ public class InteractiveMethods {
 	final String minDivstring = "Minimum diversity b/w components of tree";
 	final String minSizestring = "Minimum size of MSER ellipses";
 	final String maxSizestring = "Maximum size of MSER ellipses";
-	final String waterstring = "Threshold for Watershedding";
+	public final String waterstring = "Threshold for Watershedding";
 	final String maxSearchstring = "Maximum search radius";
 	final String maxSearchstringS = "Maximum search radius";
 	final String initialSearchstring = "Initial search radius";
@@ -852,6 +871,8 @@ public class InteractiveMethods {
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
 	public JButton AllMser = new JButton("Apply and Show stack"); 
+	
+	public JButton Water3D = new JButton("Apply in 3D");
 
 	public CheckboxGroup detection = new CheckboxGroup();
 	final Checkbox Watershed = new Checkbox("Do watershedding", detection, showWatershed);
@@ -1113,7 +1134,8 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		WaterPanel.add(autothreshold, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
+		WaterPanel.add(Water3D, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		WaterPanel.setBorder(waterborder);
 
 		panelFirst.add(WaterPanel, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -1322,6 +1344,7 @@ public class InteractiveMethods {
 		MSER.addItemListener(new DoMSERListener(this));
 		autothreshold.addItemListener(new PREauto(this));
 
+		Water3D.addActionListener(new PREApplyWater3DListener(this));
 		lostframe.addTextListener(new PRELostFrameListener(this));
 		findminima.addItemListener(new FindMinimaListener(this));
 		findmaxima.addItemListener(new FindMaximaListener(this));

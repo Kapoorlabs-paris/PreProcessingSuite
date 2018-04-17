@@ -29,10 +29,11 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 
-public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, Void> {
+public class DistWatershed <T extends NativeType<T>> {
 
 	
 	final InteractiveMethods parent;
@@ -40,26 +41,27 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 	private final RandomAccessibleInterval<T> source;
 	private RandomAccessibleInterval<IntType> watershedimage;
 
-	RandomAccessibleInterval<UnsignedByteType> distimg;
+	RandomAccessibleInterval<FloatType> distimg;
 	private final RandomAccessibleInterval<BitType> bitimg;
+	public boolean apply3D = false;
 	
 	
-	public DistWatershed(final InteractiveMethods parent, final RandomAccessibleInterval<T> source, final RandomAccessibleInterval<BitType> bitimg, final JProgressBar jpb) {
+	public DistWatershed(final InteractiveMethods parent, final RandomAccessibleInterval<T> source, final RandomAccessibleInterval<BitType> bitimg, final JProgressBar jpb, boolean apply3D) {
 		
 	this.parent = parent;
 	this.source = source;
 	this.bitimg = bitimg;
 	this.jpb = jpb;
-		
+	this.apply3D = apply3D;	
 		
 	}
 	
-	@Override
-	protected Void doInBackground() throws Exception {
+	
+	public void execute()  {
 		// Perform the distance transform
 		final T type = source.randomAccess().get().createVariable();
-		final ImgFactory<UnsignedByteType> factory = Util.getArrayOrCellImgFactory(source, new UnsignedByteType());
-		distimg = factory.create(source, new UnsignedByteType());
+		final ImgFactory<FloatType> factory = Util.getArrayOrCellImgFactory(source, new FloatType());
+		distimg = factory.create(source, new FloatType());
 		
 		utility.ProgressBar.SetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
 		DistanceTransformImage(source, distimg);
@@ -74,15 +76,14 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 						new ArrayImgFactory<IntType>().create(source, new IntType()));
 
 				outputLabeling = GetlabeledImage(distimg, oldseedLabeling);
-				
 				watershedimage = outputLabeling.getStorageImg();
-		return null;
+		
 	}
 	public RandomAccessibleInterval<IntType> getResult() {
 		
 		return watershedimage;
 	}
-    public RandomAccessibleInterval<UnsignedByteType> getDistanceTransformedimg() {
+    public RandomAccessibleInterval<FloatType> getDistanceTransformedimg() {
 		
 		return distimg;
 	}
@@ -103,7 +104,7 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 	 */
 
 	private void DistanceTransformImage(RandomAccessibleInterval<T> inputimg,
-			RandomAccessibleInterval<UnsignedByteType> outimg) {
+			RandomAccessibleInterval<FloatType> outimg) {
 		int n = inputimg.numDimensions();
 
 		// make an empty list
@@ -125,7 +126,7 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 		final NearestNeighborSearchOnKDTree<BitType> search = new NearestNeighborSearchOnKDTree<BitType>(tree);
 
 		// randomaccess on the output
-		final RandomAccess<UnsignedByteType> ranac = outimg.randomAccess();
+		final RandomAccess<FloatType> ranac = outimg.randomAccess();
 
 		// reset cursor for the input (or make a new one)
 		cursor.reset();
@@ -204,7 +205,7 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 
 	}
 
-	public NativeImgLabeling<Integer, IntType> GetlabeledImage(RandomAccessibleInterval<UnsignedByteType> inputimg,
+	public NativeImgLabeling<Integer, IntType> GetlabeledImage(RandomAccessibleInterval<FloatType> inputimg,
 			NativeImgLabeling<Integer, IntType> seedLabeling) {
 
 		int n = inputimg.numDimensions();
@@ -215,7 +216,7 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 		final NativeImgLabeling<Integer, IntType> outputLabeling = new NativeImgLabeling<Integer, IntType>(
 				new ArrayImgFactory<IntType>().create(inputimg, new IntType()));
 
-		final Watershed<UnsignedByteType, Integer> watershed = new Watershed<UnsignedByteType, Integer>();
+		final Watershed<FloatType, Integer> watershed = new Watershed<FloatType, Integer>();
 
 		watershed.setSeeds(seedLabeling);
 		watershed.setIntensityImage(inputimg);
@@ -230,33 +231,7 @@ public class DistWatershed <T extends NativeType<T>> extends SwingWorker<Void, V
 		return outputLabeling;
 
 	}
-	@Override
-	protected void done() {
-		parent.intimg = getResult();
-		if(parent.intimg!=null) {
-		parent.Maxlabel = GetMaxlabelsseeded(parent.intimg);
-		if (parent.displayWatershedimg)
-			ImageJFunctions.show(parent.intimg);
-		
-		if (parent.displayDistTransimg)
-			ImageJFunctions.show(getDistanceTransformedimg() );
-		
-		
-		utility.ProgressBar.SetProgressBar(jpb, "Done");
-		}
-		else
-			IJ.error("Choose a different threshold, current value too high");
-
-		
-		try {
-			get();
-		} catch (InterruptedException e) {
-
-		} catch (ExecutionException e) {
-
-		
-		}
-	}
+	
 	
 
 }
