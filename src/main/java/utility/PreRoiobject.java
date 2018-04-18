@@ -9,6 +9,8 @@ import net.imglib2.AbstractEuclideanSpace;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealLocalizable;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import net.imglib2.util.ValuePair;
@@ -103,11 +105,11 @@ public class PreRoiobject extends AbstractEuclideanSpace implements RealLocaliza
 	{
 		features.put( feature, value );
 	}
-	public static Pair<Double, Integer> getIntensity(Roi roi, RandomAccessibleInterval<FloatType> source) {
+	public static < T extends RealType< T > & NativeType< T >> Pair<Double, Integer> getIntensity(Roi roi, RandomAccessibleInterval<T> source) {
 
 		double Intensity = 0;
         int NumberofPixels = 0;
-		Cursor<FloatType> currentcursor = Views.iterable(source).localizingCursor();
+		Cursor<T> currentcursor = Views.iterable(source).localizingCursor();
 
 		final double[] position = new double[source.numDimensions()];
 

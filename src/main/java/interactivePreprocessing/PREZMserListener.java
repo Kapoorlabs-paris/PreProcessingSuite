@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
 
+import mser3D.MserAll;
 import snakeSegmentation.SingleSnake;
 import snakeSegmentation.ZSnake;
 
@@ -36,7 +37,7 @@ public class PREZMserListener implements ActionListener {
 
 	
 
-		ZMser dosnake = new ZMser(parent);
+		MserAll dosnake = new MserAll(parent);
 		dosnake.execute();
 
 	}

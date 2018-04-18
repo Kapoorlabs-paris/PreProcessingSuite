@@ -38,9 +38,9 @@ public class ZMser extends SwingWorker<Void, Void> {
 	protected Void doInBackground() throws Exception {
 
 		ImagePlus Localimp = ImageJFunctions.show(parent.originalimg);
-		int count = 0;
-		int[] totalcount = new int[parent.thirdDimensionSize + 1];
-		int expectedMT = 61;
+	//	int count = 0;
+	//	int[] totalcount = new int[parent.thirdDimensionSize + 1];
+	//	int expectedMT = 61;
 		for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
 
 			parent.thirdDimension = z;
@@ -65,9 +65,9 @@ public class ZMser extends SwingWorker<Void, Void> {
 			parent.overlay.clear();
 			parent.Rois = utility.FinderUtils.getcurrentRois(parent.newtree);
 
-			count += (expectedMT - parent.Rois.size());
+		//	count += (expectedMT - parent.Rois.size());
 			
-			totalcount[z] = expectedMT - parent.Rois.size();
+		//	totalcount[z] = expectedMT - parent.Rois.size();
 			
 			parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 			ArrayList<double[]> centerRoi = utility.FinderUtils.getRoiMean(parent.newtree);
@@ -96,15 +96,15 @@ public class ZMser extends SwingWorker<Void, Void> {
 			Localimp.hide();
 		}
 		
-	 double meanfaliure = count /(parent.thirdDimensionSize );
-	 double stdev = 0;
-	 for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
+	 //double meanfaliure = count /(parent.thirdDimensionSize );
+	 //double stdev = 0;
+	 //for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
 		 
-		 stdev+= (totalcount[z] - meanfaliure) * (totalcount[z] - meanfaliure);
-	 }
+	 //	 stdev+= (totalcount[z] - meanfaliure) * (totalcount[z] - meanfaliure);
+	// }
 	 
 	 
-System.out.println("Count" + " " + count  + "STDEV: " + Math.sqrt(stdev/parent.thirdDimensionSize));
+    //System.out.println("Count" + " " + count  + "STDEV: " + Math.sqrt(stdev/parent.thirdDimensionSize));
 		return null;
 
 	}

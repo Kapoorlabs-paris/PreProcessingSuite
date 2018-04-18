@@ -870,9 +870,9 @@ public class InteractiveMethods {
 	final Checkbox advanced = new Checkbox("Display advanced Snake parameters");
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
-	public JButton AllMser = new JButton("Apply and Show stack"); 
+	public JButton AllMser = new JButton("MSER in 3D/4D"); 
 	
-	public JButton Water3D = new JButton("Apply in 3D");
+	public JButton Water3D = new JButton("Watershed in 3D/4D");
 
 	public CheckboxGroup detection = new CheckboxGroup();
 	final Checkbox Watershed = new Checkbox("Do watershedding", detection, showWatershed);
@@ -1195,7 +1195,7 @@ public class InteractiveMethods {
 
 		MserPanel.add(findmaximaMser, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		MserPanel.add(AllMser, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+		MserPanel.add(AllMser, new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		MserPanel.setPreferredSize(new Dimension(SizeX, SizeYbig));
 

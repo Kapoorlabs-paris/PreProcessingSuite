@@ -51,6 +51,7 @@ import net.imglib2.labeling.DefaultROIStrategyFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingROIStrategy;
 import net.imglib2.labeling.NativeImgLabeling;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -61,7 +62,7 @@ import net.imglib2.util.Util;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
-public class FinderUtils {
+public class FinderUtils< T extends RealType< T > & NativeType< T >> {
 
 	public static ArrayList<Roi> getcurrentRois(ArrayList<RefinedPeak<Point>> peaks, double sigma, double sigma2) {
 
@@ -834,22 +835,22 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 		return center;
 
 	}
-	public static ArrayList<Roi> getcurrentRois(MserTree<UnsignedByteType> newtree) {
+	public static < T extends RealType< T > & NativeType< T >> ArrayList<Roi> getcurrentRois(MserTree<T> newtree) {
 
 		ArrayList<double[]> meanandcovchildlist = new ArrayList<double[]>();
 		ArrayList<double[]> meanandcovlist = new ArrayList<double[]>();
 		ArrayList<double[]> redmeanandcovlist = new ArrayList<double[]>();
-		final HashSet<Mser<UnsignedByteType>> rootset = newtree.roots();
+		final HashSet<Mser<T>> rootset = newtree.roots();
 		
 		
-		final Iterator<Mser<UnsignedByteType>> rootsetiterator = rootset.iterator();
+		final Iterator<Mser<T>> rootsetiterator = rootset.iterator();
 		
 		
 		final ArrayList<double[]> AllmeanCovar = new ArrayList<double[]>();
 		
 		while (rootsetiterator.hasNext()) {
 
-			Mser<UnsignedByteType> rootmser = rootsetiterator.next();
+			Mser<T> rootmser = rootsetiterator.next();
 
 			if (rootmser.size() > 0) {
 
@@ -861,11 +862,11 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 		
 		// We do this so the ROI remains attached the the same label and is not changed if the program is run again
 	   
-	       final Iterator<Mser<UnsignedByteType>> treeiterator = newtree.iterator();
+	       final Iterator<Mser<T>> treeiterator = newtree.iterator();
 	       
 	       while (treeiterator.hasNext()) {
 
-				Mser<UnsignedByteType> mser = treeiterator.next();
+				Mser<T> mser = treeiterator.next();
 				//System.out.println(mser.getChildren().size());
 				if (mser.getChildren().size()  > 1) {
 
