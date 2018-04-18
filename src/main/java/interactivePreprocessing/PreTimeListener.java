@@ -35,20 +35,20 @@ public class PreTimeListener implements AdjustmentListener {
 		this.deltaScrollbar = deltaScrollbar;
 		//deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
 		if(!parent.snakeinprogress)
-			deltaScrollbar.addMouseListener(new PreStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
+			deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
 	
-			deltaScrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
-			deltaScrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+			deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+			deltaScrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 		
-		parent.fourthDimension = (int) Math.round(utility.Slicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
+		parent.fourthDimension = (int) Math.round(utility.CovistoSlicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
 
 
 		deltaScrollbar
-		.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.fourthDimension, min, max, scrollbarSize));
+		.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.fourthDimension, min, max, scrollbarSize));
 		
 		label.setText(string +  " = "  + parent.fourthDimension);
 

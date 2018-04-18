@@ -28,7 +28,7 @@ public class PreSigmaListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 		this.parent = parent;
 		this.sigmaScrollbar1 = sigmaScrollbar1;
-		sigmaScrollbar1.addMouseListener( new PreStandardMouseListener( parent, ValueChange.DOG ) );
+		sigmaScrollbar1.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.DOG ) );
 	}
 
 	@Override

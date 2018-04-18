@@ -81,7 +81,7 @@ import net.imglib2.view.Views;
 			final T type = source.randomAccess().get().createVariable();
 			final ImgFactory<UnsignedByteType> factory = Util.getArrayOrCellImgFactory(source, new UnsignedByteType());
 			distimg = factory.create(source, new UnsignedByteType());
-			utility.ProgressBar.SetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
 			parent.panelFirst.validate();
 			parent.panelFirst.repaint();
 			DistanceTransformImage(source, distimg);

@@ -39,7 +39,7 @@ public class ZSnake extends SwingWorker<Void, Void> {
 			
 			
 			
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize,
 					parent.fourthDimension, parent.fourthDimensionSize);
 			parent.updatePreview(ValueChange.THIRDDIMmouse);
 
@@ -74,7 +74,7 @@ public class ZSnake extends SwingWorker<Void, Void> {
 		parent.snakeinprogress = false;
 		
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

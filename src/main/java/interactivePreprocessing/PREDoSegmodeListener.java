@@ -3,8 +3,6 @@ package interactivePreprocessing;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import userTESTING.PreprocessingFileChooser;
-
 public class PREDoSegmodeListener implements ItemListener {
 	
 	public final PreprocessingFileChooser parent;

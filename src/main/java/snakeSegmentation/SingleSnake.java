@@ -52,7 +52,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 	protected void done() {
 		parent.snakeinprogress = false;
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

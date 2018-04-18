@@ -28,7 +28,7 @@ public class PREUnstability_ScoreListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
 		
-		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.MSER ) );
+		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
 		
 	}
 	

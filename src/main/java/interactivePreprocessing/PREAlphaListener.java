@@ -28,7 +28,7 @@ public class PREAlphaListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
 		
-		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.ALPHA ) );
+		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.ALPHA ) );
 		
 	}
 	

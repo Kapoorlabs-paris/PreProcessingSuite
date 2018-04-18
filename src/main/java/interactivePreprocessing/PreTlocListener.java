@@ -67,7 +67,7 @@ public class PreTlocListener implements TextListener {
 					
 					
 					 }
-			    	parent.timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
+			    	parent.timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
 					parent.timeslider.repaint();
 					parent.timeslider.validate();
 

@@ -5,9 +5,11 @@ import ij.gui.GenericDialog;
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 
-public class SnakeUtils {
+public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 
 	/*
 	 * Dialog advanced
@@ -16,15 +18,15 @@ public class SnakeUtils {
 	 */
 	final InteractiveMethods parent;
 	Roi processRoi = null;
-	final RandomAccessibleInterval<FloatType> CurrentView;
-	public SnakeUtils(final InteractiveMethods parent, final RandomAccessibleInterval<FloatType> CurrentView) {
+	final RandomAccessibleInterval<T> CurrentView;
+	public  SnakeUtils(final InteractiveMethods parent, final RandomAccessibleInterval<T> CurrentView) {
 		
 		this.parent = parent;
 		this.CurrentView = CurrentView;
 		
 	}
 	
-	public ABSnakeFast processSnake(Roi roi, int numRoi) {
+	public ABSnakeFast<T> processSnake(Roi roi, int numRoi) {
 
 		int i;
 
@@ -33,7 +35,7 @@ public class SnakeUtils {
 		processRoi = roi;
 
 		// initialisation of the snake
-		ABSnakeFast snake = new ABSnakeFast();
+		ABSnakeFast<T> snake = new ABSnakeFast<T>();
 		snake.Init(processRoi);
 
 		snake.setOriginalImage(CurrentView);

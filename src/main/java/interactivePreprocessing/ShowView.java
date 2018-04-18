@@ -22,12 +22,12 @@ public class ShowView {
 			parent.thirdDimension = parent.thirdDimensionSize;
 			
 			
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
 					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
 			
 		} else {
 
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
 					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
 			
 		}
@@ -44,12 +44,12 @@ public class ShowView {
 			parent.fourthDimension = parent.fourthDimensionSize;
 			
 			
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
 					(int)parent.thirdDimensionSize,(int) parent.fourthDimension, (int)parent.fourthDimensionSize);
 			
 		} else {
 
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
 					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
 			
 		}

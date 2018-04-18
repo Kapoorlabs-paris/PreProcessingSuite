@@ -22,7 +22,7 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import interactivePreprocessing.InteractiveMethods;
 
-public class Slicer  {
+public class CovistoSlicer  {
 	
 	public static  RandomAccessibleInterval<FloatType> getCurrentViewLarge(RandomAccessibleInterval<FloatType> originalimg, int thirdDimension) {
 		
@@ -48,7 +48,7 @@ public class Slicer  {
 	 *            - the Img to copy
 	 * @return - the copy of the Img
 	 */
-	public static Img<UnsignedByteType> copytoByteImage(final RandomAccessibleInterval<FloatType> input) {
+	public static Img<UnsignedByteType> PREcopytoByteImage(final RandomAccessibleInterval<FloatType> input) {
 		// create a new Image with the same properties
 		// note that the input provides the size for the new image as it
 		// implements

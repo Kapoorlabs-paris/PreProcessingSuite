@@ -4,10 +4,10 @@ import java.awt.Color;
 
 import javax.swing.JProgressBar;
 
-public class ProgressBar {
+public class CovsitoProgressBar {
 
 	
-	public static void SetProgressBar(JProgressBar jpb, double percent, String message) {
+	public static void CovistoSetProgressBar(JProgressBar jpb, double percent, String message) {
 
 		jpb.setValue((int) Math.round(percent));
 		jpb.setOpaque(true);
@@ -16,7 +16,7 @@ public class ProgressBar {
 
 	}
 	
-	public static void SetProgressBar(JProgressBar jpb, String message) {
+	public static void CovistoSetProgressBar(JProgressBar jpb, String message) {
 
 		
 		

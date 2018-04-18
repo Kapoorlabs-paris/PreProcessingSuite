@@ -38,7 +38,7 @@ public class TSnake extends SwingWorker<Void, Void> {
 			parent.fourthDimension = t;
 			System.out.println(t);
 			String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(t);
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, parent.thirdDimension,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, parent.thirdDimension,
 					parent.thirdDimensionSize, t, parent.fourthDimensionSize);
 			parent.updatePreview(ValueChange.FOURTHDIMmouse);
 
@@ -69,7 +69,7 @@ public class TSnake extends SwingWorker<Void, Void> {
 		parent.snakeinprogress = false;
 		
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

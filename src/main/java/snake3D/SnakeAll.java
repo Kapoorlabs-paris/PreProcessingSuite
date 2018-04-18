@@ -1,30 +1,26 @@
-package dog3D;
+package snake3D;
 
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import distanceTransform.DistWatershed;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mser3D.ComputeCompTree;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.logic.BitType;
-import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
-import preProcessing.GetLocalmaxminMT;
-import preProcessing.GlobalThresholding;
 
-public class DogAll extends SwingWorker<Void, Void> {
+public class SnakeAll extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
-	public DogAll(final InteractiveMethods parent) {
+	public SnakeAll(final InteractiveMethods parent) {
 
 		this.parent = parent;
 
@@ -89,10 +85,10 @@ public class DogAll extends SwingWorker<Void, Void> {
 		
 		
 	
-		ComputeDoG<UnsignedByteType> ComputeDOG = new ComputeDoG<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
-		ComputeDOG.execute();
+		ComputeSnakeSeg<UnsignedByteType> ComputeSnake = new ComputeSnakeSeg<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
+		ComputeSnake.execute();
 		
-		RandomAccessibleInterval<BitType> bitimg =  ComputeDOG.getBinaryimg();
+		RandomAccessibleInterval<BitType> bitimg =  ComputeSnake.getBinaryimg();
 		Cursor< BitType > bitcursor = Views.iterable(bitoutputslice).localizingCursor();
 		
 		RandomAccess<BitType> ranac = bitimg.randomAccess();

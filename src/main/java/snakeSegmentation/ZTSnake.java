@@ -44,7 +44,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 				parent.fourthDimension = t;
 				String uniqueID = Integer.toString(z) + Integer.toString(t);
 				
-				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				// Expand the image by 10 pixels
@@ -73,7 +73,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 		parent.snakeinprogress = false;
 		
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

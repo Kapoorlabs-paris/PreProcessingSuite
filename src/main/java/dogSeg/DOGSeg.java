@@ -31,8 +31,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		if(!parent.snakeinprogress)
-		utility.ProgressBar.SetProgressBar(jpb, "Doing Difference of Gaussian Detection, Please Wait...");
-
+			utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Doing Difference of Gaussian Detection, Please Wait...");
 		final DogDetection.ExtremaType type;
 		if (parent.lookForMaxima)
 			type = DogDetection.ExtremaType.MINIMA;
@@ -41,7 +40,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 		parent.sigma2 = utility.ScrollbarUtils.computeSigma2(parent.sigma, parent.sensitivity);
 		final DogDetection<FloatType> newdog = new DogDetection<FloatType>(Views.extendBorder(parent.CurrentView),
 				parent.interval, new double[] { 1, 1 }, parent.sigma, parent.sigma2, type, parent.threshold, true);
-
+		parent.overlay.clear();
 		parent.peaks = newdog.getSubpixelPeaks();
 
 		return null;
@@ -82,7 +81,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
 		if(!parent.snakeinprogress)
-		utility.ProgressBar.SetProgressBar(jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Done");
 		parent.updatePreview(ValueChange.SNAKE);
 		try {
 			get();

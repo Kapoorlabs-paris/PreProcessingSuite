@@ -49,13 +49,13 @@ public class MserAll extends SwingWorker<Void, Void> {
 				parent.thirdDimension = z;
 				parent.fourthDimension = t;
 				
-				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
 				// UnsignedByteType image created here
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				
-				RandomAccessibleInterval<BitType> currentbitimg = utility.Slicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
+				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
 			

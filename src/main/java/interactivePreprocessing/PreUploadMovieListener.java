@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
 
 import ij.io.Opener;
-import userTESTING.PreprocessingFileChooser;
 
 public class PreUploadMovieListener implements ActionListener {
 	

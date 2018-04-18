@@ -95,8 +95,7 @@ public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 
 		String uniqueID = Integer.toString(z) + Integer.toString(t);
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
-		CreateBinary(source, bitimg);
-
+		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
 	}
 
 
@@ -106,43 +105,6 @@ public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 		return bitimg;
 	}
 
-	/***
-	 * 
-	 * Do the distance transform of the input image using the bit image provided.
-	 * 
-	 * @param inputimg
-	 *            The pre-processed input image as RandomAccessibleInterval <T>
-	 * @param outimg
-	 *            The distance transormed image having the same dimensions as the
-	 *            input image.
-	 * @param invtype
-	 *            Straight: The intensity value is set to the distance, gives white
-	 *            on black background. Inverse: The intensity is set to the negative
-	 *            of the distance, gives black on white background.
-	 */
-
-	private void CreateBinary(RandomAccessibleInterval<T> inputimg, RandomAccessibleInterval<BitType> outimg) {
-
-		Cursor<T> incursor = Views.iterable(inputimg).localizingCursor();
-		RandomAccess<BitType> outran = outimg.randomAccess();
-
-		while (incursor.hasNext()) {
-
-			incursor.fwd();
-			outran.setPosition(incursor);
-
-			for (Roi currentroi : parent.Rois) {
-
-				if (currentroi.contains(incursor.getIntPosition(0), incursor.getIntPosition(1))) {
-
-					outran.get().setOne();
-
-				}
-
-			}
-
-		}
-	}
 
 
 

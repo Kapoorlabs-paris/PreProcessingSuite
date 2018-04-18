@@ -28,7 +28,7 @@ public class PreWaterListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 		this.parent = parent;
 		this.sigmaScrollbar1 = sigmaScrollbar1;
-		sigmaScrollbar1.addMouseListener( new PreStandardMouseListener( parent, ValueChange.WATER ) );
+		sigmaScrollbar1.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.WATER ) );
 	}
 
 	@Override

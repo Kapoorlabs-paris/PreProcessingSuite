@@ -17,12 +17,12 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
  * @author spreibi
  *
  */
-public class PreStandardMouseListener implements MouseListener
+public class CovistoStandardMouseListener implements MouseListener
 {
 	final InteractiveMethods parent;
 	final ValueChange change;
 
-	public PreStandardMouseListener( final InteractiveMethods parent, final ValueChange change)
+	public CovistoStandardMouseListener( final InteractiveMethods parent, final ValueChange change)
 	{
 		this.parent = parent;
 		this.change = change;

@@ -1,4 +1,4 @@
-package userTESTING;
+package interactivePreprocessing;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -23,11 +23,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import ij.ImagePlus;
-import interactivePreprocessing.InteractiveMethods;
-import interactivePreprocessing.PREDoSegmodeListener;
-import interactivePreprocessing.PREDoTrackmodeListener;
-import interactivePreprocessing.PreCurrentMovieListener;
-import interactivePreprocessing.PreUploadMovieListener;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
@@ -151,7 +146,7 @@ public class PreprocessingFileChooser extends JPanel {
 	    
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
-		new InteractiveMethods(image, chooserA.getSelectedFile()).run(null);
+		new InteractiveMethods(image, chooserA.getSelectedFile(), onlySeg, TrackandSeg).run(null);
 		close(parent);
 
 		
@@ -166,7 +161,7 @@ public class PreprocessingFileChooser extends JPanel {
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
 		
-		new InteractiveMethods(image).run(null);
+		new InteractiveMethods(image, onlySeg, TrackandSeg).run(null);
 		close(parent);
 		if(impA!=null)
         impA.close();

@@ -9,12 +9,14 @@ import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import utility.PreRoiobject;
 
 
-public class SnakeonView {
+public class SnakeonView <T extends RealType<T> & NativeType<T>> {
 
 	
 	final InteractiveMethods parent;
@@ -40,7 +42,7 @@ public class SnakeonView {
 		parent.timeslider.setEnabled(false);
 		parent.inputFieldT.setEnabled(false);
 		parent.inputFieldZ.setEnabled(false);
-		SnakeUtils snakes = new SnakeUtils(parent, CurrentView);
+		SnakeUtils<T> snakes = new SnakeUtils(parent, CurrentView);
 		snakes.AdvancedParameters();
 		
 		
@@ -52,12 +54,12 @@ public class SnakeonView {
 		
 		
 		nbRois = rois.size();
-		ABSnakeFast snake;
+		ABSnakeFast<T> snake;
 		for(PreRoiobject currentroi: rois) {
 			
 			percent++;
 			
-			utility.ProgressBar.SetProgressBar(parent.jpb, 100 * percent / nbRois,
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 * percent / nbRois,
 					"Computing snake segmentation for " +   " T = " + parent.fourthDimension  + "/" + parent.fourthDimensionSize
 							+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
 			

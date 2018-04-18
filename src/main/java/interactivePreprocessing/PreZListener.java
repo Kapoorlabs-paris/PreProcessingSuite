@@ -35,20 +35,20 @@ public class PreZListener implements AdjustmentListener {
 			
 		//	deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			if(!parent.snakeinprogress)
-				deltaScrollbar.addMouseListener(new PreStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
+				deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			
 				
-				deltaScrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
-				deltaScrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+				deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+				deltaScrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		}
 
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent e) {
 			
-			parent.thirdDimension = (int) Math.round(utility.Slicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
+			parent.thirdDimension = (int) Math.round(utility.CovistoSlicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
 			
 			deltaScrollbar
-			.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.thirdDimension, min, max, scrollbarSize));
+			.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.thirdDimension, min, max, scrollbarSize));
 
 
 

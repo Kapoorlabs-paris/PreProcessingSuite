@@ -10,6 +10,8 @@ import net.imglib2.RealRandomAccess;
 import net.imglib2.RealRandomAccessible;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.interpolation.randomaccess.NearestNeighborInterpolatorFactory;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
@@ -28,7 +30,7 @@ import org.scijava.vecmath.Point2d;
  * @modified Varun Kapoor Feb 2017
  */
 
-public class ABSnakeFast {
+public class ABSnakeFast  <T extends RealType<T> & NativeType<T>>{
 
 	
 	Point2d points[];
@@ -43,7 +45,7 @@ public class ABSnakeFast {
 	boolean closed;
 	SnakeConfig config;
 	ImageProcessor gradImage;
-	RandomAccessibleInterval<FloatType> originalImage;
+	RandomAccessibleInterval<T> originalImage;
 
 	double previousAlpha = 0;
 
@@ -146,7 +148,7 @@ public class ABSnakeFast {
 		return this.closed;
 	}
 
-	public void setOriginalImage(RandomAccessibleInterval<FloatType> originalImage) {
+	public void setOriginalImage(RandomAccessibleInterval<T> originalImage) {
 		this.originalImage = originalImage;
 	}
 
@@ -658,7 +660,7 @@ public class ABSnakeFast {
 	 * @param image
 	 *            Description of the Parameter
 	 */
-	public void computeGrad(RandomAccessibleInterval<FloatType> image) {
+	public void computeGrad(RandomAccessibleInterval<T> image) {
 		if (previousAlpha != config.getAlpha()) {
 			gradImage = grad2d_derivative(image, config.getAlpha());
 			previousAlpha = config.getAlpha();
@@ -722,11 +724,11 @@ public class ABSnakeFast {
 
 			// create an InterpolatorFactory RealRandomAccessible using nearst
 			// neighbor interpolation
-			NearestNeighborInterpolatorFactory<FloatType> factory1 = new NearestNeighborInterpolatorFactory<FloatType>();
-			RealRandomAccessible<FloatType> realoriginalImage = Views
+			NearestNeighborInterpolatorFactory<T> factory1 = new NearestNeighborInterpolatorFactory<T>();
+			RealRandomAccessible<T> realoriginalImage = Views
 					.interpolate(Views.extendMirrorSingle(originalImage), factory1);
 
-			RealRandomAccess<FloatType> ranac = realoriginalImage.realRandomAccess();
+			RealRandomAccess<T> ranac = realoriginalImage.realRandomAccess();
 
 			ranac.setPosition(new double[] { ix, iy });
 			image_line[index] = ranac.get().getRealDouble();
@@ -1469,7 +1471,7 @@ public class ABSnakeFast {
 	 *            Description of the Parameter
 	 * @return Description of the Return Value
 	 */
-	private ImageProcessor grad2d_derivative(RandomAccessibleInterval<FloatType> iDep, double alphaD) {
+	private ImageProcessor grad2d_derivative(RandomAccessibleInterval<T> iDep, double alphaD) {
 		// ImageProcessor iGrad = iDep.createProcessor(iDep.getWidth(),
 		// iDep.getHeight());
 
@@ -1548,11 +1550,11 @@ public class ABSnakeFast {
 		/*
 		 * x-smoothing
 		 */
-		RandomAccess<FloatType> ranac = iDep.randomAccess();
+		RandomAccess<T> ranac = iDep.randomAccess();
 		for (i = 0; i < height; i++) {
 			for (j = 0; j < width; j++) {
 				ranac.setPosition(new int[] { j, i });
-				a1[i * width + j] = ranac.get().get();
+				a1[i * width + j] = ranac.get().getRealFloat();
 			}
 		}
 
@@ -1630,7 +1632,7 @@ public class ABSnakeFast {
 		for (i = 0; i < height; ++i) {
 			for (j = 0; j < width; ++j) {
 				ranac.setPosition(new int[] { j, i });
-				a1[i * width + j] = (int) (ranac.get().get());
+				a1[i * width + j] = (int) (ranac.get().getRealFloat());
 			}
 		}
 

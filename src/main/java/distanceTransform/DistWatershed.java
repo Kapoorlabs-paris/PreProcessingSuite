@@ -63,7 +63,7 @@ public class DistWatershed <T extends NativeType<T>> {
 		final ImgFactory<FloatType> factory = Util.getArrayOrCellImgFactory(source, new FloatType());
 		distimg = factory.create(source, new FloatType());
 		
-		utility.ProgressBar.SetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
+		utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Doing Distance Transformed Watershedding, Please Wait...");
 		DistanceTransformImage(source, distimg);
 		
 		// Prepare seed image for watershedding

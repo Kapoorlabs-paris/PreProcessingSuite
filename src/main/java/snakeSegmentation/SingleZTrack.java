@@ -58,7 +58,7 @@ public class SingleZTrack extends SwingWorker<Void, Void> {
 	@Override
 	protected void done() {
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

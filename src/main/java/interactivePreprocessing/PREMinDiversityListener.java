@@ -28,9 +28,9 @@ public class PREMinDiversityListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
 		
-		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.MSER ) );
-		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
-		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
+		scrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 	
 	

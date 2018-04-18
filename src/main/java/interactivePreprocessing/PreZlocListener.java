@@ -69,7 +69,7 @@ public class PreZlocListener implements TextListener {
 					
 					
 				}
-				parent.zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(parent.thirdDimension, parent.thirdDimensionsliderInit, parent.thirdDimensionSize, parent.scrollbarSize));
+				parent.zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.thirdDimension, parent.thirdDimensionsliderInit, parent.thirdDimensionSize, parent.scrollbarSize));
 				parent.zslider.repaint();
 				parent.zslider.validate();
 

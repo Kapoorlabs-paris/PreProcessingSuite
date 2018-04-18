@@ -67,17 +67,17 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 				parent.thirdDimension = z;
 				parent.fourthDimension = t;
 				
-				parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				
-				RandomAccessibleInterval<BitType> currentbitimg = utility.Slicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
+				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
-				RandomAccessibleInterval<IntType> currentintimg = utility.Slicer.getCurrentView(intimg, z, parent.thirdDimensionSize, t,
+				RandomAccessibleInterval<IntType> currentintimg = utility.CovistoSlicer.getCurrentView(intimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
-				RandomAccessibleInterval<FloatType> currentnewimg = utility.Slicer.getCurrentView(newimg, z, parent.thirdDimensionSize, t,
+				RandomAccessibleInterval<FloatType> currentnewimg = utility.CovistoSlicer.getCurrentView(newimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
 			processSlice(parent.CurrentView, currentintimg, currentbitimg, currentnewimg);

@@ -65,7 +65,7 @@ public class SingleAllTrack extends SwingWorker<Void, Void> {
 		try {
 			ThreeDTimetrack dosnake = new ThreeDTimetrack(parent);
 			dosnake.execute();
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

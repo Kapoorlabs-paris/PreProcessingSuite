@@ -62,7 +62,7 @@ public class SnakeonZ {
 			
 			percent++;
 			
-			utility.ProgressBar.SetProgressBar(parent.jpb, 100 * percent / nbRois,
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 * percent / nbRois,
 					"Computing snake segmentation for " +   " T = " + parent.fourthDimension 
 							+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
 			

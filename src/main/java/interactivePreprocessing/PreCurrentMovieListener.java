@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import ij.IJ;
-import userTESTING.PreprocessingFileChooser;
 
 
 public class PreCurrentMovieListener implements ActionListener {

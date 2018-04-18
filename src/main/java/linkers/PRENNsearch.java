@@ -58,7 +58,7 @@ public class PRENNsearch implements BlobTracker {
 			while(it.hasNext()) {
 				
 
-				utility.ProgressBar.SetProgressBar(jpb, 100 * percent / (AccountedZ.size() - 1),
+				utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, 100 * percent / (AccountedZ.size() - 1),
 						"Computing Nearest Neighbours for " + " T = " + T 
 								+ " Z = " + Z);
 				int nextZ = it.next().getValue();

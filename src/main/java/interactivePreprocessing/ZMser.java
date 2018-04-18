@@ -45,13 +45,13 @@ public class ZMser extends SwingWorker<Void, Void> {
 
 			parent.thirdDimension = z;
 
-			parent.CurrentView = utility.Slicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize,
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize,
 					parent.fourthDimension, parent.fourthDimensionSize);
 			parent.updatePreview(ValueChange.THIRDDIM);
 
 			parent.prestack.addSlice(Localimp.getImageStack().getProcessor(z).convertToRGB());
 			parent.cp = (ColorProcessor) (parent.prestack.getProcessor(z).duplicate());
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Computing Component Tree for MSER, Please Wait...");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Computing Component Tree for MSER, Please Wait...");
 
 			if (parent.darktobright)
 
@@ -115,7 +115,7 @@ public class ZMser extends SwingWorker<Void, Void> {
 		new ImagePlus("Sim", parent.prestack).show();
 
 		try {
-			utility.ProgressBar.SetProgressBar(parent.jpb, "Done");
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();
 		} catch (ExecutionException | InterruptedException e) {
 			e.printStackTrace();

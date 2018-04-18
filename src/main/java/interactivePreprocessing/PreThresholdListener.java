@@ -28,9 +28,9 @@ public class PreThresholdListener implements AdjustmentListener {
 		this.max = max;
 		this.scrollbar = scrollbar;
 		this.scrollbarSize = scrollbarSize;
-		scrollbar.addMouseListener( new PreStandardMouseListener( parent, ValueChange.DOG ) );
-		scrollbar.setBlockIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
-		scrollbar.setUnitIncrement(utility.Slicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.DOG ) );
+		scrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
+		scrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		
 	}
 

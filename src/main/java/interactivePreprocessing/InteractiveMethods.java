@@ -79,7 +79,6 @@ import net.imglib2.view.Views;
 import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
 import preProcessing.Kernels;
-import userTESTING.PreprocessingFileChooser;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
 import visualization.CovistoModelView;
@@ -249,6 +248,7 @@ public class InteractiveMethods {
 	public double Inv_alpha_min = 0.2;
 	public double Inv_alpha_max = 10.0;
 	public ImageStack prestack;
+	public boolean SegMode;
 	 
 	public ColorProcessor cp = null;
 	public double Mul_factor = 0.99;
@@ -367,18 +367,22 @@ public class InteractiveMethods {
 
 	}
 
-	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg) {
+	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg, final boolean SegMode, final boolean TrackandSeg) {
 
 		this.originalimg = originalimg;
+		this.SegMode = SegMode;
+		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
 		this.ndims = originalimg.numDimensions();
 	}
 
-	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg, File file) {
+	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg, File file, final boolean SegMode, final boolean TrackandSeg) {
 
 		this.originalimg = originalimg;
 		this.inputfile = file;
+		this.SegMode = SegMode;
+		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
 		this.ndims = originalimg.numDimensions();
@@ -497,7 +501,7 @@ public class InteractiveMethods {
 
 		setTime(fourthDimension);
 		setZ(thirdDimension);
-		CurrentView = utility.Slicer.getCurrentView(originalimg, fourthDimension, thirdDimensionSize, thirdDimension,
+		CurrentView = utility.CovistoSlicer.getCurrentView(originalimg, fourthDimension, thirdDimensionSize, thirdDimension,
 				fourthDimensionSize);
 
 		imp = ImageJFunctions.show(CurrentView);
@@ -600,13 +604,13 @@ public class InteractiveMethods {
 			imp.updateAndDraw();
 			zText.setText("Current Z = " + localthirddim);
 			zgenText.setText("Current Z / T = " + localthirddim);
-			zslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(localthirddim, thirdDimensionsliderInit,
+			zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim, thirdDimensionsliderInit,
 					thirdDimensionSize, scrollbarSize));
 			zslider.repaint();
 			zslider.validate();
 
 			timeText.setText("Current T = " + localfourthdim);
-			timeslider.setValue(utility.Slicer.computeScrollbarPositionFromValue(localfourthdim,
+			timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localfourthdim,
 					fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
 			timeslider.repaint();
 			timeslider.validate();
@@ -675,7 +679,7 @@ public class InteractiveMethods {
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
-			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
 			
 		}
@@ -701,7 +705,7 @@ public class InteractiveMethods {
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
-			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
 			if (showMSER) {
 
@@ -738,7 +742,7 @@ public class InteractiveMethods {
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
-			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
 			MSERSeg computeMSER = new MSERSeg(this, jpb);
 			computeMSER.execute();
@@ -750,7 +754,7 @@ public class InteractiveMethods {
 			if (overlay != null)
 				overlay.clear();
 
-			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 			bitimg = new ArrayImgFactory<BitType>().create(newimg, new BitType());
 			bitimgFloat = new ArrayImgFactory<FloatType>().create(newimg, new FloatType());
 			GetLocalmaxminMT.ThresholdingMTBit(CurrentView, bitimg, thresholdWater);
@@ -790,7 +794,7 @@ public class InteractiveMethods {
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
 
-			newimg = utility.Slicer.copytoByteImage(CurrentView);
+			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
 			DOGSeg computeDOG = new DOGSeg(this, jpb);
 			computeDOG.execute();
@@ -873,7 +877,7 @@ public class InteractiveMethods {
 	public JButton AllMser = new JButton("MSER in 3D/4D"); 
 	public JButton AllDog = new JButton("DOG in 3D/4D"); 
 	public JButton Water3D = new JButton("Watershed in 3D/4D");
-
+	public JButton AllSnake = new JButton("Snake in 3D/4D"); 
 	public CheckboxGroup detection = new CheckboxGroup();
 	final Checkbox Watershed = new Checkbox("Do watershedding", detection, showWatershed);
 	final Checkbox DOG = new Checkbox("Do DoG detection", detection, showDOG);
@@ -1275,9 +1279,10 @@ public class InteractiveMethods {
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
 		if (originalimg.numDimensions() > 2)
-			SnakePanel.add(Zsnakes, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
+			SnakePanel.add(AllSnake, new GridBagConstraints(5, 2, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
+		/*
 		if (originalimg.numDimensions() > 3) {
 			SnakePanel.add(Tsnakes, new GridBagConstraints(5, 3, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
@@ -1286,12 +1291,16 @@ public class InteractiveMethods {
 					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		}
 
+        */
 		SnakePanel.add(advanced, new GridBagConstraints(5, 5, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		
+		
 		SnakePanel.setBorder(snakeborder);
 		panelSecond.add(SnakePanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
+		if(!SegMode) {
 		NearestNPanel.add(maxSearchText, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		NearestNPanel.add(maxSearchS, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
@@ -1334,7 +1343,7 @@ public class InteractiveMethods {
 		KalmanPanel.setBorder(Kalmanborder);
 		panelThird.add(KalmanPanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-
+		}
 		sigmaslider.addAdjustmentListener(
 				new PreSigmaListener(this, sigmaText, sigmastring, sigmaMin, sigmaMax, scrollbarSize, sigmaslider));
 
@@ -1365,6 +1374,7 @@ public class InteractiveMethods {
 		Allsnakes.addActionListener(new PREZTSnakeListener(this));
 		AllDog.addActionListener(new PREApplyDog3DListener(this));
 		AllMser.addActionListener(new PREZMserListener(this));
+		AllSnake.addActionListener(new PREApplySnake3DListener(this));
 		advanced.addItemListener(new AdvancedSnakeListener(this));
 		Snakeiter.addTextListener(new IterationListener(this));
 		gradientthresh.addTextListener(new GradientListener(this));
@@ -1416,9 +1426,10 @@ public class InteractiveMethods {
 
 		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
+		if(!SegMode) {
 		panelSecond.add(controlnextthird, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
-		
+		}
 		panelSecond.setPreferredSize(SnakePanel.getPreferredSize());
 		controlnextthird.setEnabled(false);
 		panelFirst.add(controlnext, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
