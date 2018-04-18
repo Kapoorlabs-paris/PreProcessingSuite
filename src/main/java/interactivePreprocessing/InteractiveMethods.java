@@ -871,7 +871,7 @@ public class InteractiveMethods {
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
 	public JButton AllMser = new JButton("MSER in 3D/4D"); 
-	
+	public JButton AllDog = new JButton("DOG in 3D/4D"); 
 	public JButton Water3D = new JButton("Watershed in 3D/4D");
 
 	public CheckboxGroup detection = new CheckboxGroup();
@@ -1157,6 +1157,8 @@ public class InteractiveMethods {
 
 		DogPanel.add(findmaxima, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		DogPanel.add(AllDog, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		DogPanel.setBorder(dogborder);
 
 		panelFirst.add(DogPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -1361,6 +1363,7 @@ public class InteractiveMethods {
 		Zsnakes.addActionListener(new PREZSnakeListener(this));
 		Tsnakes.addActionListener(new PRETSnakeListener(this));
 		Allsnakes.addActionListener(new PREZTSnakeListener(this));
+		AllDog.addActionListener(new PREApplyDog3DListener(this));
 		AllMser.addActionListener(new PREZMserListener(this));
 		advanced.addItemListener(new AdvancedSnakeListener(this));
 		Snakeiter.addTextListener(new IterationListener(this));

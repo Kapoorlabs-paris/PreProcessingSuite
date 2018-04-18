@@ -1,4 +1,4 @@
-package mser3D;
+package dog3D;
 
 import java.util.concurrent.ExecutionException;
 
@@ -20,11 +20,11 @@ import net.imglib2.view.Views;
 import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
 
-public class MserAll extends SwingWorker<Void, Void> {
+public class DogAll extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
-	public MserAll(final InteractiveMethods parent) {
+	public DogAll(final InteractiveMethods parent) {
 
 		this.parent = parent;
 
@@ -89,10 +89,10 @@ public class MserAll extends SwingWorker<Void, Void> {
 		
 		
 	
-		ComputeCompTree<UnsignedByteType> ComputeMSER = new ComputeCompTree<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
-		ComputeMSER.execute();
+		ComputeDoG<UnsignedByteType> ComputeDOG = new ComputeDoG<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
+		ComputeDOG.execute();
 		
-		RandomAccessibleInterval<BitType> bitimg =  ComputeMSER.getBinaryimg();
+		RandomAccessibleInterval<BitType> bitimg =  ComputeDOG.getBinaryimg();
 		Cursor< BitType > bitcursor = Views.iterable(bitoutputslice).localizingCursor();
 		
 		RandomAccess<BitType> ranac = bitimg.randomAccess();
