@@ -50,7 +50,7 @@ public class ComputeSnakeSeg <T extends RealType<T> & NativeType<T>> {
 
 	public void execute() {
 
-
+		
 		ArrayList<PreRoiobject> rois = parent.ZTRois.get(uniqueID);
 
 		int nbRois = rois.size();

@@ -1,5 +1,6 @@
 package snake3D;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -15,6 +16,7 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.Views;
+import utility.PreRoiobject;
 
 public class SnakeAll extends SwingWorker<Void, Void> {
 
@@ -50,7 +52,7 @@ public class SnakeAll extends SwingWorker<Void, Void> {
 				
 				// UnsignedByteType image created here
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
-				
+				parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
 						parent.fourthDimensionSize);
 				
