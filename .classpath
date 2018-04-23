@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/jocl-2.3.2-natives-macosx-universal.jar"/>
 	<classpathentry kind="lib" path="/Applications/Fiji.app/jars/macosx/jogl-all-2.3.2-natives-macosx-universal.jar"/>
 	<classpathentry kind="src" path="/scifio"/>
+	<classpathentry kind="src" path="/MasterPanels"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
