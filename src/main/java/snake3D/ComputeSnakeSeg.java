@@ -1,6 +1,10 @@
 package snake3D;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JProgressBar;
 
@@ -46,12 +50,10 @@ public class ComputeSnakeSeg <T extends RealType<T> & NativeType<T>> {
 
 	public void execute() {
 
-		parent.snakeinprogress = true;
 
 		ArrayList<PreRoiobject> rois = parent.ZTRois.get(uniqueID);
 
 		int nbRois = rois.size();
-		ABSnakeFast<T> snake;
 		
 		
 		boolean dialog;
@@ -60,33 +62,25 @@ public class ComputeSnakeSeg <T extends RealType<T> & NativeType<T>> {
 		parent.timeslider.setEnabled(false);
 		parent.inputFieldT.setEnabled(false);
 		parent.inputFieldZ.setEnabled(false);
-		SnakeUtils<T> snakes = new SnakeUtils(parent, source);
+		SnakeUtils<T> snakes = new SnakeUtils<T>(parent, source);
 		snakes.AdvancedParameters();
 		int percent = 0;
+		int nThreads = Runtime.getRuntime().availableProcessors();
+		// set up executor service
+		final ExecutorService taskExecutor = Executors.newFixedThreadPool(nThreads);
+		List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+		
          for(PreRoiobject currentroi: rois) {
-			
 			percent++;
-			
-			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 * percent / nbRois,
-					"Computing snake segmentation for " +   " T = " + parent.fourthDimension  + "/" + parent.fourthDimensionSize
-							+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
-			
-			
-			
-			snake = snakes.processSnake(currentroi.rois, percent);
-			
-			Roi Roiresult = snake.createRoi();
-			double[] geocenter = Roiresult.getContourCentroid();
-			final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi.rois, source);
-			final double intensity = Intensityandpixels.getA();
-			final double numberofpixels = Intensityandpixels.getB();
-			final double averageintensity = intensity / numberofpixels;
-			
-			PreRoiobject currentobject = new PreRoiobject(Roiresult, new double [] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
-			parent.CurrentPreRoiobject.add(currentobject);
+		tasks.add(Executors.callable(new ParallelSnake<T>(parent, source, snakes, currentroi, percent, nbRois)));
 
 		}
-		
+         try {
+			taskExecutor.invokeAll(tasks);
+		} catch (InterruptedException e) {
+
+			
+		}
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
 		
 		// Get displaced Rois
