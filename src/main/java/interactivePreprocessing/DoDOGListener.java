@@ -5,7 +5,9 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 public class DoDOGListener implements ItemListener {
 	
@@ -35,16 +37,16 @@ public class DoDOGListener implements ItemListener {
 			
 			parent.sigmaslider.setVisible(true);
 			parent.thresholdslider.setVisible(true);
-			parent.findmaxima.setVisible(true);
-			parent.findminima.setVisible(true);
+			CovistoDogPanel.findmaxima.setVisible(true);
+			CovistoDogPanel.findminima.setVisible(true);
 			
-			parent.deltaS.setVisible(false);
-			parent.Unstability_ScoreS.setVisible(false);
-			parent.minDiversityS.setVisible(false);
-			parent.minSizeS.setVisible(false);
-			parent.maxSizeS.setVisible(false);
-			parent.findminimaMser.setVisible(false);
-			parent.findmaximaMser.setVisible(false);
+			CovistoMserPanel.deltaS.setVisible(false);
+			CovistoMserPanel.Unstability_ScoreS.setVisible(false);
+			CovistoMserPanel.minDiversityS.setVisible(false);
+			CovistoMserPanel.minSizeS.setVisible(false);
+			CovistoMserPanel.maxSizeS.setVisible(false);
+			CovistoMserPanel.findminimaMser.setVisible(false);
+			CovistoMserPanel.findmaximaMser.setVisible(false);
 			
 			parent.displayWater.setVisible(false);
 			parent.displayBinary.setVisible(false);

@@ -46,6 +46,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 import costMatrix.CostFunction;
 import distanceTransform.CreateWatershed;
 import distanceTransform.DistWatershed;
+import dogGUI.CovistoDogPanel;
 import dogSeg.DOGSeg;
 import ij.IJ;
 import ij.ImageJ;
@@ -101,7 +102,6 @@ public class InteractiveMethods {
 	public int fourthDimensionslider = 1;
 	public int fourthDimensionsliderInit = 1;
 	public int Maxlabel;
-	public int sigmasliderInit = 0;
 	public int thresholdsliderInit = 125;
 	public int thresholdsliderWaterInit = 125;
 
@@ -818,8 +818,8 @@ public class InteractiveMethods {
 	public JPanel panelThird = new JPanel();
 	public JPanel Timeselect = new JPanel();
 	public JPanel Zselect = new JPanel();
-	public JPanel DogPanel = new JPanel();
 	public JPanel MserPanel = new JPanel();
+	public JPanel DogPanel = new JPanel();
 	public JPanel WaterPanel = new JPanel();
 	public JPanel SnakePanel = new JPanel();
 	public JPanel RoiPanel = new JPanel();
@@ -832,8 +832,7 @@ public class InteractiveMethods {
 	final String zstring = "Current Z";
 	final String zgenstring = "Current Z / T";
 
-	final String sigmastring = "Approximate object size";
-	final String thresholdstring = "Threshold peak intensity";
+	
 
 	
 	public final String waterstring = "Threshold for Watershedding";
@@ -855,13 +854,8 @@ public class InteractiveMethods {
 	Label alphaText = new Label(alphastring + " = " + alphaInit, Label.CENTER);
 	Label betaText = new Label(betastring + " = " + betaInit, Label.CENTER);
 
-	public CheckboxGroup minormax = new CheckboxGroup();
-	final Checkbox findminima = new Checkbox("Locate Minima", minormax, lookForMinima);
-	final Checkbox findmaxima = new Checkbox("Locate Maxima", minormax, lookForMaxima);
 
-	public CheckboxGroup minormaxMser = new CheckboxGroup();
-	final Checkbox findminimaMser = CovistoMserPanel.findminimaMser;
-	final Checkbox findmaximaMser = CovistoMserPanel.findmaximaMser;
+
 
 	final Checkbox displayWater = new Checkbox("Display Watershed image", true);
 
@@ -874,7 +868,7 @@ public class InteractiveMethods {
 	final Checkbox advanced = new Checkbox("Display advanced Snake parameters");
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
-	public JButton AllDog = new JButton("DOG in 3D/4D"); 
+
 	public JButton Water3D = new JButton("Watershed in 3D/4D");
 	public JButton AllSnake = new JButton("Snake in 3D/4D"); 
 	public CheckboxGroup detection = new CheckboxGroup();
@@ -891,17 +885,12 @@ public class InteractiveMethods {
 	public JScrollBar zslider = new JScrollBar(Scrollbar.HORIZONTAL, thirdDimensionsliderInit, 10, 0,
 			10 + scrollbarSize);
 
-	public JScrollBar sigmaslider = new JScrollBar(Scrollbar.HORIZONTAL, sigmaInit, 10, 0, scrollbarSize + 10);
-	public JScrollBar thresholdslider = new JScrollBar(Scrollbar.HORIZONTAL, thresholdInit, 10, 0, 10 + scrollbarSize);
+	public JScrollBar sigmaslider = CovistoDogPanel.sigmaslider;
+	public JScrollBar thresholdslider = CovistoDogPanel.thresholdslider;
 	public JScrollBar thresholdWaterslider = new JScrollBar(Scrollbar.HORIZONTAL, thresholdsliderWaterInit, 10, 0,
 			10 + scrollbarSize);
 
-	final JScrollBar deltaS = CovistoMserPanel.deltaS;
-	final JScrollBar Unstability_ScoreS = CovistoMserPanel.Unstability_ScoreS;
-	final JScrollBar minDiversityS = CovistoMserPanel.minDiversityS;
-
-	final JScrollBar minSizeS = CovistoMserPanel.minSizeS;
-	final JScrollBar maxSizeS = CovistoMserPanel.maxSizeS;
+	
 	final JScrollBar maxSearchS = new JScrollBar(Scrollbar.HORIZONTAL, maxSearchInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar maxSearchSS = new JScrollBar(Scrollbar.HORIZONTAL, maxSearchInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar initialSearchS = new JScrollBar(Scrollbar.HORIZONTAL, initialSearchradiusInit, 10, 0,
@@ -909,8 +898,8 @@ public class InteractiveMethods {
 	final JScrollBar alphaS = new JScrollBar(Scrollbar.HORIZONTAL, alphaInit, 10, 0, 10 + scrollbarSize);
 	final JScrollBar betaS = new JScrollBar(Scrollbar.HORIZONTAL, betaInit, 10, 0, 10 + scrollbarSize);
 
-	public Label sigmaText = new Label("Approximate object size = " + sigmaInit, Label.CENTER);
-	public Label thresholdText = new Label("Approximate peak intensity " + thresholdInit, Label.CENTER);
+	public Label sigmaText = CovistoDogPanel.sigmaText;
+	public Label thresholdText = CovistoDogPanel.thresholdText;
 	public Label watertext = new Label(waterstring + " = " + thresholdInitWater, Label.CENTER);
 
 	public TextField inputField = new TextField();
@@ -954,21 +943,12 @@ public class InteractiveMethods {
 	
 
 
-		sigmaslider.setValue(
-				utility.ScrollbarUtils.computeScrollbarPositionFromValue(sigmaInit, sigmaMin, sigmaMax, scrollbarSize));
+	
 
 		thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(thresholdsliderWaterInit,
 				thresholdMinWater, thresholdMaxWater, scrollbarSize));
 
-		thresholdslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(thresholdsliderInit,
-				thresholdMin, thresholdMax, scrollbarSize));
-
-		sigma = utility.ScrollbarUtils.computeValueFromScrollbarPosition(sigmaslider.getValue(), sigmaMin, sigmaMax,
-				scrollbarSize);
-
-		threshold = utility.ScrollbarUtils.computeValueFromScrollbarPosition(thresholdslider.getValue(), thresholdMin,
-				thresholdMax, scrollbarSize);
-
+	
 		thresholdWater = utility.ScrollbarUtils.computeValueFromScrollbarPosition(thresholdWaterslider.getValue(),
 				thresholdMinWater, thresholdMaxWater, scrollbarSize);
 		maxSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(maxSearchS.getValue(),
@@ -980,8 +960,8 @@ public class InteractiveMethods {
 		beta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(betaS.getValue(), betaMin, betaMax,
 				scrollbarSize);
 
-		sigmaText = new Label("Approximate object size = " + sigma, Label.CENTER);
-		thresholdText = new Label("Approximate peak intensity " + threshold, Label.CENTER);
+		
+		
 		watertext = new Label(waterstring + " = " + thresholdWater, Label.CENTER);
 		maxSearchText = new Label(maxSearchstring + " = " + maxSearchradius, Label.CENTER);
 		iniSearchText = new Label(initialSearchstring + " = " + initialSearchradius, Label.CENTER);
@@ -1006,7 +986,7 @@ public class InteractiveMethods {
 		Timeselect.setLayout(layout);
 
 		Zselect.setLayout(layout);
-		DogPanel.setLayout(layout);
+		
 		DetectionPanel.setLayout(layout);
 		SnakePanel.setLayout(layout);
 		WaterPanel.setLayout(layout);
@@ -1027,8 +1007,7 @@ public class InteractiveMethods {
 
 		Border timeborder = new CompoundBorder(new TitledBorder("Select time"), new EmptyBorder(c.insets));
 		Border zborder = new CompoundBorder(new TitledBorder("Select Z"), new EmptyBorder(c.insets));
-		Border dogborder = new CompoundBorder(new TitledBorder("Difference of Gaussian detection"),
-				new EmptyBorder(c.insets));
+		
 		Border waterborder = new CompoundBorder(new TitledBorder("Watershed detection"), new EmptyBorder(c.insets));
 		Border snakeborder = new CompoundBorder(new TitledBorder("Active Contour refinement"),
 				new EmptyBorder(c.insets));
@@ -1117,26 +1096,8 @@ public class InteractiveMethods {
 		panelFirst.add(WaterPanel, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, insets, 0, 0));
 
-		DogPanel.add(sigmaText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
-		DogPanel.add(sigmaslider, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		DogPanel.add(thresholdText, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		DogPanel.add(thresholdslider, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		DogPanel.add(findminima, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		DogPanel.add(findmaxima, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		DogPanel.add(AllDog, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		DogPanel.setBorder(dogborder);
-
+		DogPanel = CovistoDogPanel.DogPanel();
 		panelFirst.add(DogPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
@@ -1279,11 +1240,9 @@ public class InteractiveMethods {
 		panelThird.add(KalmanPanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		}
-		sigmaslider.addAdjustmentListener(
-				new PreSigmaListener(this, sigmaText, sigmastring, sigmaMin, sigmaMax, scrollbarSize, sigmaslider));
+	
 
-		thresholdWaterslider.addAdjustmentListener(new PreWaterListener(this, watertext, waterstring, thresholdMinWater,
-				thresholdMaxWater, scrollbarSize, thresholdWaterslider));
+		
 
 		Watershed.addItemListener(new DoWatershedListener(this));
 		DOG.addItemListener(new DoDOGListener(this));
@@ -1292,8 +1251,8 @@ public class InteractiveMethods {
 
 		Water3D.addActionListener(new PREApplyWater3DListener(this));
 		lostframe.addTextListener(new PRELostFrameListener(this));
-		findminima.addItemListener(new FindMinimaListener(this));
-		findmaxima.addItemListener(new FindMaximaListener(this));
+		CovistoDogPanel.findminima.addItemListener(new FindMinimaListener(this));
+		CovistoDogPanel.findmaxima.addItemListener(new FindMaximaListener(this));
 		CovistoMserPanel.findminimaMser.addItemListener(new FindMinimaMserListener(this));
 		CovistoMserPanel.findmaximaMser.addItemListener(new FindMaximaMserListener(this));
 
@@ -1304,40 +1263,44 @@ public class InteractiveMethods {
 		AllthreeD.addActionListener(new PREAllZTrackListener(this));
 		Timetrack.addActionListener(new PRE3DTListener(this));
 		Singlesnake.addActionListener(new PRESinglesnakeListener(this));
-		Zsnakes.addActionListener(new PREZSnakeListener(this));
+ 		Zsnakes.addActionListener(new PREZSnakeListener(this));
 		Tsnakes.addActionListener(new PRETSnakeListener(this));
 		Allsnakes.addActionListener(new PREZTSnakeListener(this));
-		AllDog.addActionListener(new PREApplyDog3DListener(this));
+		CovistoDogPanel.AllDog.addActionListener(new PREApplyDog3DListener(this));
 		CovistoMserPanel.AllMser.addActionListener(new PREZMserListener(this));
 		AllSnake.addActionListener(new PREApplySnake3DListener(this));
 		advanced.addItemListener(new AdvancedSnakeListener(this));
 		Snakeiter.addTextListener(new IterationListener(this));
 		gradientthresh.addTextListener(new GradientListener(this));
 		maxdist.addTextListener(new MaxdistListener(this));
-
+		
+		thresholdWaterslider.addAdjustmentListener(new PreWaterListener(this, watertext, waterstring, thresholdMinWater,
+				thresholdMaxWater, scrollbarSize, thresholdWaterslider));
+		CovistoDogPanel.sigmaslider.addAdjustmentListener(
+				new PreSigmaListener(this, CovistoDogPanel.sigmaText, CovistoDogPanel.sigmastring, CovistoDogPanel.sigmaMin, CovistoDogPanel.sigmaMax, CovistoDogPanel.scrollbarSize, CovistoDogPanel.sigmaslider));
 		alphaS.addAdjustmentListener(
 				new PREAlphaListener(this, alphaText, alphastring, alphaMin, alphaMax, scrollbarSize, alphaS));
 		betaS.addAdjustmentListener(
 				new PREBetaListener(this, betaText, betastring, betaMin, betaMax, scrollbarSize, betaS));
 
 		CovistoMserPanel.deltaS.addAdjustmentListener(
-				new PREDeltaListener(this, CovistoMserPanel.deltaText, CovistoMserPanel.deltastring, deltaMin, deltaMax, scrollbarSize, CovistoMserPanel.deltaS));
+				new PREDeltaListener(this, CovistoMserPanel.deltaText, CovistoMserPanel.deltastring, CovistoMserPanel.deltaMin, CovistoMserPanel.deltaMax, CovistoMserPanel.scrollbarSize, CovistoMserPanel.deltaS));
 
 		CovistoMserPanel.Unstability_ScoreS.addAdjustmentListener(
 				new PREUnstability_ScoreListener(this, CovistoMserPanel.Unstability_ScoreText, CovistoMserPanel.Unstability_Scorestring,
-						Unstability_ScoreMin, Unstability_ScoreMax, scrollbarSize, CovistoMserPanel.Unstability_ScoreS));
+						CovistoMserPanel.Unstability_ScoreMin, CovistoMserPanel.Unstability_ScoreMax, CovistoMserPanel.scrollbarSize, CovistoMserPanel.Unstability_ScoreS));
 
-		CovistoMserPanel.minDiversityS.addAdjustmentListener(new PREMinDiversityListener(this, CovistoMserPanel.minDivText, CovistoMserPanel.minDivstring, minDiversityMin,
-				minDiversityMax, scrollbarSize, CovistoMserPanel.minDiversityS));
+		CovistoMserPanel.minDiversityS.addAdjustmentListener(new PREMinDiversityListener(this, CovistoMserPanel.minDivText, CovistoMserPanel.minDivstring, CovistoMserPanel.minDiversityMin,
+				CovistoMserPanel.minDiversityMax, CovistoMserPanel.scrollbarSize, CovistoMserPanel.minDiversityS));
 
-		CovistoMserPanel.minSizeS.addAdjustmentListener(new PREMinSizeListener(this, CovistoMserPanel.minSizeText, CovistoMserPanel.minSizestring, minSizemin, minSizemax,
-				scrollbarSize, CovistoMserPanel.minSizeS));
+		CovistoMserPanel.minSizeS.addAdjustmentListener(new PREMinSizeListener(this, CovistoMserPanel.minSizeText, CovistoMserPanel.minSizestring, CovistoMserPanel.minSizemin, CovistoMserPanel.minSizemax,
+				CovistoMserPanel.scrollbarSize, CovistoMserPanel.minSizeS));
 
-		CovistoMserPanel.maxSizeS.addAdjustmentListener(new PREMaxSizeListener(this, CovistoMserPanel.maxSizeText, CovistoMserPanel.maxSizestring, maxSizemin, maxSizemax,
-				scrollbarSize, CovistoMserPanel.maxSizeS));
+		CovistoMserPanel.maxSizeS.addAdjustmentListener(new PREMaxSizeListener(this, CovistoMserPanel.maxSizeText, CovistoMserPanel.maxSizestring, CovistoMserPanel.maxSizemin, CovistoMserPanel.maxSizemax,
+				CovistoMserPanel.scrollbarSize, CovistoMserPanel.maxSizeS));
 
-		thresholdslider.addAdjustmentListener(new PreThresholdListener(this, thresholdText, thresholdstring,
-				thresholdMin, thresholdMax, scrollbarSize, thresholdslider));
+		CovistoDogPanel.thresholdslider.addAdjustmentListener(new PreThresholdListener(this, CovistoDogPanel.thresholdText,  CovistoDogPanel.thresholdstring,
+				 CovistoDogPanel.thresholdMin,  CovistoDogPanel.thresholdMax, CovistoDogPanel.scrollbarSize, CovistoDogPanel.thresholdslider));
 
 		timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
 				fourthDimensionSize, scrollbarSize, timeslider));
