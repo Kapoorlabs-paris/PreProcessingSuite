@@ -20,6 +20,7 @@ import ij.ImagePlus;
 import ij3d.Image3DUniverse;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import kalmanGUI.CovistoKalmanPanel;
 import linkers.FeatureModel3D;
 import linkers.KFsearch;
 import linkers.Model3D;
@@ -51,7 +52,7 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		
-		parent.UserchosenCostFunction = new PixelratiowDistCostFunction(parent.alpha, parent.beta);
+		parent.UserchosenCostFunction = new PixelratiowDistCostFunction(CovistoKalmanPanel.alpha, CovistoKalmanPanel.beta);
 		ThreeDRoiobjectCollection coll = new ThreeDRoiobjectCollection();
 		for(Map.Entry<Integer, ArrayList<ThreeDRoiobject>> entry : parent.threeDTRois.entrySet()) {
 			
@@ -68,7 +69,7 @@ public class ThreeDTimetrack extends SwingWorker<Void, Void> {
 		}
 		
 		
-		KFsearch Tsearch = new KFsearch(coll, parent.UserchosenCostFunction, parent.maxSearchradius, parent.initialSearchradius, parent.maxframegap, parent.Accountedframes, parent.jpb);
+		KFsearch Tsearch = new KFsearch(coll, parent.UserchosenCostFunction, CovistoKalmanPanel.maxSearchradius, CovistoKalmanPanel.initialSearchradius, CovistoKalmanPanel.maxframegap, parent.Accountedframes, parent.jpb);
 		Tsearch.process();
 		SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > Tgraph = Tsearch.getResult();
 		

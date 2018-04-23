@@ -4,6 +4,8 @@ import java.awt.TextComponent;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
+import kalmanGUI.CovistoKalmanPanel;
+
 public class PRELostFrameListener implements TextListener {
 
 	public InteractiveMethods parent;
@@ -19,7 +21,7 @@ public class PRELostFrameListener implements TextListener {
 	    String s = tc.getText();
 	   
 	    if (s.length() > 0)
-		parent.maxframegap = Integer.parseInt(s);
+	    	CovistoKalmanPanel.maxframegap = Integer.parseInt(s);
 		
 		
 	}

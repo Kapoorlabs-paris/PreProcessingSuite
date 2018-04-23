@@ -7,6 +7,8 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import kalmanGUI.CovistoKalmanPanel;
+import nearestNeighbourGUI.CovistoNearestNPanel;
 
 public class PREMaxSearchTListener implements AdjustmentListener {
 	
@@ -36,13 +38,13 @@ public class PREMaxSearchTListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.maxSearchradiusS = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoKalmanPanel.maxSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
-		    parent.maxSearchradius = parent.maxSearchradiusS;
+		CovistoKalmanPanel.maxSearchradius = CovistoKalmanPanel.maxSearchradiusS;
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.maxSearchradiusS, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.maxSearchradius, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.maxSearchradiusS));
+			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.maxSearchradius));
 
 	
 	}

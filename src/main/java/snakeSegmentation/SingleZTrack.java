@@ -13,7 +13,9 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import kalmanGUI.CovistoKalmanPanel;
 import linkers.PRENNsearch;
+import nearestNeighbourGUI.CovistoNearestNPanel;
 import net.imglib2.Interval;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.Pair;
@@ -34,7 +36,7 @@ public class SingleZTrack extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		PRENNsearch Zsearch = new PRENNsearch(parent.ZTRois, parent.maxSearchradius, parent.fourthDimension, parent.AccountedZ, parent.jpb);
+		PRENNsearch Zsearch = new PRENNsearch(parent.ZTRois, CovistoNearestNPanel.maxSearchradiusNearest, parent.fourthDimension, parent.AccountedZ, parent.jpb);
 		Zsearch.process();
 		SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > Zgraph = Zsearch.getResult();
 		HashMap<Integer, ArrayList<PreRoiobject> > currentRoiobject = utility.AnalzeZTrack.get3Dobjects(Zgraph);

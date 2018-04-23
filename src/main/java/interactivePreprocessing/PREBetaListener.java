@@ -7,6 +7,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import kalmanGUI.CovistoKalmanPanel;
 
 public class PREBetaListener implements AdjustmentListener {
 	
@@ -36,11 +37,11 @@ public class PREBetaListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.beta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoKalmanPanel.beta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.beta, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.beta, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.beta));
+			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.beta));
 
 	
 	}

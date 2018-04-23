@@ -8,6 +8,8 @@ import java.text.DecimalFormat;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import kalmanGUI.CovistoKalmanPanel;
+import nearestNeighbourGUI.CovistoNearestNPanel;
 
 public class PREMaxSearchListener implements AdjustmentListener {
 	
@@ -38,12 +40,12 @@ public class PREMaxSearchListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.maxSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoNearestNPanel.maxSearchradiusNearest = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.maxSearchradius, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoNearestNPanel.maxSearchradiusNearest , min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.maxSearchradius));
+			label.setText(string +  " = "  + parent.nf.format(CovistoNearestNPanel.maxSearchradiusNearest));
 
 	
 	}
