@@ -25,7 +25,6 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		parent.snakeinprogress = true;
 		String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(parent.fourthDimension);
 
 		ArrayList<PreRoiobject> currentRoi = parent.ZTRois.get(uniqueID);
@@ -50,7 +49,6 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected void done() {
-		parent.snakeinprogress = false;
 		try {
 			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 			get();

@@ -66,7 +66,6 @@ public class TSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected void done() {
-		parent.snakeinprogress = false;
 		
 		try {
 			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");

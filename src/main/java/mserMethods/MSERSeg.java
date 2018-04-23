@@ -32,9 +32,7 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		if(!parent.snakeinprogress)
-			utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Computing Component Tree for MSER, Please Wait...");
-
+		if(!parent.snakeongoing) {
 		if (parent.darktobright)
 
 			parent.newtree = MserTree.buildMserTree(parent.newimg, parent.delta, parent.minSize, parent.maxSize,
@@ -55,8 +53,6 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 			
 			for (int index = 0; index < centerRoi.size(); ++index) {
 
-				double[] center = new double[] { centerRoi.get(index)[0], centerRoi.get(index)[1], parent.thirdDimension };
-
 				Roi or = parent.Rois.get(index);
 
 				or.setStrokeColor(parent.colorDrawMser);
@@ -74,14 +70,30 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 				PreRoiobject currentobject = new PreRoiobject(currentroi, new double[] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
 				parent.CurrentPreRoiobject.add(currentobject);
 			}
+
+			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : parent.ZTRois.entrySet()) {
+
+				ArrayList<PreRoiobject> current = entry.getValue();
+				for (PreRoiobject currentroi : current) {
+
+					if (currentroi.fourthDimension == parent.fourthDimension && currentroi.thirdDimension == parent.thirdDimension) {
+
+						currentroi.rois.setStrokeColor(parent.colorSnake);
+						parent.overlay.add(currentroi.rois);
+						
+					}
+
+				}
+			}
 			parent.imp.setOverlay(parent.overlay);
 			parent.imp.updateAndDraw();
 			
 			
 			
-			if(!parent.snakeinprogress)
 				utility.CovsitoProgressBar.CovistoSetProgressBar(jpb, "Done");
-			parent.updatePreview(ValueChange.SNAKE);
+		}
+				if(parent.snakeongoing)
+					parent.updatePreview(ValueChange.SNAKE);
 		return null;
 	}
 

@@ -34,7 +34,6 @@ public class PreTimeListener implements AdjustmentListener {
 
 		this.deltaScrollbar = deltaScrollbar;
 		//deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
-		if(!parent.snakeinprogress)
 			deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
 	
 			deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));

@@ -64,7 +64,6 @@ public class PreZlocListener implements TextListener {
 					
 					parent.zText.setText("Current Z = " + parent.thirdDimension);
 					parent.zgenText.setText("Current Z / T = " + parent.thirdDimension);
-					if(!parent.snakeinprogress)
 					parent.updatePreview(ValueChange.THIRDDIMmouse);
 					
 					

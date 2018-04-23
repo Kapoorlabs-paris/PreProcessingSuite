@@ -34,7 +34,6 @@ public class SnakeonZ {
 	
 	public boolean process() {
 		
-		parent.snakeinprogress = true;
 		parent.zslider.setEnabled(false);
 		parent.timeslider.setEnabled(false);
 		parent.inputFieldT.setEnabled(false);

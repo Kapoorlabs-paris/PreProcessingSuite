@@ -2,6 +2,7 @@ package snake3D;
 
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
+import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
@@ -50,7 +51,6 @@ public class ParallelSnake <T extends RealType<T> & NativeType<T>> implements Ru
 		
 		PreRoiobject currentobject = new PreRoiobject(Roiresult, new double [] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
 		parent.CurrentPreRoiobject.add(currentobject);
-		
 	}
 
 }

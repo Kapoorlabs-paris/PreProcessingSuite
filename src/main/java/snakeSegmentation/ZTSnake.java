@@ -38,7 +38,6 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 			for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
 
-				parent.snakeinprogress = true;
 
 				parent.thirdDimension = z;
 				parent.fourthDimension = t;
@@ -70,7 +69,6 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected void done() {
-		parent.snakeinprogress = false;
 		
 		try {
 			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");

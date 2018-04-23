@@ -137,7 +137,7 @@ public class InteractiveMethods {
 
 	public float deltaMax = 255f;
 
-	public boolean snakeinprogress = false;
+    public boolean snakeongoing = false;
 	public int Progressmin = 0;
 	public int Progressmax = 100;
 	public int max = Progressmax;
@@ -440,7 +440,6 @@ public class InteractiveMethods {
 		Normalize.normalize(Views.iterable(originalimg), minval, maxval);
 		prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
 				java.awt.image.ColorModel.getRGBdefault());
-		System.out.println(minSizeInit + " " + maxSizeInit + " " + Unstability_ScoreInit + " " + minDiversityInit);
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
 		universe = new Image3DUniverse((int)originalimg.dimension(0), (int)originalimg.dimension(1));
@@ -528,6 +527,7 @@ public class InteractiveMethods {
 	public void updatePreview(final ValueChange change) {
 
 		overlay = imp.getOverlay();
+		int localthirddim = thirdDimension, localfourthdim = fourthDimension;
 		uniqueID = Integer.toString(thirdDimension) + Integer.toString(fourthDimension);
 		ZID = Integer.toString(thirdDimension);
 		TID = Integer.toString(fourthDimension);
@@ -572,19 +572,13 @@ public class InteractiveMethods {
 		
 		if (change == ValueChange.SNAKE) {
 
+			overlay.clear();
 			Accountedframes.put(TID, fourthDimension);
 
 			AccountedZ.put(ZID, thirdDimension);
-			for (int i = 0; i < overlay.size(); ++i) {
+			
 
-				if (overlay.get(i).getStrokeColor() == colorSnake) {
-					overlay.remove(i);
-					--i;
-				}
-
-			}
-
-			int localthirddim = thirdDimension, localfourthdim = fourthDimension;
+			
 			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
 				ArrayList<PreRoiobject> current = entry.getValue();
@@ -704,22 +698,36 @@ public class InteractiveMethods {
 			}
 
 			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
-
+			
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
-			if (showMSER) {
+			
+			if ( showMSER ) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
 				computeMSER.execute();
 
 			}
 
-			if (showDOG) {
+			if ( showDOG ) {
 
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();
 			}
+			
+			
+			zText.setText("Current Z = " + localthirddim);
+			zgenText.setText("Current Z / T = " + localthirddim);
+			zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim, thirdDimensionsliderInit,
+					thirdDimensionSize, scrollbarSize));
+			zslider.repaint();
+			zslider.validate();
 
+			timeText.setText("Current T = " + localfourthdim);
+			timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localfourthdim,
+					fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
+			timeslider.repaint();
+			timeslider.validate();
 		}
 
 		if (change == ValueChange.MSER) {

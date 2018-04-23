@@ -58,10 +58,7 @@ public class ComputeSnakeSeg <T extends RealType<T> & NativeType<T>> {
 		
 		boolean dialog;
 		boolean dialogAdvanced;
-		parent.zslider.setEnabled(false);
-		parent.timeslider.setEnabled(false);
-		parent.inputFieldT.setEnabled(false);
-		parent.inputFieldZ.setEnabled(false);
+	
 		SnakeUtils<T> snakes = new SnakeUtils<T>(parent, source);
 		snakes.AdvancedParameters();
 		int percent = 0;

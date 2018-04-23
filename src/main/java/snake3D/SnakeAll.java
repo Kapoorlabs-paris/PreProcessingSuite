@@ -36,7 +36,7 @@ public class SnakeAll extends SwingWorker<Void, Void> {
 		
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg, new BitType());
 		
-		
+		parent.snakeongoing = true;
 		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
 
 
@@ -68,8 +68,7 @@ public class SnakeAll extends SwingWorker<Void, Void> {
 		
 		
 		
-		
-		
+			parent.snakeongoing = false;
 		
 		
 		
@@ -87,7 +86,7 @@ public class SnakeAll extends SwingWorker<Void, Void> {
 	
 		ComputeSnakeSeg<UnsignedByteType> ComputeSnake = new ComputeSnakeSeg<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
 		ComputeSnake.execute();
-		
+		parent.updatePreview(ValueChange.SNAKE);
 		RandomAccessibleInterval<BitType> bitimg =  ComputeSnake.getBinaryimg();
 		Cursor< BitType > bitcursor = Views.iterable(bitoutputslice).localizingCursor();
 		

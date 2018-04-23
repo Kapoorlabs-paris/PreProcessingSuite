@@ -34,7 +34,6 @@ public class PreZListener implements AdjustmentListener {
 			this.deltaScrollbar = deltaScrollbar;
 			
 		//	deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
-			if(!parent.snakeinprogress)
 				deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			
 				

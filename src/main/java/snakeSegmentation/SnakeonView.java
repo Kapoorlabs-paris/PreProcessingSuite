@@ -34,7 +34,6 @@ public class SnakeonView <T extends RealType<T> & NativeType<T>> {
 	
 	
 	public boolean process() {
-		parent.snakeinprogress = true;
 		resultrois = new ArrayList<PreRoiobject>();
 		boolean dialog;
 		boolean dialogAdvanced;

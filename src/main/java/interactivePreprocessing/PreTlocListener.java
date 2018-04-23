@@ -62,7 +62,6 @@ public class PreTlocListener implements TextListener {
 					show.shownewT();
 					parent.timeText.setText("Current T = " + parent.fourthDimension);
 					
-					if(!parent.snakeinprogress)
 					parent.updatePreview(ValueChange.FOURTHDIMmouse);
 					
 					
