@@ -44,6 +44,8 @@ public class PREMinDiversityListener implements AdjustmentListener {
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.minDiversity, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.minDiversity));
+			
+	
 
 	
 	}

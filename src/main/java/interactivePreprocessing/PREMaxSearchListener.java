@@ -9,6 +9,7 @@ import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import kalmanGUI.CovistoKalmanPanel;
+import mserGUI.CovistoMserPanel;
 import nearestNeighbourGUI.CovistoNearestNPanel;
 
 public class PREMaxSearchListener implements AdjustmentListener {
@@ -47,6 +48,9 @@ public class PREMaxSearchListener implements AdjustmentListener {
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoNearestNPanel.maxSearchradiusNearest));
 
+			
+
+			
 	
 	}
 	

@@ -8,6 +8,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 import watershedGUI.CovistoWatershedPanel;
 
 
@@ -41,7 +42,7 @@ public class PreWaterListener implements AdjustmentListener {
 			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoWatershedPanel.thresholdWater));
-
+			
 	
 	}
 }

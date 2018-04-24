@@ -45,7 +45,6 @@ public class PREMinSizeListener implements AdjustmentListener {
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.minSize));
 
-	
 	}
 	
 

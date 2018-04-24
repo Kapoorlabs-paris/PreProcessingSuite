@@ -9,6 +9,7 @@ import javax.swing.JScrollBar;
 
 import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 
 public class PreSigmaListener implements AdjustmentListener {
@@ -41,7 +42,7 @@ public class PreSigmaListener implements AdjustmentListener {
 			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoDogPanel.sigma, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoDogPanel.sigma));
-
+		
 	
 	}
 }

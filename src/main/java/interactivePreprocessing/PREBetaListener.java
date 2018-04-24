@@ -42,7 +42,7 @@ public class PREBetaListener implements AdjustmentListener {
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.beta, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.beta));
-
+		
 	
 	}
 	

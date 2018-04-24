@@ -43,6 +43,7 @@ public class PREAlphaListener implements AdjustmentListener {
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.alpha ));
 
+		    
 	
 	}
 	

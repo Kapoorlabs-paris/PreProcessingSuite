@@ -8,6 +8,7 @@ import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import kalmanGUI.CovistoKalmanPanel;
+import zGUI.CovistoZselectPanel;
 
 public class PREIniSearchListener implements AdjustmentListener {
 	
@@ -44,6 +45,7 @@ public class PREIniSearchListener implements AdjustmentListener {
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.initialSearchradius));
 
+			
 	
 	}
 	

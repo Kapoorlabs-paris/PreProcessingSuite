@@ -40,12 +40,12 @@ public class PREMaxSearchTListener implements AdjustmentListener {
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
 		CovistoKalmanPanel.maxSearchradius = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
-		CovistoKalmanPanel.maxSearchradius = CovistoKalmanPanel.maxSearchradiusS;
 		
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.maxSearchradius, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.maxSearchradius));
-
+			
+			
 	
 	}
 	

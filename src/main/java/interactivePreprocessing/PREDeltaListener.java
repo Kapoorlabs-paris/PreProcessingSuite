@@ -45,6 +45,7 @@ public class PREDeltaListener implements AdjustmentListener {
 			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.delta));
 
 	
+	
 	}
 	
 	

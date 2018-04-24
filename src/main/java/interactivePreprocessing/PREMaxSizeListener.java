@@ -45,7 +45,7 @@ public class PREMaxSizeListener implements AdjustmentListener {
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.maxSize));
 
-	
+			  
 	}
 	
 

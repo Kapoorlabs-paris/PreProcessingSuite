@@ -43,6 +43,9 @@ public class PreThresholdListener implements AdjustmentListener {
 		scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoDogPanel.threshold, min, max, scrollbarSize));
 
 		label.setText(string +  " = "  + parent.nf.format(CovistoDogPanel.threshold));
+		
+		
+		
 	
 	}
 }

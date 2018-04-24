@@ -11,6 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.logic.BitType;
+import watershedGUI.CovistoWatershedPanel;
 import zGUI.CovistoZselectPanel;
 
 
@@ -34,7 +35,6 @@ public class PreZListener implements AdjustmentListener {
 
 			this.deltaScrollbar = deltaScrollbar;
 			
-		//	deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 				deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			
 				
@@ -53,6 +53,10 @@ public class PreZListener implements AdjustmentListener {
 
 
 			label.setText(string +  " = "  + CovistoZselectPanel.thirdDimension);
+			
+			
+			
+			
 			CovistoZselectPanel.inputFieldZ.setText(Integer.toString((int)CovistoZselectPanel.thirdDimension));
 			parent.panelFirst.validate();
 			parent.panelFirst.repaint();

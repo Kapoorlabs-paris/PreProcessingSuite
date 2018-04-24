@@ -6,6 +6,7 @@ import java.awt.event.AdjustmentListener;
 
 import javax.swing.JScrollBar;
 
+import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import mserGUI.CovistoMserPanel;
 
@@ -43,6 +44,7 @@ public class PREUnstability_ScoreListener implements AdjustmentListener {
 			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.Unstability_Score, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + CovistoMserPanel.Unstability_Score);
+			
 
 	}
 

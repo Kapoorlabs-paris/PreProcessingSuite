@@ -6,6 +6,7 @@ import java.awt.event.AdjustmentListener;
 
 import javax.swing.JScrollBar;
 
+import dogGUI.CovistoDogPanel;
 import ij.IJ;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
@@ -34,7 +35,6 @@ public class PreTimeListener implements AdjustmentListener {
 		this.scrollbarSize = scrollbarSize;
 
 		this.deltaScrollbar = deltaScrollbar;
-		//deltaScrollbar.addMouseMotionListener(new PreNonStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
 			deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.FOURTHDIMmouse));
 	
 			deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
@@ -44,6 +44,7 @@ public class PreTimeListener implements AdjustmentListener {
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 		
+	
 		CovistoTimeselectPanel.fourthDimension = (int) Math.round(utility.CovistoSlicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
 
 
@@ -52,7 +53,7 @@ public class PreTimeListener implements AdjustmentListener {
 		
 		label.setText(string +  " = "  + CovistoTimeselectPanel.fourthDimension);
 
-		CovistoTimeselectPanel.inputFieldT.setText(Integer.toString((int)CovistoTimeselectPanel.fourthDimension));
+	
 		parent.panelFirst.validate();
 		parent.panelFirst.repaint();
 		ShowView show = new ShowView(parent);

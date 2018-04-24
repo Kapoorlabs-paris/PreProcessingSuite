@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import ij.gui.Roi;
-import mpicbg.imglib.util.Util;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -280,7 +279,7 @@ public class CovistoSlicer  {
 
 	public static int computeScrollbarPositionFromValue(final float sigma, final float min, final float max,
 			final int scrollbarSize) {
-		return Util.round(((sigma - min) / (max - min)) * scrollbarSize);
+		return Math.round(((sigma - min) / (max - min)) * scrollbarSize);
 	}
 
 	
