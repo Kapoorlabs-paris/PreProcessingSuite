@@ -4,6 +4,8 @@ import java.awt.TextComponent;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
+import snakeGUI.CovistoSnakePanel;
+
 public class IterationListener implements TextListener  {
 	
 	
@@ -22,7 +24,7 @@ public class IterationListener implements TextListener  {
 	    String s = tc.getText();
 	   
 	    if (s.length() > 0)
-		parent.snakeiterations = Integer.parseInt(s);
+		CovistoSnakePanel.snakeiterations = Integer.parseInt(s);
 		
 	}
 

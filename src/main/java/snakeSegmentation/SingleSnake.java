@@ -9,11 +9,15 @@ import javax.swing.SwingWorker;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Interval;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
-public class SingleSnake extends SwingWorker<Void, Void> {
+public class SingleSnake <T extends RealType<T> & NativeType<T>> extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
@@ -25,7 +29,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(parent.fourthDimension);
+		String uniqueID = Integer.toString(CovistoZselectPanel.thirdDimension) + Integer.toString(CovistoTimeselectPanel.fourthDimension);
 
 		ArrayList<PreRoiobject> currentRoi = parent.ZTRois.get(uniqueID);
 		// Expand the image by 10 pixels
@@ -36,7 +40,7 @@ public class SingleSnake extends SwingWorker<Void, Void> {
 		parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 		
 		
-		SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
+		SnakeonView<T> applysnake = new SnakeonView<T>(parent, parent.CurrentView, currentRoi);
 		applysnake.process();
 		ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 		

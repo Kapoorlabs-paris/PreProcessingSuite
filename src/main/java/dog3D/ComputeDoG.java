@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+import dogGUI.CovistoDogPanel;
 import ij.IJ;
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
@@ -38,7 +39,9 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import net.imglib2.util.Util;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
@@ -67,13 +70,13 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 	public void execute() {
 
 		final DogDetection.ExtremaType type;
-		if (parent.lookForMaxima)
+		if (CovistoDogPanel.lookForMaxima)
 			type = DogDetection.ExtremaType.MINIMA;
 		else
 			type = DogDetection.ExtremaType.MAXIMA;
-		parent.sigma2 = utility.ScrollbarUtils.computeSigma2(parent.sigma, parent.sensitivity);
+		CovistoDogPanel.sigma2 = utility.ScrollbarUtils.computeSigma2(CovistoDogPanel.sigma, parent.sensitivity);
 		final DogDetection<T> newdog = new DogDetection<T>(Views.extendBorder(source),
-				parent.interval, new double[] { 1, 1 }, parent.sigma, parent.sigma2, type, parent.threshold, true);
+				parent.interval, new double[] { 1, 1 }, CovistoDogPanel.sigma, CovistoDogPanel.sigma2, type, CovistoDogPanel.threshold, true);
 
 		parent.peaks = newdog.getSubpixelPeaks();
 		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
@@ -86,8 +89,8 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
 			PreRoiobject currentobject = new PreRoiobject(currentroi,
-					new double[] { geocenter[0], geocenter[1], parent.thirdDimension }, numberofpixels, intensity,
-					averageintensity, parent.thirdDimension, parent.fourthDimension);
+					new double[] { geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension }, numberofpixels, intensity,
+					averageintensity, CovistoZselectPanel.thirdDimension, CovistoTimeselectPanel.fourthDimension);
 			parent.CurrentPreRoiobject.add(currentobject);
 		}
 

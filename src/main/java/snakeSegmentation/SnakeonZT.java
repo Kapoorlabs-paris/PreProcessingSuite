@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import dogSeg.DOGSeg;
 import snakeSegmentation.SnakeUtils;
+import timeGUI.CovistoTimeselectPanel;
 import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.gui.Roi;
@@ -12,12 +13,15 @@ import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import mserMethods.MSERSeg;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 
-public class SnakeonZT {
+public class SnakeonZT <T extends RealType<T> & NativeType<T>> {
 
 	
 	final InteractiveMethods parent;
@@ -33,15 +37,15 @@ public class SnakeonZT {
 	
 	
 	public boolean process() {
-		parent.zslider.setEnabled(false);
-		parent.timeslider.setEnabled(false);
-		parent.inputFieldT.setEnabled(false);
-		parent.inputFieldZ.setEnabled(false);
+		CovistoZselectPanel.zslider.setEnabled(false);
+		CovistoTimeselectPanel.timeslider.setEnabled(false);
+		CovistoTimeselectPanel.inputFieldT.setEnabled(false);
+		CovistoZselectPanel.inputFieldZ.setEnabled(false);
 		resultrois = new ArrayList<PreRoiobject>();
 		boolean dialog;
 		boolean dialogAdvanced;
 		
-		SnakeUtils snakes = new SnakeUtils(parent, CurrentView);
+		SnakeUtils<T> snakes = new SnakeUtils(parent, CurrentView);
 		snakes.AdvancedParameters();
 	
 		
@@ -55,14 +59,14 @@ public class SnakeonZT {
 	
 		
 		nbRois = rois.size();
-		ABSnakeFast snake;
+		ABSnakeFast<T> snake;
 		for(PreRoiobject currentroi: rois) {
 			
 			percent++;
 			
 			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 * percent / nbRois,
-					"Computing snake segmentation for " + " T = " +  parent.fourthDimension + "/" + parent.fourthDimensionSize 
-							+ " Z = " + parent.thirdDimension+ "/" + parent.thirdDimensionSize);
+					"Computing snake segmentation for " + " T = " +  CovistoTimeselectPanel.fourthDimension + "/" + CovistoTimeselectPanel.fourthDimensionSize 
+							+ " Z = " + CovistoZselectPanel.thirdDimension+ "/" + CovistoZselectPanel.thirdDimensionSize);
 			Roi current = currentroi.rois;
 			
 			snake = snakes.processSnake(current, percent);
@@ -74,15 +78,15 @@ public class SnakeonZT {
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
 			
-			PreRoiobject currentobject = new PreRoiobject(Roiresult,  new double [] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+			PreRoiobject currentobject = new PreRoiobject(Roiresult,  new double [] {geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension}, numberofpixels, intensity, averageintensity, CovistoZselectPanel.thirdDimension, CovistoTimeselectPanel.fourthDimension);
 			resultrois.add(currentobject);
 
 		}
 		
-		parent.zslider.setEnabled(true);
-		parent.timeslider.setEnabled(true);
-		parent.inputFieldT.setEnabled(true);
-		parent.inputFieldZ.setEnabled(true);
+		CovistoZselectPanel.zslider.setEnabled(true);
+		CovistoTimeselectPanel.timeslider.setEnabled(true);
+		CovistoTimeselectPanel.inputFieldT.setEnabled(true);
+		CovistoZselectPanel.inputFieldZ.setEnabled(true);
 		
 		
 		return true;

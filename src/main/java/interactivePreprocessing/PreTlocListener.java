@@ -11,6 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.logic.BitType;
+import timeGUI.CovistoTimeselectPanel;
 
 
 public class PreTlocListener implements TextListener {
@@ -53,22 +54,23 @@ public class PreTlocListener implements TextListener {
 			    	String s = tc.getText();
 			    	if (arg0.getKeyChar() == KeyEvent.VK_ENTER&& !pressed) {
 						pressed = true;
-			    		if (parent.fourthDimension > parent.fourthDimensionSize) {
+			    		if (CovistoTimeselectPanel.fourthDimension > CovistoTimeselectPanel.fourthDimensionSize) {
 							IJ.log("Max frame number exceeded, moving to last frame instead");
-							parent.fourthDimension = parent.fourthDimensionSize;
+							CovistoTimeselectPanel.fourthDimension = CovistoTimeselectPanel.fourthDimensionSize;
 						} else
-							parent.fourthDimension = Integer.parseInt(s);
+							CovistoTimeselectPanel.fourthDimension = Integer.parseInt(s);
 			    		ShowView show = new ShowView(parent);
 					show.shownewT();
-					parent.timeText.setText("Current T = " + parent.fourthDimension);
+					CovistoTimeselectPanel.timeText.setText("Current T = " + CovistoTimeselectPanel.fourthDimension);
 					
 					parent.updatePreview(ValueChange.FOURTHDIMmouse);
 					
 					
 					 }
-			    	parent.timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.fourthDimension, parent.fourthDimensionsliderInit, parent.fourthDimensionSize, parent.scrollbarSize));
-					parent.timeslider.repaint();
-					parent.timeslider.validate();
+			    	CovistoTimeselectPanel.timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(CovistoTimeselectPanel.fourthDimension, CovistoTimeselectPanel.fourthDimensionsliderInit,
+			    			CovistoTimeselectPanel.fourthDimensionSize, CovistoTimeselectPanel.scrollbarSize));
+			    	CovistoTimeselectPanel.timeslider.repaint();
+			    	CovistoTimeselectPanel.timeslider.validate();
 
 			    }
 			});

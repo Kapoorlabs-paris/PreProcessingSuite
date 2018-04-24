@@ -8,6 +8,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import watershedGUI.CovistoWatershedPanel;
 
 
 public class PreWaterListener implements AdjustmentListener {
@@ -33,13 +34,13 @@ public class PreWaterListener implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.thresholdWater = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    CovistoWatershedPanel.thresholdWater = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
 		
-			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.thresholdWater, min, max, scrollbarSize));
+			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.thresholdWater));
+			label.setText(string +  " = "  + parent.nf.format(CovistoWatershedPanel.thresholdWater));
 
 	
 	}

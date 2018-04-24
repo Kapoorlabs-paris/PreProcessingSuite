@@ -8,6 +8,7 @@ import java.awt.event.ItemListener;
 import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import mserGUI.CovistoMserPanel;
+import watershedGUI.CovistoWatershedPanel;
 
 public class DoWatershedListener implements ItemListener {
 	
@@ -35,8 +36,8 @@ public class DoWatershedListener implements ItemListener {
 			parent.showMSER = false;
 			parent.showWatershed = true;
 			
-			parent.sigmaslider.setVisible(false);
-			parent.thresholdslider.setVisible(false);
+			CovistoDogPanel.sigmaslider.setVisible(false);
+			CovistoDogPanel.thresholdslider.setVisible(false);
 			CovistoDogPanel.findmaxima.setVisible(false);
 			CovistoDogPanel.findminima.setVisible(false);
 			
@@ -50,11 +51,11 @@ public class DoWatershedListener implements ItemListener {
 			
 			
 			
-			parent.displayWater.setVisible(true);
-			parent.displayBinary.setVisible(true);
-			parent.displayDist.setVisible(true);
-			parent.autothreshold.setVisible(true);
-			parent.thresholdWaterslider.setVisible(true);
+			CovistoWatershedPanel.displayWater.setVisible(true);
+			CovistoWatershedPanel.displayBinary.setVisible(true);
+			CovistoWatershedPanel.displayDist.setVisible(true);
+			CovistoWatershedPanel.autothreshold.setVisible(true);
+			CovistoWatershedPanel.thresholdWaterslider.setVisible(true);
 			
 			parent.SnakePanel.setVisible(false);
 		

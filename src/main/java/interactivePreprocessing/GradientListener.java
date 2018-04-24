@@ -4,6 +4,8 @@ import java.awt.TextComponent;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
+import snakeGUI.CovistoSnakePanel;
+
 public class GradientListener implements TextListener  {
 	
 	
@@ -22,7 +24,7 @@ public class GradientListener implements TextListener  {
 	    String s = tc.getText();
 	   
 	    if (s.length() > 0)
-		parent.Gradthresh = Integer.parseInt(s);
+		CovistoSnakePanel.Gradthresh = Integer.parseInt(s);
 		
 	}
 

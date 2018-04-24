@@ -7,6 +7,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 public class PREMinSizeListener implements AdjustmentListener {
 	
@@ -37,12 +38,12 @@ public class PREMinSizeListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.minSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoMserPanel.minSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.minSize, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.minSize, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.minSize));
+			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.minSize));
 
 	
 	}

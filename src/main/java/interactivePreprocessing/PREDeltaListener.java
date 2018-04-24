@@ -7,6 +7,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JScrollBar;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 public class PREDeltaListener implements AdjustmentListener {
 	
@@ -37,11 +38,11 @@ public class PREDeltaListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    parent.delta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoMserPanel.delta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.delta, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.delta, min, max, scrollbarSize));
 
-			label.setText(string +  " = "  + parent.nf.format(parent.delta));
+			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.delta));
 
 	
 	}

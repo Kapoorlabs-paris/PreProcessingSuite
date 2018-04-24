@@ -3,6 +3,7 @@ package interactivePreprocessing;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 
 public class FindMinimaListener implements ItemListener {
@@ -23,11 +24,11 @@ public class FindMinimaListener implements ItemListener {
 		
 		
 		if (arg0.getStateChange() == ItemEvent.DESELECTED) {
-			parent.lookForMinima = false;
-			parent.lookForMaxima = false;
+			CovistoDogPanel.lookForMinima = false;
+			CovistoDogPanel.lookForMaxima = false;
 		} else if (arg0.getStateChange() == ItemEvent.SELECTED) {
-			parent.lookForMinima = true;
-			parent.lookForMaxima = false;
+			CovistoDogPanel.lookForMinima = true;
+			CovistoDogPanel.lookForMaxima = false;
 			parent.updatePreview(ValueChange.DOG);
 		}
 

@@ -12,11 +12,14 @@ import ij.gui.Roi;
 import ij.process.ColorProcessor;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.componenttree.mser.MserTree;
 import net.imglib2.type.NativeType;
 import net.imglib2.util.Pair;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class MSERSeg extends SwingWorker<Void, Void> {
 
@@ -33,15 +36,15 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		if(!parent.snakeongoing) {
-		if (parent.darktobright)
+		if (CovistoMserPanel.darktobright)
 
-			parent.newtree = MserTree.buildMserTree(parent.newimg, parent.delta, parent.minSize, parent.maxSize,
-					parent.Unstability_Score, parent.minDiversity, true);
+			parent.newtree = MserTree.buildMserTree(parent.newimg, CovistoMserPanel.delta, CovistoMserPanel.minSize, CovistoMserPanel.maxSize,
+					CovistoMserPanel.Unstability_Score, CovistoMserPanel.minDiversity, true);
 
 		else
 
-			parent.newtree = MserTree.buildMserTree(parent.newimg, parent.delta, parent.minSize, parent.maxSize,
-					parent.Unstability_Score, parent.minDiversity, false);
+			parent.newtree = MserTree.buildMserTree(parent.newimg, CovistoMserPanel.delta, CovistoMserPanel.minSize, CovistoMserPanel.maxSize,
+					CovistoMserPanel.Unstability_Score, CovistoMserPanel.minDiversity, false);
 		 parent.overlay.clear();
 			parent.Rois = utility.FinderUtils.getcurrentRois(parent.newtree);
 
@@ -67,7 +70,8 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 				final double intensity = Intensityandpixels.getA();
 				final double numberofpixels = Intensityandpixels.getB();
 				final double averageintensity = intensity / numberofpixels;
-				PreRoiobject currentobject = new PreRoiobject(currentroi, new double[] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+				PreRoiobject currentobject = new PreRoiobject(currentroi, new double[] {geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension}, 
+						numberofpixels, intensity, averageintensity, CovistoZselectPanel.thirdDimension, CovistoTimeselectPanel.fourthDimension);
 				parent.CurrentPreRoiobject.add(currentobject);
 			}
 
@@ -76,7 +80,7 @@ public class MSERSeg extends SwingWorker<Void, Void> {
 				ArrayList<PreRoiobject> current = entry.getValue();
 				for (PreRoiobject currentroi : current) {
 
-					if (currentroi.fourthDimension == parent.fourthDimension && currentroi.thirdDimension == parent.thirdDimension) {
+					if (currentroi.fourthDimension == CovistoTimeselectPanel.fourthDimension && currentroi.thirdDimension == CovistoZselectPanel.thirdDimension) {
 
 						currentroi.rois.setStrokeColor(parent.colorSnake);
 						parent.overlay.add(currentroi.rois);

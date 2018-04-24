@@ -20,7 +20,9 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class MserAll extends SwingWorker<Void, Void> {
 
@@ -43,22 +45,22 @@ public class MserAll extends SwingWorker<Void, Void> {
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg, new BitType());
 		
 		
-		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
+		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 
-			for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
+			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
 				
-				parent.thirdDimension = z;
-				parent.fourthDimension = t;
+				CovistoZselectPanel.thirdDimension = z;
+				CovistoTimeselectPanel.fourthDimension = t;
 				
-				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				
 				// UnsignedByteType image created here
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
-				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				
 			
 				

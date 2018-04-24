@@ -3,7 +3,9 @@ package interactivePreprocessing;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import dogGUI.CovistoDogPanel;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 public class FindMaximaMserListener implements ItemListener {
 	
@@ -23,11 +25,11 @@ public class FindMaximaMserListener implements ItemListener {
 		
 		
 		if (arg0.getStateChange() == ItemEvent.DESELECTED) {
-			parent.darktobright = false;
-			parent.brighttodark = false;
+			CovistoMserPanel.darktobright = false;
+			CovistoMserPanel.brighttodark = false;
 		} else if (arg0.getStateChange() == ItemEvent.SELECTED) {
-			parent.darktobright = true;
-			parent.brighttodark = false;
+			CovistoMserPanel.darktobright = true;
+			CovistoMserPanel.brighttodark = false;
 			parent.updatePreview(ValueChange.MSER);
 		}
 

@@ -20,6 +20,7 @@ import net.imglib2.Interval;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
 
@@ -36,7 +37,7 @@ public class SingleZTrack extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		PRENNsearch Zsearch = new PRENNsearch(parent.ZTRois, CovistoNearestNPanel.maxSearchradiusNearest, parent.fourthDimension, parent.AccountedZ, parent.jpb);
+		PRENNsearch Zsearch = new PRENNsearch(parent.ZTRois, CovistoNearestNPanel.maxSearchradiusNearest, CovistoTimeselectPanel.fourthDimension, parent.AccountedZ, parent.jpb);
 		Zsearch.process();
 		SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > Zgraph = Zsearch.getResult();
 		HashMap<Integer, ArrayList<PreRoiobject> > currentRoiobject = utility.AnalzeZTrack.get3Dobjects(Zgraph);
@@ -47,11 +48,11 @@ public class SingleZTrack extends SwingWorker<Void, Void> {
 			
 			double[] geometriccenter = ThreeDRoiobject.getCentroid3D( currentobject);
 			final Pair<Double, Integer> Intensityandpixels = ThreeDRoiobject.getIntensity3D(currentobject);
-			ThreeDRoiobject current3D = new ThreeDRoiobject(currentobject, geometriccenter, Intensityandpixels.getB(), Intensityandpixels.getA(), Intensityandpixels.getA() / Intensityandpixels.getB(), parent.fourthDimension);
+			ThreeDRoiobject current3D = new ThreeDRoiobject(currentobject, geometriccenter, Intensityandpixels.getB(), Intensityandpixels.getA(), Intensityandpixels.getA() / Intensityandpixels.getB(), CovistoTimeselectPanel.fourthDimension);
 			AllRois.add(current3D);
 			
 		}
-		parent.threeDTRois.put(parent.fourthDimension, AllRois);
+		parent.threeDTRois.put(CovistoTimeselectPanel.fourthDimension, AllRois);
 		
 		
 		return null;

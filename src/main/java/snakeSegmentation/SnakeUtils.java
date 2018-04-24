@@ -8,6 +8,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
+import snakeGUI.CovistoSnakePanel;
 
 public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 
@@ -49,7 +50,7 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 		double DisplMax = parent.configDriver.getMaxDisplacement(false);
 		double mul = parent.configDriver.getStep();
 
-		config = new SnakeConfig(parent.Gradthresh, DisplMax, parent.DistMax, regMin, regMax, 1.0 / InvAlphaD);
+		config = new SnakeConfig(CovistoSnakePanel.Gradthresh, DisplMax, CovistoSnakePanel.DistMax, regMin, regMax, 1.0 / InvAlphaD);
 		snake.setConfig(config);
 		// compute image gradient
 		snake.computeGrad(CurrentView);
@@ -59,7 +60,7 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 		double olddist;
 		double term = 0;
 
-		for (i = 0; i < parent.snakeiterations; i++) {
+		for (i = 0; i < CovistoSnakePanel.snakeiterations; i++) {
 		
 			// each iteration
 			dist = snake.process();
@@ -71,7 +72,7 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 			if (term > 10)
 				break;
 			
-			if ((dist >= dist0) && (dist < parent.force)) {
+			if ((dist >= dist0) && (dist < CovistoSnakePanel.force)) {
 				// System.out.println("update " + config.getAlpha());
 				snake.computeGrad(CurrentView);
 				config.update(mul);
@@ -79,7 +80,7 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 			dist0 = dist;
 
 			// display of the snake
-			if ((parent.displaysnake > 0) && ((i % parent.displaysnake) == 0)) {
+			if ((CovistoSnakePanel.displaysnake > 0) && ((i % CovistoSnakePanel.displaysnake) == 0)) {
 
 			}
 		}
@@ -92,9 +93,9 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 
 		// create dialog
 		GenericDialog gd = new GenericDialog("Snake");
-		gd.addNumericField("Gradient_threshold:", parent.Gradthresh, 0);
-		gd.addNumericField("Number_of_iterations:", parent.snakeiterations, 0);
-		gd.addNumericField("Display Snake result after:", parent.displaysnake, 0);
+		gd.addNumericField("Gradient_threshold:", CovistoSnakePanel.Gradthresh, 0);
+		gd.addNumericField("Number_of_iterations:", CovistoSnakePanel.snakeiterations, 0);
+		gd.addNumericField("Display Snake result after:", CovistoSnakePanel.displaysnake, 0);
 		gd.addCheckbox("Advanced_options", parent.advancedSnake);
 	
 
@@ -102,11 +103,11 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 		gd.showDialog();
 
 		// threshold of edge
-		parent.Gradthresh = (int) gd.getNextNumber();
+		CovistoSnakePanel.Gradthresh = (int) gd.getNextNumber();
 		// number of iterations
-		parent.snakeiterations = (int) gd.getNextNumber();
+		CovistoSnakePanel.snakeiterations = (int) gd.getNextNumber();
 
-		parent.displaysnake = (int) gd.getNextNumber();
+		CovistoSnakePanel.displaysnake = (int) gd.getNextNumber();
 
 		
 		parent.advancedSnake = gd.getNextBoolean();
@@ -121,10 +122,10 @@ public class SnakeUtils <T extends RealType<T> & NativeType<T>> {
 
 	public void AdvancedParameters() {
 		// see advanced dialog class
-		parent.configDriver.setMaxDisplacement(parent.Displacement_min, parent.Displacement_max);
-		parent.configDriver.setInvAlphaD(parent.Inv_alpha_min, parent.Inv_alpha_max);
-		parent.configDriver.setReg(parent.regmin, parent.regmax);
-		parent.configDriver.setStep(parent.Mul_factor);
+		parent.configDriver.setMaxDisplacement(CovistoSnakePanel.Displacement_min, CovistoSnakePanel.Displacement_max);
+		parent.configDriver.setInvAlphaD(CovistoSnakePanel.Inv_alpha_min, CovistoSnakePanel.Inv_alpha_max);
+		parent.configDriver.setReg(CovistoSnakePanel.regmin, CovistoSnakePanel.regmax);
+		parent.configDriver.setStep(CovistoSnakePanel.Mul_factor);
 	}
 	
 }

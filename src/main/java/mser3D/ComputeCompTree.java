@@ -10,6 +10,7 @@ import javax.swing.SwingWorker;
 import ij.IJ;
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
+import mserGUI.CovistoMserPanel;
 import net.imglib2.Cursor;
 import net.imglib2.KDTree;
 import net.imglib2.RandomAccess;
@@ -37,7 +38,9 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Pair;
 import net.imglib2.util.Util;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 
@@ -67,15 +70,15 @@ public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 
 		MserTree<T> newtree;
 		// Compute the component tree
-		if (parent.darktobright)
+		if (CovistoMserPanel.darktobright)
 
-			newtree = MserTree.buildMserTree(source, parent.delta, parent.minSize, parent.maxSize,
-					parent.Unstability_Score, parent.minDiversity, true);
+			newtree = MserTree.buildMserTree(source, CovistoMserPanel.delta, CovistoMserPanel.minSize, CovistoMserPanel.maxSize,
+					CovistoMserPanel.Unstability_Score, CovistoMserPanel.minDiversity, true);
 
 		else
 
-			newtree = MserTree.buildMserTree(source, parent.delta, parent.minSize, parent.maxSize,
-					parent.Unstability_Score, parent.minDiversity, false);
+			newtree = MserTree.buildMserTree(source, CovistoMserPanel.delta, CovistoMserPanel.minSize, CovistoMserPanel.maxSize,
+					CovistoMserPanel.Unstability_Score, CovistoMserPanel.minDiversity, false);
 
 		parent.Rois = utility.FinderUtils.getcurrentRois(newtree);
 		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
@@ -88,8 +91,8 @@ public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 			final double numberofpixels = Intensityandpixels.getB();
 			final double averageintensity = intensity / numberofpixels;
 			PreRoiobject currentobject = new PreRoiobject(currentroi,
-					new double[] { geocenter[0], geocenter[1], parent.thirdDimension }, numberofpixels, intensity,
-					averageintensity, parent.thirdDimension, parent.fourthDimension);
+					new double[] { geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension }, numberofpixels, intensity,
+					averageintensity, CovistoZselectPanel.thirdDimension, CovistoTimeselectPanel.fourthDimension);
 			parent.CurrentPreRoiobject.add(currentobject);
 		}
 

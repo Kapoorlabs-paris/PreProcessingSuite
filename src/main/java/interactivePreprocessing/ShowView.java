@@ -1,6 +1,8 @@
 package interactivePreprocessing;
 
 import ij.IJ;
+import timeGUI.CovistoTimeselectPanel;
+import zGUI.CovistoZselectPanel;
 
 public class ShowView {
 
@@ -17,18 +19,18 @@ public class ShowView {
 	
 	public void shownewZ() {
 
-		if (parent.thirdDimension > parent.thirdDimensionSize) {
+		if (CovistoZselectPanel.thirdDimension > CovistoZselectPanel.thirdDimensionSize) {
 			IJ.log("Max Z stack exceeded, moving to last Z instead");
-			parent.thirdDimension = parent.thirdDimensionSize;
+			CovistoZselectPanel.thirdDimension = CovistoZselectPanel.thirdDimensionSize;
 			
 			
-			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
-					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)CovistoZselectPanel.thirdDimension,
+					(int)CovistoZselectPanel.thirdDimensionSize, (int)CovistoTimeselectPanel.fourthDimension, (int)CovistoTimeselectPanel.fourthDimensionSize);
 			
 		} else {
 
-			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)parent.thirdDimension,
-					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, (int)CovistoZselectPanel.thirdDimension,
+					(int)CovistoZselectPanel.thirdDimensionSize, (int)CovistoTimeselectPanel.fourthDimension, (int)CovistoTimeselectPanel.fourthDimensionSize);
 			
 		}
 
@@ -39,18 +41,18 @@ public class ShowView {
 	
 	public void shownewT() {
 
-		if (parent.fourthDimension > parent.fourthDimensionSize) {
+		if (CovistoTimeselectPanel.fourthDimension > CovistoTimeselectPanel.fourthDimensionSize) {
 			IJ.log("Max time point exceeded, moving to last time point instead");
-			parent.fourthDimension = parent.fourthDimensionSize;
+			CovistoTimeselectPanel.fourthDimension = CovistoTimeselectPanel.fourthDimensionSize;
 			
 			
-			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
-					(int)parent.thirdDimensionSize,(int) parent.fourthDimension, (int)parent.fourthDimensionSize);
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) CovistoZselectPanel.thirdDimension,
+					(int)CovistoZselectPanel.thirdDimensionSize,(int) CovistoTimeselectPanel.fourthDimension, (int)CovistoTimeselectPanel.fourthDimensionSize);
 			
 		} else {
 
-			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) parent.thirdDimension,
-					(int)parent.thirdDimensionSize, (int)parent.fourthDimension, (int)parent.fourthDimensionSize);
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg,(int) CovistoZselectPanel.thirdDimension,
+					(int)CovistoZselectPanel.thirdDimensionSize, (int)CovistoTimeselectPanel.fourthDimension, (int)CovistoTimeselectPanel.fourthDimensionSize);
 			
 		}
 

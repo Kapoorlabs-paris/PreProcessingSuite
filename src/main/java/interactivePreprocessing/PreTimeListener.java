@@ -11,6 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.logic.BitType;
+import timeGUI.CovistoTimeselectPanel;
 
 
 
@@ -43,15 +44,15 @@ public class PreTimeListener implements AdjustmentListener {
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 		
-		parent.fourthDimension = (int) Math.round(utility.CovistoSlicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
+		CovistoTimeselectPanel.fourthDimension = (int) Math.round(utility.CovistoSlicer.computeValueFromScrollbarPosition(e.getValue(), min, max, scrollbarSize));
 
 
 		deltaScrollbar
-		.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.fourthDimension, min, max, scrollbarSize));
+		.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(CovistoTimeselectPanel.fourthDimension, min, max, scrollbarSize));
 		
-		label.setText(string +  " = "  + parent.fourthDimension);
+		label.setText(string +  " = "  + CovistoTimeselectPanel.fourthDimension);
 
-		parent.inputFieldT.setText(Integer.toString((int)parent.fourthDimension));
+		CovistoTimeselectPanel.inputFieldT.setText(Integer.toString((int)CovistoTimeselectPanel.fourthDimension));
 		parent.panelFirst.validate();
 		parent.panelFirst.repaint();
 		ShowView show = new ShowView(parent);

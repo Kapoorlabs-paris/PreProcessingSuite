@@ -9,7 +9,9 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 import snakeSegmentation.ABSnakeFast;
 import snakeSegmentation.SnakeUtils;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class ParallelSnake <T extends RealType<T> & NativeType<T>> implements Runnable {
 
@@ -35,8 +37,8 @@ public class ParallelSnake <T extends RealType<T> & NativeType<T>> implements Ru
 	public void run() {
 		percent++;
 		utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 * percent / nbRois,
-				"Computing snake segmentation for " +   " T = " + parent.fourthDimension  + "/" + parent.fourthDimensionSize
-						+ " Z = " + parent.thirdDimension + "/" + parent.thirdDimensionSize);
+				"Computing snake segmentation for " +   " T = " + CovistoTimeselectPanel.fourthDimension  + "/" + CovistoTimeselectPanel.fourthDimensionSize
+						+ " Z = " + CovistoZselectPanel.thirdDimension + "/" + CovistoZselectPanel.thirdDimensionSize);
 		
 		
 		
@@ -49,7 +51,8 @@ public class ParallelSnake <T extends RealType<T> & NativeType<T>> implements Ru
 		final double numberofpixels = Intensityandpixels.getB();
 		final double averageintensity = intensity / numberofpixels;
 		
-		PreRoiobject currentobject = new PreRoiobject(Roiresult, new double [] {geocenter[0], geocenter[1], parent.thirdDimension}, numberofpixels, intensity, averageintensity, parent.thirdDimension, parent.fourthDimension);
+		PreRoiobject currentobject = new PreRoiobject(Roiresult, new double [] {geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension}, numberofpixels, intensity, averageintensity,
+				CovistoZselectPanel.thirdDimension, CovistoTimeselectPanel.fourthDimension);
 		parent.CurrentPreRoiobject.add(currentobject);
 	}
 

@@ -4,6 +4,8 @@ import java.awt.TextComponent;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
+import snakeGUI.CovistoSnakePanel;
+
 public class MaxdistListener implements TextListener  {
 	
 	
@@ -22,7 +24,7 @@ public class MaxdistListener implements TextListener  {
 	    String s = tc.getText();
 	   
 	    if (s.length() > 0)
-		parent.DistMax = Integer.parseInt(s);
+		CovistoSnakePanel.DistMax = Integer.parseInt(s);
 		
 	}
 

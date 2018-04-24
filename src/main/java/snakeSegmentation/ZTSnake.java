@@ -10,13 +10,17 @@ import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
-public class ZTSnake extends SwingWorker<Void, Void> {
+public class ZTSnake <T extends RealType<T> & NativeType<T>> extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
@@ -28,23 +32,23 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		parent.zslider.setEnabled(false);
-		parent.timeslider.setEnabled(false);
-		parent.inputFieldT.setEnabled(false);
-		parent.inputFieldZ.setEnabled(false);
-		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
+		CovistoZselectPanel.zslider.setEnabled(false);
+		CovistoTimeselectPanel.timeslider.setEnabled(false);
+		CovistoTimeselectPanel.inputFieldT.setEnabled(false);
+		CovistoZselectPanel.inputFieldZ.setEnabled(false);
+		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 			// For each T go in Z and make a 3D object to track with
 
-			for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
+			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
 
 
-				parent.thirdDimension = z;
-				parent.fourthDimension = t;
+				CovistoZselectPanel.thirdDimension = z;
+				CovistoTimeselectPanel.fourthDimension = t;
 				String uniqueID = Integer.toString(z) + Integer.toString(t);
 				
-				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				// Expand the image by 10 pixels
 				ArrayList<PreRoiobject> currentRoi = parent.CurrentPreRoiobject;
@@ -53,7 +57,7 @@ public class ZTSnake extends SwingWorker<Void, Void> {
 				Interval interval = Intervals.expand(spaceinterval, 10);
 				parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
 
-				SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
+				SnakeonView<T> applysnake = new SnakeonView<T>(parent, parent.CurrentView, currentRoi);
 				applysnake.process();
 				ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 				parent.ZTRois.put(uniqueID, resultrois);

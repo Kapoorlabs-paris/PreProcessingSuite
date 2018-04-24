@@ -31,6 +31,7 @@ import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
+import zGUI.CovistoZselectPanel;
 
 public class Visualize3D {
 
@@ -210,7 +211,7 @@ public class Visualize3D {
 						}
 						double dist = DistanceSq(new double[] { dCordX, dCordY }, new double[] { x, y });
 						if (DistanceSq(new double[] { dCordX, dCordY }, new double[] { x, y }) < distmin
-								&& parent.thirdDimension == (int) dCordZ && parent.ndims > 3) {
+								&& CovistoZselectPanel.thirdDimension == (int) dCordZ && parent.ndims > 3) {
 
 							parent.rowchoice = row;
 							distmin = dist;

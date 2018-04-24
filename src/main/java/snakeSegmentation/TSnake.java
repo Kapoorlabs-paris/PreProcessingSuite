@@ -10,13 +10,17 @@ import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
+import zGUI.CovistoZselectPanel;
 
-public class TSnake extends SwingWorker<Void, Void> {
+public class TSnake <T extends RealType<T> & NativeType<T>> extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
@@ -33,13 +37,12 @@ public class TSnake extends SwingWorker<Void, Void> {
 	
 		
 		
-		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
+		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
-			parent.fourthDimension = t;
-			System.out.println(t);
-			String uniqueID = Integer.toString(parent.thirdDimension) + Integer.toString(t);
-			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, parent.thirdDimension,
-					parent.thirdDimensionSize, t, parent.fourthDimensionSize);
+			CovistoTimeselectPanel.fourthDimension = t;
+			String uniqueID = Integer.toString(CovistoZselectPanel.thirdDimension) + Integer.toString(t);
+			parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, CovistoZselectPanel.thirdDimension,
+					CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
 			parent.updatePreview(ValueChange.FOURTHDIMmouse);
 
 			ArrayList<PreRoiobject> currentRoi = parent.CurrentPreRoiobject;
@@ -50,7 +53,7 @@ public class TSnake extends SwingWorker<Void, Void> {
 					parent.CurrentView.min(1), parent.CurrentView.max(0), parent.CurrentView.max(1) });
 			Interval interval = Intervals.expand(spaceinterval, 10);
 			parent.CurrentView = Views.interval(Views.extendBorder(parent.CurrentView), interval);
-			SnakeonView applysnake = new SnakeonView(parent, parent.CurrentView, currentRoi);
+			SnakeonView<T> applysnake = new SnakeonView<T>(parent, parent.CurrentView, currentRoi);
 			applysnake.process();
 			ArrayList<PreRoiobject> resultrois = applysnake.getResult();
 			currentRoi.clear();

@@ -19,6 +19,7 @@ import net.imglib2.Interval;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
 
@@ -51,7 +52,7 @@ public class SingleAllTrack extends SwingWorker<Void, Void> {
 			
 			double[] geometriccenter = ThreeDRoiobject.getCentroid3D( currentobject);
 			final Pair<Double, Integer> Intensityandpixels = ThreeDRoiobject.getIntensity3D(currentobject);
-			ThreeDRoiobject current3D = new ThreeDRoiobject(currentobject, geometriccenter, Intensityandpixels.getB(), Intensityandpixels.getA(), Intensityandpixels.getA() / Intensityandpixels.getB(), parent.fourthDimension);
+			ThreeDRoiobject current3D = new ThreeDRoiobject(currentobject, geometriccenter, Intensityandpixels.getB(), Intensityandpixels.getA(), Intensityandpixels.getA() / Intensityandpixels.getB(), CovistoTimeselectPanel.fourthDimension);
 			AllRois.add(current3D);
 			
 		}

@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import snakeSegmentation.*;
 import threeDViewer.ThreeDRoiobjectDisplayer;
+import timeGUI.CovistoTimeselectPanel;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -91,20 +92,14 @@ import visualization.Draw3DLines;
 import visualization.DummyTrackColorGenerator;
 import visualization.SelectionModel;
 import watershedGUI.CovistoWatershedPanel;
+import zGUI.CovistoZselectPanel;
 
 public class InteractiveMethods {
 
 	public NumberFormat nf;
 	public RandomAccessibleInterval<FloatType> originalimg;
 	public int ndims;
-	public int fourthDimension;
-	public int thirdDimension;
-	public int thirdDimensionSize;
-	public int fourthDimensionSize;
-	public int thirdDimensionslider = 1;
-	public int thirdDimensionsliderInit = 1;
-	public int fourthDimensionslider = 1;
-	public int fourthDimensionsliderInit = 1;
+
 	public int Maxlabel;
 	public int thresholdsliderInit = 125;
 
@@ -123,73 +118,37 @@ public class InteractiveMethods {
 	public final int scrollbarSize = 1000;
 	public JProgressBar jpb;
 	public File inputfile;
-
 	public boolean autothreshwater = false;
-
-	public int Unstability_ScoreInit = 1;
-	public float Unstability_Score = Unstability_ScoreInit;
-
-	public int minSizeInit = 50;
-	public int maxSizeInit = 500;
-
-	public int deltaInit = 10;
-	public float delta = deltaInit;
-
-	public float deltaMax = 255f;
-
 	public boolean snakeongoing = false;
 	public int Progressmin = 0;
 	public int Progressmax = 100;
 	public int max = Progressmax;
-
-	public FloatType minval = new FloatType(0);
-	public FloatType maxval = new FloatType(1);
-
 	public MserTree<UnsignedByteType> newtree;
-
-	public float thresholdMin = 0;
-	public float thresholdMax = 255f;
-	public int thresholdInit = 0;
-
 	public Roi nearestRoiCurr;
 	public int rowchoice;
 	public static int standardSensitivity = 4;
 	public int sensitivity = standardSensitivity;
 	public Color colorChange = Color.RED;
-	public float minDiversityMin = 0;
-	public float minDiversityMax = 1;
-	public int minDiversityInit = 1;
-	public float minDiversity = minDiversityInit;
+	
 	public MouseMotionListener ml;
 	public MouseListener mvl;
 	public int timeMin = 1;
-	public long minSize = 1;
-	public long maxSize = maxSizeInit;
-	public long minSizemin = 0;
-	public long minSizemax = 1000;
-	public long maxSizemin = 1;
-	public long maxSizemax = 10000;
-	public float deltaMin = 0;
+	
 
 	public boolean onlySeg = true;
 
 	public boolean TrackandSeg = false;
-	public float Unstability_ScoreMin = 0f;
-	public float Unstability_ScoreMax = 1f;
+	
 	public int tablesize;
-	public float sigma2 = 1.1f;
-	public float threshold = 1f;
+	
 
-	public boolean darktobright = false;
-	public boolean brighttodark = true;
 	public ArrayList<Roi> Rois;
 	public ArrayList<PreRoiobject> CurrentPreRoiobject;
 	public ArrayList<Roi> NearestNeighbourRois;
 	public ArrayList<Roi> BiggerRois;
 	public JTable table;
 	public int row;
-	public int sigmaInit = 30;
-	public float sigma = sigmaInit;
+	
 	public CostFunction<ThreeDRoiobject, ThreeDRoiobject> UserchosenCostFunction;
 	public Color colorDrawMser = Color.green;
 	public Color colorDrawDog = Color.red;
@@ -198,10 +157,7 @@ public class InteractiveMethods {
 	public Color colorTrack = Color.GREEN;
 	public Overlay overlay;
 	public FinalInterval interval;
-	public boolean lookForMaxima = true;
-	public boolean lookForMinima = false;
-	public float sigmaMin = 1f;
-	public float sigmaMax = 100f;
+	
 	public RandomAccessibleInterval<BitType> bitimg;
 	public RandomAccessibleInterval<FloatType> bitimgFloat;
 	public RandomAccessibleInterval<IntType> intimg;
@@ -223,12 +179,6 @@ public class InteractiveMethods {
 	public boolean SegMode;
 
 	public ColorProcessor cp = null;
-	public double Mul_factor = 0.99;
-	// maximum displacement
-	public double force = 10;
-	// regulari1ation factors, min and max
-	public double reg = 5;
-	public double regmin, regmax;
 
 	public boolean AutoSnake = true;
 	public boolean advancedSnake = false;
@@ -236,90 +186,12 @@ public class InteractiveMethods {
 
 	public static enum ValueChange {
 
-		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse, THIRDDIM, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay, ThreeDTrackDisplayALL;
+		ALL, MSER, DOG, SNAKE, WATER, DIST, DISTWATER, GAUSS, THRESHOLD, SIGMA, FOURTHDIMmouse, THIRDDIMmouse,
+		THIRDDIM, MINDIVERSITY, DELTA, MINSIZE, MAXSIZE, MAXVAR, DARKTOBRIGHT, PREROI, NearestN, Kalman, ALPHA, BETA, ThreeDTrackDisplay, ThreeDTrackDisplayALL;
 
 	}
 
-	public void setTime(final int value) {
-
-		fourthDimensionslider = value;
-		fourthDimensionsliderInit = value;
-		fourthDimension = value;
-	}
-
-	public int getTimeMax() {
-
-		return thirdDimensionSize;
-	}
-
-	public void setZ(final int value) {
-		thirdDimensionslider = value;
-		thirdDimensionsliderInit = value;
-		thirdDimension = value;
-	}
-
-	public void setInitialminDiversity(final float value) {
-		minDiversity = value;
-		minDiversityInit = computeScrollbarPositionFromValue(minDiversity, minDiversityMin, minDiversityMax,
-				scrollbarSize);
-	}
-
-	public double getInitialminDiversity(final float value) {
-
-		return minDiversity;
-
-	}
-
-	public void setInitialminSize(final int value) {
-		minSize = value;
-		minSizeInit = computeScrollbarPositionFromValue(minSize, minSizemin, minSizemax, scrollbarSize);
-	}
-
-	public double getInitialminSize(final int value) {
-
-		return minSize;
-
-	}
-
-	public void setInitialmaxSize(final int value) {
-		maxSize = value;
-		maxSizeInit = computeScrollbarPositionFromValue(maxSize, maxSizemin, maxSizemax, scrollbarSize);
-	}
-
-	public double getInitialmaxSize(final int value) {
-
-		return maxSize;
-
-	}
-
-	public double getInitialSigma() {
-		return sigma;
-	}
-
-	public void setInitialSigma(final float value) {
-		sigma = value;
-		sigmaInit = computeScrollbarPositionFromValue(sigma, sigmaMin, sigmaMax, scrollbarSize);
-	}
-
-	public double getInitialThreshold() {
-		return threshold;
-	}
-
-	public void setInitialThreshold(final float value) {
-		threshold = value;
-		thresholdInit = computeScrollbarPositionFromValue(threshold, thresholdMin, thresholdMax, scrollbarSize);
-	}
-
-	public void setInitialDelta(final float value) {
-		delta = value;
-		deltaInit = computeScrollbarPositionFromValue(delta, deltaMin, deltaMax, scrollbarSize);
-	}
-
-	public double getInitialDelta(final float value) {
-
-		return delta;
-
-	}
+	
 
 	public InteractiveMethods() {
 
@@ -351,12 +223,6 @@ public class InteractiveMethods {
 		this.ndims = originalimg.numDimensions();
 	}
 
-	public void setInitialUnstability_Score(final float value) {
-		Unstability_Score = value;
-		Unstability_ScoreInit = computeScrollbarPositionFromValue(Unstability_Score, Unstability_ScoreMin,
-				Unstability_ScoreMax, scrollbarSize);
-	}
-
 	public void run(String arg0) {
 		FloatType minval = new FloatType(0);
 		FloatType maxval = new FloatType(255);
@@ -376,53 +242,42 @@ public class InteractiveMethods {
 		configDriver = new SnakeConfigDriver();
 		ZTPreRoiobject = new ArrayList<PreRoiobject>();
 		Timetracks = new HashMap<Integer, ArrayList<ThreeDRoiobject>>();
-		setInitialUnstability_Score(Unstability_ScoreInit);
-		setInitialDelta(deltaInit);
 
-		setInitialminDiversity(minDiversityInit);
-		setInitialmaxSize(maxSizeInit);
-		setInitialminSize(minSizeInit);
-
-		regmin = reg / 2.0;
-		regmax = reg;
 		if (ndims < 3) {
 
-			thirdDimensionSize = 0;
-			fourthDimensionSize = 0;
+			CovistoZselectPanel.thirdDimensionSize = 0;
+			CovistoTimeselectPanel.fourthDimensionSize = 0;
 		}
 
 		if (ndims == 3) {
 
-			fourthDimension = 0;
-			fourthDimensionsliderInit = 0;
-			thirdDimension = 1;
-			fourthDimensionSize = 0;
-
-			thirdDimensionSize = (int) originalimg.dimension(2);
+			CovistoTimeselectPanel.fourthDimension = 0;
+			CovistoTimeselectPanel.fourthDimensionsliderInit = 0;
+			CovistoZselectPanel.thirdDimension = 1;
+			CovistoTimeselectPanel.fourthDimensionSize = 0;
+			CovistoZselectPanel.thirdDimensionSize = (int) originalimg.dimension(2);
 
 		}
 
 		if (ndims == 4) {
 
-			fourthDimension = 1;
-			thirdDimension = 1;
-
-			thirdDimensionSize = (int) originalimg.dimension(2);
-			fourthDimensionSize = (int) originalimg.dimension(3);
+			CovistoTimeselectPanel.fourthDimension = 1;
+			CovistoZselectPanel.thirdDimension = 1;
+			CovistoZselectPanel.thirdDimensionSize = (int) originalimg.dimension(2);
+			CovistoTimeselectPanel.fourthDimensionSize = (int) originalimg.dimension(3);
 
 			prestack = new ImageStack((int) originalimg.dimension(0), (int) originalimg.dimension(1),
 					java.awt.image.ColorModel.getRGBdefault());
 		}
 
-		setTime(fourthDimension);
-		setZ(thirdDimension);
-		CurrentView = utility.CovistoSlicer.getCurrentView(originalimg, fourthDimension, thirdDimensionSize,
-				thirdDimension, fourthDimensionSize);
+		CurrentView = utility.CovistoSlicer.getCurrentView(originalimg, CovistoTimeselectPanel.fourthDimension,
+				CovistoZselectPanel.thirdDimensionSize, CovistoZselectPanel.thirdDimension,
+				CovistoTimeselectPanel.fourthDimensionSize);
 
 		imp = ImageJFunctions.show(CurrentView);
-		System.out.println(originalimg.dimension(0) + " " + originalimg.dimension(1) + " " + originalimg.dimension(2)
-				+ " " + originalimg.dimension(3) + " " + ndims);
-		imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+	
+		imp.setTitle("Active image" + " " + "time point : " + CovistoTimeselectPanel.fourthDimension + " " + " Z: "
+				+ CovistoZselectPanel.thirdDimension);
 		roimanager = RoiManager.getInstance();
 
 		if (roimanager == null) {
@@ -443,10 +298,11 @@ public class InteractiveMethods {
 	public void updatePreview(final ValueChange change) {
 
 		overlay = imp.getOverlay();
-		int localthirddim = thirdDimension, localfourthdim = fourthDimension;
-		uniqueID = Integer.toString(thirdDimension) + Integer.toString(fourthDimension);
-		ZID = Integer.toString(thirdDimension);
-		TID = Integer.toString(fourthDimension);
+		int localthirddim = CovistoZselectPanel.thirdDimension, localfourthdim = CovistoTimeselectPanel.fourthDimension;
+		uniqueID = Integer.toString(CovistoZselectPanel.thirdDimension)
+				+ Integer.toString(CovistoTimeselectPanel.fourthDimension);
+		ZID = Integer.toString(CovistoZselectPanel.thirdDimension);
+		TID = Integer.toString(CovistoTimeselectPanel.fourthDimension);
 		if (overlay == null) {
 
 			overlay = new Overlay();
@@ -483,16 +339,17 @@ public class InteractiveMethods {
 		if (change == ValueChange.SNAKE) {
 
 			overlay.clear();
-			Accountedframes.put(TID, fourthDimension);
+			Accountedframes.put(TID, CovistoTimeselectPanel.fourthDimension);
 
-			AccountedZ.put(ZID, thirdDimension);
+			AccountedZ.put(ZID, CovistoZselectPanel.thirdDimension);
 
 			for (Map.Entry<String, ArrayList<PreRoiobject>> entry : ZTRois.entrySet()) {
 
 				ArrayList<PreRoiobject> current = entry.getValue();
 				for (PreRoiobject currentroi : current) {
 
-					if (currentroi.fourthDimension == fourthDimension && currentroi.thirdDimension == thirdDimension) {
+					if (currentroi.fourthDimension == CovistoTimeselectPanel.fourthDimension
+							&& currentroi.thirdDimension == CovistoZselectPanel.thirdDimension) {
 
 						currentroi.rois.setStrokeColor(colorSnake);
 						overlay.add(currentroi.rois);
@@ -504,18 +361,20 @@ public class InteractiveMethods {
 			}
 			imp.setOverlay(overlay);
 			imp.updateAndDraw();
-			zText.setText("Current Z = " + localthirddim);
-			zgenText.setText("Current Z / T = " + localthirddim);
-			zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim,
-					thirdDimensionsliderInit, thirdDimensionSize, scrollbarSize));
-			zslider.repaint();
-			zslider.validate();
+			CovistoZselectPanel.zText.setText("Current Z = " + localthirddim);
+			CovistoZselectPanel.zgenText.setText("Current Z / T = " + localthirddim);
+			CovistoZselectPanel.zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim,
+					CovistoZselectPanel.thirdDimensionsliderInit, CovistoZselectPanel.thirdDimensionSize,
+					scrollbarSize));
+			CovistoZselectPanel.zslider.repaint();
+			CovistoZselectPanel.zslider.validate();
 
-			timeText.setText("Current T = " + localfourthdim);
-			timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localfourthdim,
-					fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
-			timeslider.repaint();
-			timeslider.validate();
+			CovistoTimeselectPanel.timeText.setText("Current T = " + localfourthdim);
+			CovistoTimeselectPanel.timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(
+					localfourthdim, CovistoTimeselectPanel.fourthDimensionsliderInit,
+					CovistoTimeselectPanel.fourthDimensionSize, scrollbarSize));
+			CovistoTimeselectPanel.timeslider.repaint();
+			CovistoTimeselectPanel.timeslider.validate();
 
 		}
 
@@ -530,13 +389,14 @@ public class InteractiveMethods {
 				final double numberofpixels = Intensityandpixels.getB();
 				final double averageintensity = intensity / numberofpixels;
 				PreRoiobject currentobject = new PreRoiobject(currentroi,
-						new double[] { geocenter[0], geocenter[1], thirdDimension }, numberofpixels, intensity,
-						averageintensity, thirdDimension, fourthDimension);
+						new double[] { geocenter[0], geocenter[1], CovistoZselectPanel.thirdDimension }, numberofpixels,
+						intensity, averageintensity, CovistoZselectPanel.thirdDimension,
+						CovistoTimeselectPanel.fourthDimension);
 				ZTPreRoiobject.add(currentobject);
 			}
-			Accountedframes.put(TID, fourthDimension);
+			Accountedframes.put(TID, CovistoTimeselectPanel.fourthDimension);
 
-			AccountedZ.put(ZID, thirdDimension);
+			AccountedZ.put(ZID, CovistoZselectPanel.thirdDimension);
 			ZTRois.put(uniqueID, ZTPreRoiobject);
 
 			if (overlay != null)
@@ -547,7 +407,8 @@ public class InteractiveMethods {
 				ArrayList<PreRoiobject> current = entry.getValue();
 				for (PreRoiobject currentroi : current) {
 
-					if (currentroi.fourthDimension == fourthDimension && currentroi.thirdDimension == thirdDimension) {
+					if (currentroi.fourthDimension == CovistoTimeselectPanel.fourthDimension
+							&& currentroi.thirdDimension == CovistoZselectPanel.thirdDimension) {
 
 						currentroi.rois.setStrokeColor(colorConfirm);
 						overlay.add(currentroi.rois);
@@ -579,7 +440,8 @@ public class InteractiveMethods {
 
 			}
 
-			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+			imp.setTitle("Active image" + " " + "time point : " + CovistoTimeselectPanel.fourthDimension + " " + " Z: "
+					+ CovistoZselectPanel.thirdDimension);
 
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
@@ -604,7 +466,8 @@ public class InteractiveMethods {
 
 			}
 
-			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+			imp.setTitle("Active image" + " " + "time point : " + CovistoTimeselectPanel.fourthDimension + " " + " Z: "
+					+ CovistoZselectPanel.thirdDimension);
 
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
@@ -621,18 +484,20 @@ public class InteractiveMethods {
 				computeDOG.execute();
 			}
 
-			zText.setText("Current Z = " + localthirddim);
-			zgenText.setText("Current Z / T = " + localthirddim);
-			zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim,
-					thirdDimensionsliderInit, thirdDimensionSize, scrollbarSize));
-			zslider.repaint();
-			zslider.validate();
+			CovistoZselectPanel.zText.setText("Current Z = " + localthirddim);
+			CovistoZselectPanel.zgenText.setText("Current Z / T = " + localthirddim);
+			CovistoZselectPanel.zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localthirddim,
+					CovistoZselectPanel.thirdDimensionsliderInit, CovistoZselectPanel.thirdDimensionSize,
+					scrollbarSize));
+			CovistoZselectPanel.zslider.repaint();
+			CovistoZselectPanel.zslider.validate();
 
-			timeText.setText("Current T = " + localfourthdim);
-			timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(localfourthdim,
-					fourthDimensionsliderInit, fourthDimensionSize, scrollbarSize));
-			timeslider.repaint();
-			timeslider.validate();
+			CovistoTimeselectPanel.timeText.setText("Current T = " + localfourthdim);
+			CovistoTimeselectPanel.timeslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(
+					localfourthdim, CovistoTimeselectPanel.fourthDimensionsliderInit,
+					CovistoTimeselectPanel.fourthDimensionSize, CovistoTimeselectPanel.scrollbarSize));
+			CovistoTimeselectPanel.timeslider.repaint();
+			CovistoTimeselectPanel.timeslider.validate();
 		}
 
 		if (change == ValueChange.MSER) {
@@ -653,7 +518,8 @@ public class InteractiveMethods {
 
 			}
 
-			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+			imp.setTitle("Active image" + " " + "time point : " + CovistoTimeselectPanel.fourthDimension + " " + " Z: "
+					+ CovistoZselectPanel.thirdDimension);
 
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
@@ -703,7 +569,8 @@ public class InteractiveMethods {
 
 			}
 
-			imp.setTitle("Active image" + " " + "time point : " + fourthDimension + " " + " Z: " + thirdDimension);
+			imp.setTitle("Active image" + " " + "time point : " + CovistoTimeselectPanel.fourthDimension + " " + " Z: "
+					+ CovistoZselectPanel.thirdDimension);
 
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
@@ -730,14 +597,6 @@ public class InteractiveMethods {
 	public JPanel NearestNPanel = new JPanel();
 	public JPanel KalmanPanel = new JPanel();
 
-	final String timestring = "Current T";
-	final String zstring = "Current Z";
-	final String zgenstring = "Current Z / T";
-
-	public Label timeText = new Label("Current T = " + 1, Label.CENTER);
-	public Label zText = new Label("Current Z = " + 1, Label.CENTER);
-	public Label zgenText = new Label("Current Z / T = " + 1, Label.CENTER);
-
 	final String maxSearchstring = "Maximum search radius";
 
 	public JButton Roibutton = new JButton("Confirm current roi selection");
@@ -751,14 +610,9 @@ public class InteractiveMethods {
 	public final GridBagLayout layout = new GridBagLayout();
 	public final GridBagConstraints c = new GridBagConstraints();
 
-	public JScrollBar timeslider = new JScrollBar(Scrollbar.HORIZONTAL, fourthDimensionsliderInit, 10, 0,
-			scrollbarSize + 10);
-	public JScrollBar zslider = new JScrollBar(Scrollbar.HORIZONTAL, thirdDimensionsliderInit, 10, 0,
-			10 + scrollbarSize);
-
 	public TextField inputField = new TextField();
-	public TextField inputFieldT, inputtrackField;
-	public TextField inputFieldZ;
+	public TextField inputtrackField;
+
 	public int SizeXbig = 400;
 	public int SizeXsmall = 200;
 	public int SizeX = 400;
@@ -787,28 +641,11 @@ public class InteractiveMethods {
 		panelFirst.setLayout(layout);
 		panelSecond.setLayout(layout);
 		panelThird.setLayout(layout);
-		Timeselect.setLayout(layout);
-
-		Zselect.setLayout(layout);
-
 		DetectionPanel.setLayout(layout);
-		SnakePanel.setLayout(layout);
-		WaterPanel.setLayout(layout);
 		RoiPanel.setLayout(layout);
-
-		//
-		inputFieldZ = new TextField();
-		inputFieldZ = new TextField(5);
-		inputFieldZ.setText(Integer.toString(thirdDimension));
 
 		inputField.setColumns(10);
 
-		inputFieldT = new TextField();
-		inputFieldT = new TextField(5);
-		inputFieldT.setText(Integer.toString(fourthDimension));
-
-		Border timeborder = new CompoundBorder(new TitledBorder("Select time"), new EmptyBorder(c.insets));
-		Border zborder = new CompoundBorder(new TitledBorder("Select Z"), new EmptyBorder(c.insets));
 		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"),
 				new EmptyBorder(c.insets));
 
@@ -821,43 +658,18 @@ public class InteractiveMethods {
 		c.gridx = 0;
 
 		// Put time slider
+		Timeselect = CovistoTimeselectPanel.TimeselectPanel(ndims);
 
-		Timeselect.add(timeText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		Timeselect.add(timeslider, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		Timeselect.add(inputFieldT, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
-		Timeselect.setBorder(timeborder);
 		panelFirst.add(Timeselect, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
-
 		// Put z slider
-		if (ndims > 3)
-			Zselect.add(zText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		else
-			Zselect.add(zgenText, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		Zselect.add(zslider, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
-		Zselect.add(inputFieldZ, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		Zselect = CovistoZselectPanel.ZselectPanel(ndims);
 
-		Zselect.setBorder(zborder);
 		panelFirst.add(Zselect, new GridBagConstraints(3, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
-		if (ndims < 4) {
-
-			timeslider.setEnabled(false);
-			inputFieldT.setEnabled(false);
-		}
-
+		// Choice of segmentation algorithm panel
 		DetectionPanel.add(Watershed, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		DetectionPanel.add(DOG, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
@@ -869,16 +681,18 @@ public class InteractiveMethods {
 		panelFirst.add(DetectionPanel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
+		// Watershed panel
 		WaterPanel = CovistoWatershedPanel.WaterPanel();
 		panelFirst.add(WaterPanel, new GridBagConstraints(3, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, insets, 0, 0));
 
+		// Difference of Gaussian detection panel
 		DogPanel = CovistoDogPanel.DogPanel();
 		panelFirst.add(DogPanel, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, insets, 0, 0));
 
+		// Mser detection panel
 		MserPanel = CovistoMserPanel.MserPanel();
-
 		panelFirst.add(MserPanel, new GridBagConstraints(3, 3, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
 
@@ -930,10 +744,12 @@ public class InteractiveMethods {
 			}
 		}));
 
+		// Active contour refinement panel
 		SnakePanel = CovistoSnakePanel.SnakePanel(originalimg.numDimensions());
 		panelSecond.add(SnakePanel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.EAST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
+		// Tracking panel
 		if (!SegMode) {
 
 			NearestNPanel = CovistoNearestNPanel.NearestNPanel();
@@ -1027,18 +843,22 @@ public class InteractiveMethods {
 				CovistoDogPanel.thresholdText, CovistoDogPanel.thresholdstring, CovistoDogPanel.thresholdMin,
 				CovistoDogPanel.thresholdMax, CovistoDogPanel.scrollbarSize, CovistoDogPanel.thresholdslider));
 
-		timeslider.addAdjustmentListener(new PreTimeListener(this, timeText, timestring, fourthDimensionsliderInit,
-				fourthDimensionSize, scrollbarSize, timeslider));
+		CovistoTimeselectPanel.timeslider.addAdjustmentListener(
+				new PreTimeListener(this, CovistoTimeselectPanel.timeText, CovistoTimeselectPanel.timestring,
+						CovistoTimeselectPanel.fourthDimensionsliderInit, CovistoTimeselectPanel.fourthDimensionSize,
+						CovistoTimeselectPanel.scrollbarSize, CovistoTimeselectPanel.timeslider));
 
 		if (ndims > 3)
-			zslider.addAdjustmentListener(new PreZListener(this, zText, zstring, thirdDimensionsliderInit,
-					thirdDimensionSize, scrollbarSize, zslider));
+			CovistoZselectPanel.zslider.addAdjustmentListener(new PreZListener(this, CovistoZselectPanel.zText,
+					CovistoZselectPanel.zstring, CovistoZselectPanel.thirdDimensionsliderInit,
+					CovistoZselectPanel.thirdDimensionSize, scrollbarSize, CovistoZselectPanel.zslider));
 		else
-			zslider.addAdjustmentListener(new PreZListener(this, zgenText, zgenstring, thirdDimensionsliderInit,
-					thirdDimensionSize, scrollbarSize, zslider));
+			CovistoZselectPanel.zslider.addAdjustmentListener(new PreZListener(this, CovistoZselectPanel.zgenText,
+					CovistoZselectPanel.zgenstring, CovistoZselectPanel.thirdDimensionsliderInit,
+					CovistoZselectPanel.thirdDimensionSize, scrollbarSize, CovistoZselectPanel.zslider));
 
-		inputFieldZ.addTextListener(new PreZlocListener(this, false));
-		inputFieldT.addTextListener(new PreTlocListener(this, false));
+		CovistoZselectPanel.inputFieldZ.addTextListener(new PreZlocListener(this, false));
+		CovistoTimeselectPanel.inputFieldT.addTextListener(new PreTlocListener(this, false));
 
 		panelSecond.add(controlprev, new GridBagConstraints(0, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.RELATIVE, new Insets(10, 10, 0, 10), 0, 0));
@@ -1063,26 +883,6 @@ public class InteractiveMethods {
 		panelFirst.setVisible(true);
 		Cardframe.pack();
 		Cardframe.setVisible(true);
-	}
-
-	public float computeValueFromScrollbarPosition(final int scrollbarPosition, final float min, final float max,
-			final int scrollbarSize) {
-		return min + (scrollbarPosition / (float) scrollbarSize) * (max - min);
-	}
-
-	protected static float computeIntValueFromScrollbarPosition(final int scrollbarPosition, final float min,
-			final float max, final int scrollbarSize) {
-		return min + (scrollbarPosition / (max)) * (max - min);
-	}
-
-	public int computeScrollbarPositionFromValue(final float sigma, final float min, final float max,
-			final int scrollbarSize) {
-		return Util.round(((sigma - min) / (max - min)) * scrollbarSize);
-	}
-
-	public int computeIntScrollbarPositionFromValue(final float thirdDimensionslider, final float min, final float max,
-			final int scrollbarSize) {
-		return Util.round(((thirdDimensionslider - min) / (max - min)) * max);
 	}
 
 	public static void main(String[] args) {

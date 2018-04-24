@@ -4,6 +4,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import ij.gui.GenericDialog;
+import snakeGUI.CovistoSnakePanel;
 
 public class AdvancedSnakeListener implements ItemListener {
 	
@@ -40,29 +41,29 @@ public class AdvancedSnakeListener implements ItemListener {
 
 		// dialog
 		GenericDialog gd = new GenericDialog("Snake Advanced");
-		gd.addNumericField("Distance_Search", parent.DistMax, 0);
-		gd.addNumericField("Displacement_min", parent.Displacement_min, 2);
-		gd.addNumericField("Displacement_max", parent.Displacement_max, 2);
-		gd.addNumericField("Threshold_dist_positive", parent.Threshold_dist_positive, 0);
-		gd.addNumericField("Threshold_dist_negative", parent.Threshold_dist_negative, 0);
-		gd.addNumericField("Inv_alpha_min", parent.Inv_alpha_min, 2);
-		gd.addNumericField("Inv_alpha_max", parent.Inv_alpha_max, 2);
-		gd.addNumericField("Reg_min", parent.regmin, 2);
-		gd.addNumericField("Reg_max", parent.regmax, 2);
-		gd.addNumericField("Mul_factor", parent.Mul_factor, 4);
+		gd.addNumericField("Distance_Search", CovistoSnakePanel.DistMax, 0);
+		gd.addNumericField("Displacement_min", CovistoSnakePanel.Displacement_min, 2);
+		gd.addNumericField("Displacement_max", CovistoSnakePanel.Displacement_max, 2);
+		gd.addNumericField("Threshold_dist_positive", CovistoSnakePanel.Threshold_dist_positive, 0);
+		gd.addNumericField("Threshold_dist_negative", CovistoSnakePanel.Threshold_dist_negative, 0);
+		gd.addNumericField("Inv_alpha_min", CovistoSnakePanel.Inv_alpha_min, 2);
+		gd.addNumericField("Inv_alpha_max", CovistoSnakePanel.Inv_alpha_max, 2);
+		gd.addNumericField("Reg_min", CovistoSnakePanel.regmin, 2);
+		gd.addNumericField("Reg_max", CovistoSnakePanel.regmax, 2);
+		gd.addNumericField("Mul_factor", CovistoSnakePanel.Mul_factor, 4);
 		// show dialog
 		gd.showDialog();
 
-		parent.DistMax = (int) gd.getNextNumber();
-		parent.Displacement_min = gd.getNextNumber();
-		parent.Displacement_max = gd.getNextNumber();
-		parent.Threshold_dist_positive = gd.getNextNumber();
-		parent.Threshold_dist_negative = gd.getNextNumber();
-		parent.Inv_alpha_min = gd.getNextNumber();
-		parent.Inv_alpha_max = gd.getNextNumber();
-		parent.regmin = gd.getNextNumber();
-		parent.regmax = gd.getNextNumber();
-		parent.Mul_factor = gd.getNextNumber();
+		CovistoSnakePanel.DistMax = (int) gd.getNextNumber();
+		CovistoSnakePanel.Displacement_min = gd.getNextNumber();
+		CovistoSnakePanel.Displacement_max = gd.getNextNumber();
+		CovistoSnakePanel.Threshold_dist_positive = gd.getNextNumber();
+		CovistoSnakePanel.Threshold_dist_negative = gd.getNextNumber();
+		CovistoSnakePanel.Inv_alpha_min = gd.getNextNumber();
+		CovistoSnakePanel.Inv_alpha_max = gd.getNextNumber();
+		CovistoSnakePanel.regmin = gd.getNextNumber();
+		CovistoSnakePanel.regmax = gd.getNextNumber();
+		CovistoSnakePanel.Mul_factor = gd.getNextNumber();
 
 		return !gd.wasCanceled();
 

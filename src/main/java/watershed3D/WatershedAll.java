@@ -33,8 +33,11 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
+import timeGUI.CovistoTimeselectPanel;
 import utility.PreRoiobject;
 import utility.ThreeDRoiobject;
+import watershedGUI.CovistoWatershedPanel;
+import zGUI.CovistoZselectPanel;
 
 public class WatershedAll extends SwingWorker<Void, Void> {
 
@@ -59,26 +62,26 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 		
 		RandomAccessibleInterval<IntType> intimg = new ArrayImgFactory<IntType>().create(newimg, new IntType());
 		
-		for (int t = parent.fourthDimensionsliderInit; t <= parent.fourthDimensionSize; ++t) {
+		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 
-			for (int z = parent.thirdDimensionsliderInit; z <= parent.thirdDimensionSize; ++z) {
+			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
 				
-				parent.thirdDimension = z;
-				parent.fourthDimension = t;
+				CovistoZselectPanel.thirdDimension = z;
+				CovistoTimeselectPanel.fourthDimension = t;
 				
-				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				
-				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				
-				RandomAccessibleInterval<IntType> currentintimg = utility.CovistoSlicer.getCurrentView(intimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				RandomAccessibleInterval<IntType> currentintimg = utility.CovistoSlicer.getCurrentView(intimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				
-				RandomAccessibleInterval<FloatType> currentnewimg = utility.CovistoSlicer.getCurrentView(newimg, z, parent.thirdDimensionSize, t,
-						parent.fourthDimensionSize);
+				RandomAccessibleInterval<FloatType> currentnewimg = utility.CovistoSlicer.getCurrentView(newimg, z, CovistoZselectPanel.thirdDimensionSize, t,
+						CovistoTimeselectPanel.fourthDimensionSize);
 				
 			processSlice(parent.CurrentView, currentintimg, currentbitimg, currentnewimg);
 			
@@ -114,14 +117,14 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 		
 		
 		if(parent.autothreshwater) {
-		parent.thresholdWater = (float) ( GlobalThresholding.AutomaticThresholding(slice));
-		System.out.println(parent.thresholdWater);
-		parent.thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(parent.thresholdWater, parent.thresholdMinWater, parent.thresholdMaxWater, parent.scrollbarSize));
-	    parent.watertext.setText(parent.waterstring +  " = "  + parent.thresholdWater );
-		parent.thresholdslider.validate();
-		parent.thresholdslider.repaint();
+		CovistoWatershedPanel.thresholdWater = (float) ( GlobalThresholding.AutomaticThresholding(slice));
+		CovistoWatershedPanel.thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, CovistoWatershedPanel.thresholdMinWater, 
+				CovistoWatershedPanel.thresholdMaxWater, CovistoWatershedPanel.scrollbarSize));
+		CovistoWatershedPanel.watertext.setText(CovistoWatershedPanel.waterstring +  " = "  + CovistoWatershedPanel.thresholdWater );
+		CovistoWatershedPanel.thresholdWaterslider.validate();
+		CovistoWatershedPanel.thresholdWaterslider.repaint();
 		}
-		GetLocalmaxminMT.ThresholdingMTBit(slice, bitimg, parent.thresholdWater);
+		GetLocalmaxminMT.ThresholdingMTBit(slice, bitimg, CovistoWatershedPanel.thresholdWater);
 		
 		
 		DistWatershed<FloatType> WaterafterDisttransform = new DistWatershed<FloatType>(parent, slice, bitimg,

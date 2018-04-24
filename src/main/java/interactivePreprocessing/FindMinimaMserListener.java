@@ -4,6 +4,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import interactivePreprocessing.InteractiveMethods.ValueChange;
+import mserGUI.CovistoMserPanel;
 
 public class FindMinimaMserListener implements ItemListener {
 	
@@ -23,11 +24,11 @@ public class FindMinimaMserListener implements ItemListener {
 		
 		
 		if (arg0.getStateChange() == ItemEvent.DESELECTED) {
-			parent.darktobright = false;
-			parent.brighttodark = false;
+			CovistoMserPanel.darktobright = false;
+			CovistoMserPanel.brighttodark = false;
 		} else if (arg0.getStateChange() == ItemEvent.SELECTED) {
-			parent.darktobright = false;
-			parent.brighttodark = true;
+			CovistoMserPanel.darktobright = false;
+			CovistoMserPanel.brighttodark = true;
 			parent.updatePreview(ValueChange.MSER);
 		}
 

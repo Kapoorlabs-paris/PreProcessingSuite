@@ -11,6 +11,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.logic.BitType;
+import zGUI.CovistoZselectPanel;
 
 
 public class PreZlocListener implements TextListener {
@@ -54,23 +55,24 @@ public class PreZlocListener implements TextListener {
 				String s = tc.getText();
 				if (arg0.getKeyChar() == KeyEvent.VK_ENTER && !pressed) {
 					pressed = true;
-					if (parent.thirdDimension > parent.thirdDimensionSize) {
+					if (CovistoZselectPanel.thirdDimension > CovistoZselectPanel.thirdDimensionSize) {
 						IJ.log("Max frame number exceeded, moving to last frame instead");
-						parent.thirdDimension = parent.thirdDimensionSize;
+						CovistoZselectPanel.thirdDimension = CovistoZselectPanel.thirdDimensionSize;
 					} else
-						parent.thirdDimension = Integer.parseInt(s);
+						CovistoZselectPanel.thirdDimension = Integer.parseInt(s);
 					ShowView show = new ShowView(parent);
 					show.shownewZ();
 					
-					parent.zText.setText("Current Z = " + parent.thirdDimension);
-					parent.zgenText.setText("Current Z / T = " + parent.thirdDimension);
+					CovistoZselectPanel.zText.setText("Current Z = " + CovistoZselectPanel.thirdDimension);
+					CovistoZselectPanel.zgenText.setText("Current Z / T = " + CovistoZselectPanel.thirdDimension);
 					parent.updatePreview(ValueChange.THIRDDIMmouse);
 					
 					
 				}
-				parent.zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(parent.thirdDimension, parent.thirdDimensionsliderInit, parent.thirdDimensionSize, parent.scrollbarSize));
-				parent.zslider.repaint();
-				parent.zslider.validate();
+				CovistoZselectPanel.zslider.setValue(utility.CovistoSlicer.computeScrollbarPositionFromValue(CovistoZselectPanel.thirdDimension, CovistoZselectPanel.thirdDimensionsliderInit, 
+						CovistoZselectPanel.thirdDimensionSize, CovistoZselectPanel.scrollbarSize));
+				CovistoZselectPanel.zslider.repaint();
+				CovistoZselectPanel.zslider.validate();
 
 			}
 		});
