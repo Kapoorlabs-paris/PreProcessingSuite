@@ -22,7 +22,9 @@ import net.imglib2.algorithm.stats.Normalize;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
@@ -591,7 +593,7 @@ public class Utils {
 				return output;
 	}
 
-	final public static void addGaussian( final RandomAccessibleInterval< FloatType > image, final double[] location, final double[] sigma)
+	final public static< T extends RealType< T > & NativeType< T >>  void addGaussian( final RandomAccessibleInterval< T > image, final double[] location, final double[] sigma)
 	{
 	final int numDimensions = image.numDimensions();
 	final int[] size = new int[ numDimensions ];
@@ -609,10 +611,10 @@ public class Utils {
 	two_sq_sigma[ d ] =  sigma[ d ] * sigma[ d ];
 	}
 
-	final RandomAccessible< FloatType > infinite = Views.extendZero( image );
-	final RandomAccessibleInterval< FloatType > interval = Views.interval( infinite, min, max );
-	final IterableInterval< FloatType > iterable = Views.iterable( interval );
-	final Cursor< FloatType > cursor = iterable.localizingCursor();
+	final RandomAccessible< T > infinite = Views.extendZero( image );
+	final RandomAccessibleInterval< T > interval = Views.interval( infinite, min, max );
+	final IterableInterval< T > iterable = Views.iterable( interval );
+	final Cursor< T > cursor = iterable.localizingCursor();
 	
 	
 	
@@ -631,7 +633,7 @@ public class Utils {
 	}
 	
 	
-	cursor.get().set( cursor.get().get() + (float)value );
+	cursor.get().setReal( cursor.get().getPowerFloat() + (float)value );
 	
 	
 	}

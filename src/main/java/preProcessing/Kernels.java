@@ -565,7 +565,7 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 		return meanimg;
 	}
 	
-	public static RandomAccessibleInterval<BitType> CannyEdgeandMeanBit(RandomAccessibleInterval<BitType> inputimg,
+	public static  RandomAccessibleInterval<BitType> CannyEdgeandMeanBit(RandomAccessibleInterval<BitType> inputimg,
 			final double sigma) {
 		int n = inputimg.numDimensions();
 		RandomAccessibleInterval<BitType> cannyimage = new ArrayImgFactory<BitType>().create(inputimg,
@@ -755,9 +755,9 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 				new FloatType());
 		//Supress values below the low threshold
 		int n = inputimg.numDimensions();
-		double[] position = new double[n];
-				final Float Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
-				 Float threshold = Lowthreshold;
+		double[] position = new double[n];  
+				final double Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
+				 double threshold = Lowthreshold;
 				Cursor<FloatType> inputcursor = Views.iterable(inputimg).localizingCursor();
 				RandomAccess<FloatType> outputran = Threshimg.randomAccess();
 				while(inputcursor.hasNext()){
@@ -781,8 +781,8 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 		//Supress values below the low threshold
 		int n = inputimg.numDimensions();
 		double[] position = new double[n];
-				final Float Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
-				 Float threshold = Lowthreshold;
+				final double Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
+				 double threshold = Lowthreshold;
 				Cursor<FloatType> inputcursor = Views.iterable(inputimg).localizingCursor();
 				RandomAccess<FloatType> outputran = Threshimg.randomAccess();
 				while(inputcursor.hasNext()){
@@ -805,8 +805,8 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 		//Supress values below the low threshold
 		int n = inputimg.numDimensions();
 		double[] position = new double[n];
-				final Float Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
-				 Float threshold = Lowthreshold;
+				final double Lowthreshold = GlobalThresholding.AutomaticThresholdingSec(inputimg);
+				 double threshold = Lowthreshold;
 				 Float Highthreshold = new Float(2.0 * threshold);
 				Cursor<FloatType> inputcursor = Views.iterable(inputimg).localizingCursor();
 				RandomAccess<FloatType> outputran = Threshimg.randomAccess();
@@ -915,6 +915,7 @@ public static void addBackground(final IterableInterval<FloatType> iterable, fin
 
 		return gradientimg;
 	}
+	
 	
 	public static Pair<Double, Double> computeMinMax(RandomAccessibleInterval<FloatType> input){
 		

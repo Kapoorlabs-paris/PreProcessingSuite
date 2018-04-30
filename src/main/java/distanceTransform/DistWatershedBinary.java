@@ -14,14 +14,12 @@ import net.imglib2.algorithm.labeling.AllConnectedComponents;
 import net.imglib2.algorithm.labeling.Watershed;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.labeling.DefaultROIStrategyFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingROIStrategy;
 import net.imglib2.labeling.NativeImgLabeling;
 import net.imglib2.neighborsearch.NearestNeighborSearchOnKDTree;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -67,7 +65,6 @@ import net.imglib2.view.Views;
 		@Override
 		public boolean process() {
 			// Perform the distance transform
-			final BitType type = source.randomAccess().get().createVariable();
 			final ImgFactory<UnsignedByteType> factory = Util.getArrayOrCellImgFactory(source, new UnsignedByteType());
 			RandomAccessibleInterval<UnsignedByteType>  distimg = factory.create(source, new UnsignedByteType());
 			

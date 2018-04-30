@@ -63,8 +63,10 @@ import net.imglib2.Point;
 import net.imglib2.PointSampleList;
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
@@ -83,13 +85,13 @@ public class GetLocalmaxminMT {
 	protected IntensityType intensityType;
 
 	// Thresholding a FloatType to set values below the threshold to 0 intensity
-	public static void ThresholdingMT(RandomAccessibleInterval<FloatType> img, RandomAccessibleInterval<FloatType> imgout,
-			Float ThresholdValue, final IntensityType setintensity, double[] sigma) {
+	public static< T extends RealType< T > & NativeType< T >> void ThresholdingMT(RandomAccessibleInterval<T> img, RandomAccessibleInterval<T> imgout,
+			double ThresholdValue, final IntensityType setintensity, double[] sigma) {
 
 		final double[] backpos = new double[imgout.numDimensions()];
-		final Cursor<FloatType> bound = Views.iterable(img).localizingCursor();
+		final Cursor<T> bound = Views.iterable(img).localizingCursor();
 
-		final RandomAccess<FloatType> outbound = imgout.randomAccess();
+		final RandomAccess<T> outbound = imgout.randomAccess();
 
 		while (bound.hasNext()) {
 
@@ -98,7 +100,7 @@ public class GetLocalmaxminMT {
 
 			outbound.setPosition(bound);
 
-			if (bound.get().get() > (ThresholdValue)) {
+			if (bound.get().getPowerDouble() > (ThresholdValue)) {
 
 				bound.localize(backpos);
 				switch (setintensity) {
@@ -130,11 +132,11 @@ public class GetLocalmaxminMT {
 
 	// Finds and displays Local Maxima by constructing a 3*3*3.. local
 	// neighbourhood
-	public static RandomAccessibleInterval<FloatType> FindandDisplayLocalMaxima(RandomAccessibleInterval<FloatType> img,
+	public static< T extends RealType< T > & NativeType< T >> RandomAccessibleInterval<T> FindandDisplayLocalMaxima(RandomAccessibleInterval<T> img,
 			final IntensityType setintensity, double[] sigma) {
-
+		final T type = img.randomAccess().get().createVariable();
 		// Create a new image for the output
-		RandomAccessibleInterval<FloatType> output = new ArrayImgFactory<FloatType>().create(img, new FloatType());
+		RandomAccessibleInterval<T> output = new ArrayImgFactory<T>().create(img, type);
 
 		// define an interval that is span number of pixel smaller on each side
 		// in each dimension
@@ -148,7 +150,7 @@ public class GetLocalmaxminMT {
 		// create a Cursor that iterates over the source and checks in a
 		// 8-neighborhood
 		// if it is a maxima
-		final Cursor<FloatType> center = Views.iterable(img).cursor();
+		final Cursor<T> center = Views.iterable(img).cursor();
 
 		// instantiate a RectangleShape to access rectangular local
 		// neighborhoods
@@ -156,8 +158,8 @@ public class GetLocalmaxminMT {
 		final RectangleShape shape = new RectangleShape(span, true);
 
 		// iterate over the set of neighborhoods in the image
-		for (final Neighborhood<FloatType> localNeighborhood : shape.neighborhoods(img)) {
-			final FloatType centerValue = center.next();
+		for (final Neighborhood<T> localNeighborhood : shape.neighborhoods(img)) {
+			final T centerValue = center.next();
 
 			// keep this boolean true as long as no other value in the local
 			// neighborhood
@@ -165,7 +167,7 @@ public class GetLocalmaxminMT {
 			boolean isMaximum = true;
 
 			// check if all pixels in the local neighborhood that are smaller
-			for (final FloatType value : localNeighborhood) {
+			for (final T value : localNeighborhood) {
 				// test if the center is smaller than the current pixel value
 				if (centerValue.compareTo(value) < 0) {
 					isMaximum = false;
@@ -175,7 +177,7 @@ public class GetLocalmaxminMT {
 			int n = img.numDimensions();
 			double[] position = new double[n];
 			if (isMaximum) {
-				final RandomAccess<FloatType> outbound = output.randomAccess();
+				final RandomAccess<T> outbound = output.randomAccess();
 				outbound.setPosition(center);
 
 				center.localize(position);
@@ -200,11 +202,12 @@ public class GetLocalmaxminMT {
 	
 	// Finds and displays Local Minima by constructing a 3*3*3.. local
 	// neighbourhood
-	public static RandomAccessibleInterval<FloatType> FindandDisplayLocalMinima(RandomAccessibleInterval<FloatType> img,
+	public static< T extends RealType< T > & NativeType< T >> RandomAccessibleInterval<T> FindandDisplayLocalMinima(RandomAccessibleInterval<T> img,
 			 final IntensityType setintensity, double[] sigma) {
 
+		final T type = img.randomAccess().get().createVariable();
 		// Create a new image for the output
-		Img<FloatType> output = new ArrayImgFactory<FloatType>().create(img, new FloatType());
+		Img<T> output = new ArrayImgFactory<T>().create(img, type);
 
 		// define an interval that is span number of pixel smaller on each side
 		// in each dimension
@@ -218,7 +221,7 @@ public class GetLocalmaxminMT {
 		// create a Cursor that iterates over the source and checks in a
 		// 8-neighborhood
 		// if it is a maxima
-		final Cursor<FloatType> center = Views.iterable(img).cursor();
+		final Cursor<T> center = Views.iterable(img).cursor();
 
 		// instantiate a RectangleShape to access rectangular local
 		// neighborhoods
@@ -226,8 +229,8 @@ public class GetLocalmaxminMT {
 		final RectangleShape shape = new RectangleShape(span, true);
 
 		// iterate over the set of neighborhoods in the image
-		for (final Neighborhood<FloatType> localNeighborhood : shape.neighborhoods(img)) {
-			final FloatType centerValue = center.next();
+		for (final Neighborhood<T> localNeighborhood : shape.neighborhoods(img)) {
+			final T centerValue = center.next();
 
 			// keep this boolean true as long as no other value in the local
 			// neighborhood
@@ -235,7 +238,7 @@ public class GetLocalmaxminMT {
 			boolean isMinimum = true;
 
 			// check if all pixels in the local neighborhood that are smaller
-			for (final FloatType value : localNeighborhood) {
+			for (final T value : localNeighborhood) {
 				// test if the center is smaller than the current pixel value
 				if (centerValue.compareTo(value) >= 0) {
 					isMinimum = false;
@@ -245,7 +248,7 @@ public class GetLocalmaxminMT {
 			double[] position = new double[img.numDimensions()];
 			if (isMinimum) {
 
-				final RandomAccess<FloatType> outbound = output.randomAccess();
+				final RandomAccess<T> outbound = output.randomAccess();
 				outbound.setPosition(center);
 				center.localize(position);
 				switch (setintensity) {
@@ -268,7 +271,7 @@ public class GetLocalmaxminMT {
 	}
 
 	// Write Local minima to an ArrayList<RealPoint>
-	public static ArrayList<RealPoint> FindLocalMinima(RandomAccessibleInterval<FloatType> img) {
+	public static< T extends RealType< T > & NativeType< T >> ArrayList<RealPoint> FindLocalMinima(RandomAccessibleInterval<T> img) {
 
 		int n = img.numDimensions();
 
@@ -280,17 +283,17 @@ public class GetLocalmaxminMT {
 
 		img = Views.interval(img, interval);
 
-		final Cursor<FloatType> center = Views.iterable(img).cursor();
+		final Cursor<T> center = Views.iterable(img).cursor();
 
 		final RectangleShape shape = new RectangleShape(span, true);
 
-		for (final Neighborhood<FloatType> localNeighborhood : shape.neighborhoods(img)) {
+		for (final Neighborhood<T> localNeighborhood : shape.neighborhoods(img)) {
 
-			final FloatType centerValue = center.next();
+			final T centerValue = center.next();
 
 			boolean isMinimum = true;
 
-			for (final FloatType value : localNeighborhood) {
+			for (final T value : localNeighborhood) {
 				if (centerValue.compareTo(value) >= 0) {
 					isMinimum = false;
 					break;
@@ -307,7 +310,7 @@ public class GetLocalmaxminMT {
 	}
 
 	// Write Local maxima to an ArrayList<RealPoint>
-	public static ArrayList<RealPoint> FindLocalMaxima(RandomAccessibleInterval<FloatType> img) {
+	public static< T extends RealType< T > & NativeType< T >> ArrayList<RealPoint> FindLocalMaxima(RandomAccessibleInterval<T> img) {
 
 		int n = img.numDimensions();
 
@@ -319,16 +322,16 @@ public class GetLocalmaxminMT {
 
 		img = Views.interval(img, interval);
 
-		final Cursor<FloatType> center = Views.iterable(img).cursor();
+		final Cursor<T> center = Views.iterable(img).cursor();
 
 		final RectangleShape shape = new RectangleShape(span, true);
 
-		for (final Neighborhood<FloatType> localNeighborhood : shape.neighborhoods(img)) {
-			final FloatType centerValue = center.next();
+		for (final Neighborhood<T> localNeighborhood : shape.neighborhoods(img)) {
+			final T centerValue = center.next();
 
 			boolean isMaximum = true;
 
-			for (final FloatType value : localNeighborhood) {
+			for (final T value : localNeighborhood) {
 
 				if (centerValue.compareTo(value) < 0) {
 					isMaximum = false;
@@ -414,14 +417,15 @@ public class GetLocalmaxminMT {
 		return SubpixelMaxlist;
 	}
 
-	public static Pair<FloatType, FloatType> computeMinMaxIntensity(final RandomAccessibleInterval<FloatType> inputimg) {
+	public static< T extends RealType< T > & NativeType< T >> Pair<T, T> computeMinMaxIntensity(final RandomAccessibleInterval<T> inputimg) {
 		// create a cursor for the image (the order does not matter)
-		final Cursor<FloatType> cursor = Views.iterable(inputimg).cursor();
+		final Cursor<T> cursor = Views.iterable(inputimg).cursor();
 
+		
+	T type = inputimg.randomAccess().get().createVariable();
 		// initialize min and max with the first image value
-		FloatType type = cursor.next();
-		FloatType min = type.copy();
-		FloatType max = type.copy();
+		T min = type.copy();
+		T max = type.copy();
 
 		// loop over the rest of the data and determine min and max value
 		while (cursor.hasNext()) {
@@ -438,18 +442,21 @@ public class GetLocalmaxminMT {
 
 			}
 		}
-		Pair<FloatType, FloatType> pair = new ValuePair<FloatType, FloatType>(min, max);
+		Pair<T, T> pair = new ValuePair<T, T>(min, max);
 		return pair;
 	}
-	public static Pair<FloatType, FloatType> computesecondMinMaxIntensity(final RandomAccessibleInterval<FloatType> inputimg) {
+	public static< T extends RealType< T > & NativeType< T >> Pair<T, T> computesecondMinMaxIntensity(final RandomAccessibleInterval<T> inputimg) {
 		// create a cursor for the image (the order does not matter)
-		final Cursor<FloatType> cursor = Views.iterable(inputimg).cursor();
+		final Cursor<T> cursor = Views.iterable(inputimg).cursor();
 
+		
+
+		T type = inputimg.randomAccess().get().createVariable();
 		// initialize min and max with the first image value
-		FloatType type = cursor.next();
-		FloatType min = type.copy();
-		FloatType secondmin = type.copy();
-		FloatType max = type.copy();
+	
+		T min = type.copy();
+		T secondmin = type.copy();
+		T max = type.copy();
 
 		// loop over the rest of the data and determine min and max value
 		while (cursor.hasNext()) {
@@ -470,7 +477,7 @@ public class GetLocalmaxminMT {
 
 			}
 		}
-		Pair<FloatType, FloatType> pair = new ValuePair<FloatType, FloatType>(secondmin, max);
+		Pair<T, T> pair = new ValuePair<T, T>(secondmin, max);
 		return pair;
 	}
 	
