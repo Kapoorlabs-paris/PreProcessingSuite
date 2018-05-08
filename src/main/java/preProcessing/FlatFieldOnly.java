@@ -57,13 +57,13 @@ import net.imglib2.view.Views;
  * @param <FloatType>
  *            the type of the source image.
  */
-public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm< RandomAccessibleInterval< FloatType >>
+public class FlatFieldOnly <T extends RealType<T> & NativeType<T>> extends BenchmarkAlgorithm implements OutputAlgorithm< RandomAccessibleInterval< T >>
 {
 	private static final String BASE_ERROR_MSG = "[FlatField2D] ";
 
-	private final RandomAccessibleInterval< FloatType > source;
+	private final RandomAccessibleInterval< T > source;
 
-	private RandomAccessibleInterval< FloatType > output;
+	private RandomAccessibleInterval< T > output;
 
 	private final int flatfieldradius;
 	
@@ -80,14 +80,14 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 	 *            determines the size of the neighborhood. In 2D or 3D, a radius
 	 *            of 1 will generate a 3x3 neighborhood.
 	 */
-	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int flatfieldradius )
+	public FlatFieldOnly( final RandomAccessibleInterval<T> source, final int flatfieldradius )
 	{
 		this.source = source;
 		this.flatfieldradius = flatfieldradius;
 	}
 	
 	
-	public FlatFieldOnly( final RandomAccessibleInterval<FloatType> source, final int flatfieldradius, final JProgressBar jpb  )
+	public FlatFieldOnly( final RandomAccessibleInterval<T> source, final int flatfieldradius, final JProgressBar jpb  )
 	{
 		this.source = source;
 		this.flatfieldradius = flatfieldradius;
@@ -111,8 +111,8 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 	{
 		final long start = System.currentTimeMillis();
 
-		final FloatType type = source.randomAccess().get().createVariable();
-		final ImgFactory< FloatType > factory = Util.getArrayOrCellImgFactory( source, type );
+		final T type = source.randomAccess().get().createVariable();
+		final ImgFactory< T > factory = Util.getArrayOrCellImgFactory( source, type );
 		this.output = factory.create( source, type );
 
 		
@@ -126,11 +126,11 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 			{
 				
 				percent++;
-				final IntervalView< FloatType > slice = Views.hyperSlice( source, 2, z );
-				final IntervalView< FloatType > outputSlice = Views.hyperSlice( output, 2, z );
+				final IntervalView< T > slice = Views.hyperSlice( source, 2, z );
+				final IntervalView< T > outputSlice = Views.hyperSlice( output, 2, z );
 			   
 				if(jpb!=null)
-					Utils.SetProgressBar(jpb, 100 * percent/nz, "Doing Flat field correction, please wait..");
+					scrollbar.Utility.SetProgressBar(jpb, 100 * percent/nz, "Doing Flat field correction, please wait..");
 				
 				processSlice( slice, outputSlice );
 				
@@ -148,11 +148,11 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 	}
 
 	
-       private void subtract(RandomAccessibleInterval<FloatType> target, RandomAccessibleInterval<FloatType> darkfield){
+       private void subtract(RandomAccessibleInterval<T> target, RandomAccessibleInterval<T> darkfield){
 		
 		
-		Cursor<FloatType> cursor = Views.iterable(target).localizingCursor();
-		RandomAccess<FloatType> Gaussran = darkfield.randomAccess();
+		Cursor<T> cursor = Views.iterable(target).localizingCursor();
+		RandomAccess<T> Gaussran = darkfield.randomAccess();
 		double value;
 		while(cursor.hasNext()){
 			
@@ -160,7 +160,7 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 			
 			Gaussran.setPosition(cursor);
 			
-			value = cursor.get().get() - Gaussran.get().get();
+			value = cursor.get().getRealDouble() - Gaussran.get().getRealDouble();
 			cursor.get().setReal(Math.max(value,0));
 			
 			
@@ -184,7 +184,7 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
         * used by the Line finders of the MTV tracker
         * 
         */
-	private void processSlice( final RandomAccessibleInterval< FloatType > in, final IterableInterval< FloatType > out )
+	private void processSlice( final RandomAccessibleInterval< T > in, final IterableInterval< T > out )
 	{
 		
 		double[] sigma = new double[in.numDimensions()];
@@ -192,8 +192,8 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / flatfieldradius);
 		}
 		
-		RandomAccessibleInterval<FloatType> gaussimg = Utils.copyImage(in);
-		RandomAccessibleInterval<FloatType> correctedgaussimg = Utils.copyImage(in);
+		RandomAccessibleInterval<T> gaussimg = Utils.copyImage(in);
+		RandomAccessibleInterval<T> correctedgaussimg = Utils.copyImage(in);
 		
 	
 		try {
@@ -209,11 +209,11 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 		subtract(correctedgaussimg, gaussimg);
 		
 		
-		final Cursor< FloatType > cursor = out.localizingCursor();
+		final Cursor< T > cursor = out.localizingCursor();
 
 		
 
-		final RandomAccess<FloatType> nra = correctedgaussimg.randomAccess();
+		final RandomAccess<T> nra = correctedgaussimg.randomAccess();
 		
 
 		// Fill buffer with median values.
@@ -223,14 +223,14 @@ public class FlatFieldOnly extends BenchmarkAlgorithm implements OutputAlgorithm
 			nra.setPosition( cursor );
 			
 		
-			cursor.get().setReal( nra.get().get());
+			cursor.get().setReal( nra.get().getPowerDouble());
 		}
 		
 	
 	}
 
 	@Override
-	public RandomAccessibleInterval<FloatType> getResult()
+	public RandomAccessibleInterval<T> getResult()
 	{
 		return output;
 	}

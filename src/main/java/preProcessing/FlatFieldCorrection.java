@@ -57,18 +57,17 @@ import net.imglib2.view.Views;
  * @param <FloatType>
  *            the type of the source image.
  */
-public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlgorithm< RandomAccessibleInterval< FloatType >>
+public class FlatFieldCorrection<T extends RealType<T> & NativeType<T>>   extends BenchmarkAlgorithm implements OutputAlgorithm< RandomAccessibleInterval< T >>
 {
 	private static final String BASE_ERROR_MSG = "[FlatFieldAndMedianFilter2D] ";
 
-	private final RandomAccessibleInterval< FloatType > source;
+	private final RandomAccessibleInterval< T > source;
 
-	private RandomAccessibleInterval< FloatType > output;
+	private RandomAccessibleInterval< T > output;
 
 	private final int radius;
 	
-	private final int flatfieldradius;
-	
+	private final double[] psf;
 	
 	private  JProgressBar jpb;
 
@@ -82,19 +81,19 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 	 *            determines the size of the neighborhood. In 2D or 3D, a radius
 	 *            of 1 will generate a 3x3 neighborhood.
 	 */
-	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final int flatfieldradius )
+	public FlatFieldCorrection( final RandomAccessibleInterval<T> source, final int radius, final double[] psf )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.flatfieldradius = flatfieldradius;
+		this.psf = psf;
 	}
 	
 	
-	public FlatFieldCorrection( final RandomAccessibleInterval<FloatType> source, final int radius, final int flatfieldradius, final JProgressBar jpb )
+	public FlatFieldCorrection( final RandomAccessibleInterval<T> source, final int radius, final JProgressBar jpb, final double[] psf  )
 	{
 		this.source = source;
 		this.radius = radius;
-		this.flatfieldradius = flatfieldradius;
+		this.psf = psf;
 		this.jpb = jpb;
 	}
 
@@ -119,8 +118,8 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 	{
 		final long start = System.currentTimeMillis();
 
-		final FloatType type = source.randomAccess().get().createVariable();
-		final ImgFactory< FloatType > factory = Util.getArrayOrCellImgFactory( source, type );
+		final T type = source.randomAccess().get().createVariable();
+		final ImgFactory< T > factory = Util.getArrayOrCellImgFactory( source, type );
 		this.output = factory.create( source, type );
 
 		
@@ -134,11 +133,11 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 			{
 				
 				percent++;
-				final IntervalView< FloatType > slice = Views.hyperSlice( source, 2, z );
-				final IntervalView< FloatType > outputSlice = Views.hyperSlice( output, 2, z );
+				final IntervalView< T > slice = Views.hyperSlice( source, 2, z );
+				final IntervalView< T > outputSlice = Views.hyperSlice( output, 2, z );
 			   
 				if(jpb!=null)
-				Utils.SetProgressBar(jpb, 100 * percent/nz, "PreProcessing, please wait..");
+				scrollbar.Utility.SetProgressBar(jpb, 100 * percent/nz, "PreProcessing, please wait..");
 				
 				processSlice( slice, outputSlice );
 				
@@ -156,11 +155,11 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 	}
 
 	
-       private void subtract(RandomAccessibleInterval<FloatType> target, RandomAccessibleInterval<FloatType> darkfield){
+       private void subtract(RandomAccessibleInterval<T> target, RandomAccessibleInterval<T> darkfield){
 		
 		
-		Cursor<FloatType> cursor = Views.iterable(target).localizingCursor();
-		RandomAccess<FloatType> Gaussran = darkfield.randomAccess();
+		Cursor<T> cursor = Views.iterable(target).localizingCursor();
+		RandomAccess<T> Gaussran = darkfield.randomAccess();
 		double value;
 		while(cursor.hasNext()){
 			
@@ -168,7 +167,7 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 			
 			Gaussran.setPosition(cursor);
 			
-			value = cursor.get().get() - Gaussran.get().get();
+			value = cursor.get().getRealDouble() - Gaussran.get().getRealDouble();
 			cursor.get().setReal(Math.max(value,0));
 			
 			
@@ -189,19 +188,19 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
         * @param out
         * 
         * Median filter is applied on the background corrected image generated from the previous step and is the pre-processed image to be
-        * used by the Line finders of the M tracker
+        * used by the Line finders of the MTV tracker
         * 
         */
-	private void processSlice( final RandomAccessibleInterval< FloatType > in, final IterableInterval< FloatType > out )
+	private void processSlice( final RandomAccessibleInterval< T > in, final IterableInterval< T > out )
 	{
 		
 		double[] sigma = new double[in.numDimensions()];
 		for (int d = 0; d < in.numDimensions(); ++d) {
-			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / flatfieldradius);
+			sigma[d] = (int) Math.round((in.realMax(d) - in.realMin(d)) / 20.0);
 		}
 		
-		RandomAccessibleInterval<FloatType> gaussimg = Utils.copyImage(in);
-		RandomAccessibleInterval<FloatType> correctedgaussimg = Utils.copyImage(in);
+		RandomAccessibleInterval<T> gaussimg= Utils.copyImage(in);
+		RandomAccessibleInterval<T> correctedgaussimg = Utils.copyImage(in);
 		
 	
 		try {
@@ -218,11 +217,11 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 		
 		
 		
-		final Cursor< FloatType > cursor = out.localizingCursor();
+		final Cursor< T > cursor = out.localizingCursor();
 
 		final RectangleShape shape = new RectangleShape( radius, false );
-		final net.imglib2.algorithm.neighborhood.RectangleShape.NeighborhoodsAccessible<FloatType> nracessible = shape.neighborhoodsRandomAccessible( Views.extendZero( correctedgaussimg ) );
-		final RandomAccess< Neighborhood< FloatType >> nra = nracessible.randomAccess( correctedgaussimg );
+		final net.imglib2.algorithm.neighborhood.RectangleShape.NeighborhoodsAccessible<T> nracessible = shape.neighborhoodsRandomAccessible( Views.extendZero( correctedgaussimg ) );
+		final RandomAccess< Neighborhood< T >> nra = nracessible.randomAccess( correctedgaussimg );
 
 		final int size = ( int ) nra.get().size();
 		final double[] values = new double[ size ];
@@ -235,7 +234,7 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 			
 			
 			int index = 0;
-			for ( final FloatType pixel : nra.get() )
+			for ( final T pixel : nra.get() )
 			{
 				values[ index++ ] = pixel.getRealDouble();
 			}
@@ -246,7 +245,7 @@ public class FlatFieldCorrection extends BenchmarkAlgorithm implements OutputAlg
 	}
 
 	@Override
-	public RandomAccessibleInterval<FloatType> getResult()
+	public RandomAccessibleInterval<T> getResult()
 	{
 		return output;
 	}

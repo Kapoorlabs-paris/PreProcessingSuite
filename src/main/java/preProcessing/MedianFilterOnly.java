@@ -134,7 +134,7 @@ public class MedianFilterOnly extends BenchmarkAlgorithm implements OutputAlgori
 				final IntervalView< FloatType > outputSlice = Views.hyperSlice( output, 2, z );
 			   
 				if(jpb!=null)
-				Utils.SetProgressBar(jpb, 100 * percent/nz, "Doing Median Filtering, please wait..");
+					scrollbar.Utility.SetProgressBar(jpb, 100 * percent/nz, "Doing Median Filtering, please wait..");
 				
 				processSlice( slice, outputSlice );
 				

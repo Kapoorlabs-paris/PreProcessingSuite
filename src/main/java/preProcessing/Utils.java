@@ -35,82 +35,25 @@ import preProcessing.GetLocalmaxminMT;
 
 public class Utils {
 
-	public static double Distance(final double[] minCorner, final double[] maxCorner) {
-
-		double distance = 0;
-
-		for (int d = 0; d < minCorner.length; ++d) {
-
-			distance += Math.pow((minCorner[d] - maxCorner[d]), 2);
-
-		}
-		return Math.sqrt(distance);
-	}
-
 	
 	
 	
-	public static void SetProgressBar(JProgressBar jpb, double percent) {
-
-		jpb.setValue((int) Math.round(percent));
-		jpb.setOpaque(true);
-		jpb.setStringPainted(true);
-		jpb.setString("Finding MT ends");
-
-	}
-	
-	
-	public static void SetProgressBar(JProgressBar jpb, double percent, String message) {
-
-		jpb.setValue((int) Math.round(percent));
-		jpb.setOpaque(true);
-		jpb.setStringPainted(true);
-		jpb.setString(message);
-
-	}
-
-	public static void SetProgressBar(JProgressBar jpb) {
-		jpb.setValue(0);
-		jpb.setIndeterminate(true);
-		jpb.setOpaque(true);
-		jpb.setStringPainted(true);
-		jpb.setString("Pre-processing Image");
-
-	}
-
-	public static void SetProgressBarTime(JProgressBar jpb, double percent, int framenumber, int thirdDimsize) {
-
-		jpb.setValue((int) percent);
-		jpb.setOpaque(true);
-		jpb.setStringPainted(true);
-		jpb.setString("Time point = " + framenumber + "/" + thirdDimsize);
-
-	}
-
-	public static void SetProgressBarTime(JProgressBar jpb, double percent, int framenumber, int thirdDimsize,
-			String message) {
-
-		jpb.setValue((int) percent);
-		jpb.setOpaque(true);
-		jpb.setStringPainted(true);
-		jpb.setString(message + "= " + framenumber + "/" + thirdDimsize);
-
-	}
-	public static RandomAccessibleInterval<FloatType> FlatFieldMedian(RandomAccessibleInterval<FloatType> originalimg, final int radius, final int flatfieldradius) {
+	public static <T extends RealType<T> & NativeType<T>>RandomAccessibleInterval<T> FlatFieldMedian(RandomAccessibleInterval<T> originalimg,
+			final double[] flatfieldradius) {
 
 
-		final FlatFieldCorrection flatfilter = new FlatFieldCorrection(originalimg, radius, flatfieldradius);
+		final FlatFieldCorrection<T> flatfilter = new FlatFieldCorrection<T>(originalimg, 1, flatfieldradius);
 		flatfilter.process();
-		RandomAccessibleInterval<FloatType> ProgramPreprocessedimg = flatfilter.getResult();
+		RandomAccessibleInterval<T> ProgramPreprocessedimg = flatfilter.getResult();
 		return ProgramPreprocessedimg;
 				
 			}
-	public static RandomAccessibleInterval<FloatType> FlatFieldOnly(RandomAccessibleInterval<FloatType> originalimg, final int flatfieldradius) {
+	public static <T extends RealType<T> & NativeType<T>>  RandomAccessibleInterval<T> FlatFieldOnly(RandomAccessibleInterval<T> originalimg, final int flatfieldradius) {
 
 
-		final FlatFieldOnly flatfilter = new FlatFieldOnly(originalimg, flatfieldradius);
+		final FlatFieldOnly<T> flatfilter = new FlatFieldOnly<T>(originalimg, flatfieldradius);
 		flatfilter.process();
-		RandomAccessibleInterval<FloatType> ProgramPreprocessedimg = flatfilter.getResult();
+		RandomAccessibleInterval<T> ProgramPreprocessedimg = flatfilter.getResult();
 		return ProgramPreprocessedimg;
 				
 			}
@@ -126,16 +69,24 @@ public class Utils {
 			}
 	
 	
-	
-	public static Img<FloatType> copyImage(final RandomAccessibleInterval<FloatType> input) {
+	public static<T extends RealType<T> & NativeType<T>> RandomAccessibleInterval<T> Preprocess(RandomAccessibleInterval<T> originalimg, final double[] psf) {
+
+
+		final FlatFieldCorrection<T> flatfilter = new FlatFieldCorrection<T>(originalimg, 1, psf);
+		flatfilter.process();
+		RandomAccessibleInterval<T> ProgramPreprocessedimg = flatfilter.getResult();
+		return ProgramPreprocessedimg;
+				
+			}
+	public static<T extends RealType<T> & NativeType<T>> Img< T > copyImage(final RandomAccessibleInterval< T > input) {
 		// create a new Image with the same dimensions but the other imgFactory
 		// note that the input provides the size for the new image by
 		// implementing the Interval interface
-		Img<FloatType> output = new ArrayImgFactory<FloatType>().create(input, Views.iterable(input).firstElement());
+		Img<T> output = new ArrayImgFactory<T>().create(input, Views.iterable(input).firstElement());
 
 		// create a cursor that automatically localizes itself on every move
-		Cursor<FloatType> cursorInput = Views.iterable(input).localizingCursor();
-		RandomAccess<FloatType> randomAccess = output.randomAccess();
+		Cursor<T> cursorInput = Views.iterable(input).localizingCursor();
+		RandomAccess<T> randomAccess = output.randomAccess();
 
 		// iterate over the input cursor
 		while (cursorInput.hasNext()) {
@@ -154,74 +105,7 @@ public class Utils {
 		return output;
 	}
 	
-	public static Img<BitType> copyImageBit(final RandomAccessibleInterval<BitType> input) {
-		// create a new Image with the same dimensions but the other imgFactory
-		// note that the input provides the size for the new image by
-		// implementing the Interval interface
-		Img<BitType> output = new ArrayImgFactory<BitType>().create(input, Views.iterable(input).firstElement());
-
-		// create a cursor that automatically localizes itself on every move
-		Cursor<BitType> cursorInput = Views.iterable(input).localizingCursor();
-		RandomAccess<BitType> randomAccess = output.randomAccess();
-
-		// iterate over the input cursor
-		while (cursorInput.hasNext()) {
-			// move input cursor forward
-			cursorInput.fwd();
-
-			// set the output cursor to the position of the input cursor
-			randomAccess.setPosition(cursorInput);
-
-			// set the value of this pixel of the output image, every Type
-			// supports T.set( T type )
-			randomAccess.get().set(cursorInput.get());
-		}
-
-		// return the copy
-		return output;
-	}
-	/**
-	 * Generic, type-agnostic method to create an identical copy of an Img
-	 *
-	 * @param currentPreprocessedimg2
-	 *            - the Img to copy
-	 * @return - the copy of the Img
-	 */
-	public static Img<FloatType> copytoByteFloatImage(final RandomAccessibleInterval<FloatType> input) {
-		// create a new Image with the same properties
-		// note that the input provides the size for the new image as it
-		// implements
-		// the Interval interface
-		final RandomAccessibleInterval<FloatType> inputcopy = copyImage(input);
-		Normalize.normalize(Views.iterable(inputcopy), new FloatType(0), new FloatType(255));
-		final FloatType type = new FloatType();
-		final ImgFactory<FloatType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(input, type);
-		final Img<FloatType> output = factory.create(input, type);
-		// create a cursor for both images
-		RandomAccess<FloatType> ranac = inputcopy.randomAccess();
-		Cursor<FloatType> cursorOutput = output.cursor();
-
-		// iterate over the input
-		while (cursorOutput.hasNext()) {
-			// move both cursors forward by one pixel
-			cursorOutput.fwd();
-
-			int x = cursorOutput.getIntPosition(0);
-			int y = cursorOutput.getIntPosition(1);
-
-
-				ranac.setPosition(cursorOutput);
-
-				// set the value of this pixel of the output image to the same
-				// as
-				// the input,
-				// every Type supports T.set( T type )
-				cursorOutput.get().set((int) ranac.get().get());
-		}
-
-		// return the copy
-		return output;
-	}
+	
 	
 	/**
 	 * Generic, type-agnostic method to create an identical copy of an Img
@@ -293,8 +177,7 @@ public class Utils {
 			// move both cursors forward by one pixel
 			cursorOutput.fwd();
 
-			int x = cursorOutput.getIntPosition(0);
-			int y = cursorOutput.getIntPosition(1);
+		
 
 
 				ranac.setPosition(cursorOutput);
@@ -375,59 +258,18 @@ public class Utils {
 	}
 	
 	
-	public static RandomAccessibleInterval<FloatType> extractImage(final RandomAccessibleInterval<FloatType> intervalView, final FinalInterval interval) {
-
-		return intervalView;
-	}
-	public static RandomAccessibleInterval<BitType> extractImageBit(final RandomAccessibleInterval<BitType> intervalView, final FinalInterval interval) {
+	public static <T extends RealType<T> & NativeType<T>>  RandomAccessibleInterval<T> extractImage(final RandomAccessibleInterval<T> intervalView, final FinalInterval interval) {
 
 		return intervalView;
 	}
 	
-	public static RandomAccessibleInterval<FloatType> oldextractImage(final RandomAccessibleInterval<FloatType> intervalView, final FinalInterval interval) {
+	
+	public static<T extends RealType<T> & NativeType<T>>  RandomAccessibleInterval<T> oldextractImage(final RandomAccessibleInterval<T> intervalView, final FinalInterval interval) {
 
-		final FloatType type = intervalView.randomAccess().get().createVariable();
-		final ImgFactory<FloatType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(intervalView, type);
-		RandomAccessibleInterval<FloatType> totalimg = factory.create(intervalView, type);
-		final RandomAccessibleInterval<FloatType> img = Views.interval(intervalView, interval);
-
-		double[] newmin = Transformback(new double[] { img.min(0), img.min(1) },
-				new double[] { totalimg.dimension(0), totalimg.dimension(1) }, new double[] { img.min(0), img.min(1) },
-				new double[] { img.max(0), img.max(1) });
-
-		double[] newmax = Transformback(new double[] { img.max(0), img.max(1) },
-				new double[] { totalimg.dimension(0), totalimg.dimension(1) },
-				new double[] { totalimg.min(0), totalimg.min(1) }, new double[] { totalimg.max(0), totalimg.max(1) });
-		long[] newminlong = new long[] { Math.round(newmin[0]), Math.round(newmin[1]) };
-		long[] newmaxlong = new long[] { Math.round(newmax[0]), Math.round(newmax[1]) };
-
-		RandomAccessibleInterval<FloatType> outimg = factory.create(new FinalInterval(newminlong, newmaxlong), type);
-		RandomAccess<FloatType> ranac = outimg.randomAccess();
-		final Cursor<FloatType> cursor = Views.iterable(img).localizingCursor();
-
-		while (cursor.hasNext()) {
-
-			cursor.fwd();
-
-			double[] newlocation = Transformback(
-					new double[] { cursor.getDoublePosition(0), cursor.getDoublePosition(1) },
-					new double[] { totalimg.dimension(0), totalimg.dimension(1) },
-					new double[] { totalimg.min(0), totalimg.min(1) },
-					new double[] { totalimg.max(0), totalimg.max(1) });
-			long[] newlocationlong = new long[] { Math.round(newlocation[0]), Math.round(newlocation[1]) };
-			ranac.setPosition(newlocationlong);
-			ranac.get().set(cursor.get());
-
-		}
-
-		return intervalView;
-	}
-	public static RandomAccessibleInterval<BitType> oldextractImageBit(final RandomAccessibleInterval<BitType> intervalView, final FinalInterval interval) {
-
-		final BitType type = intervalView.randomAccess().get().createVariable();
-		final ImgFactory<BitType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(intervalView, type);
-		RandomAccessibleInterval<BitType> totalimg = factory.create(intervalView, type);
-		final RandomAccessibleInterval<BitType> img = Views.interval(intervalView, interval);
+		final T type = intervalView.randomAccess().get().createVariable();
+		final ImgFactory<T> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(intervalView, type);
+		RandomAccessibleInterval<T> totalimg = factory.create(intervalView, type);
+		final RandomAccessibleInterval<T> img = Views.interval(intervalView, interval);
 
 		double[] newmin = Transformback(new double[] { img.min(0), img.min(1) },
 				new double[] { totalimg.dimension(0), totalimg.dimension(1) }, new double[] { img.min(0), img.min(1) },
@@ -439,9 +281,9 @@ public class Utils {
 		long[] newminlong = new long[] { Math.round(newmin[0]), Math.round(newmin[1]) };
 		long[] newmaxlong = new long[] { Math.round(newmax[0]), Math.round(newmax[1]) };
 
-		RandomAccessibleInterval<BitType> outimg = factory.create(new FinalInterval(newminlong, newmaxlong), type);
-		RandomAccess<BitType> ranac = outimg.randomAccess();
-		final Cursor<BitType> cursor = Views.iterable(img).localizingCursor();
+		RandomAccessibleInterval<T> outimg = factory.create(new FinalInterval(newminlong, newmaxlong), type);
+		RandomAccess<T> ranac = outimg.randomAccess();
+		final Cursor<T> cursor = Views.iterable(img).localizingCursor();
 
 		while (cursor.hasNext()) {
 
@@ -462,78 +304,15 @@ public class Utils {
 	}
 	
 	
-	public static RandomAccessibleInterval<IntType> extractIntImage(final RandomAccessibleInterval<IntType> intervalView, final FinalInterval interval) {
-
-		return intervalView;
-	}
-	public static RandomAccessibleInterval<IntType> oldextractIntImage(final RandomAccessibleInterval<IntType> intervalView, final FinalInterval interval) {
-		
-				final IntType type = intervalView.randomAccess().get().createVariable();
-				final ImgFactory<IntType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(intervalView, type);
-				RandomAccessibleInterval<IntType> totalimg = factory.create(intervalView, type);
-				final RandomAccessibleInterval<IntType> img = Views.interval(intervalView, interval);
-
-				double[] newmin = Transformback(new double[] { img.min(0), img.min(1) },
-						new double[] { totalimg.dimension(0), totalimg.dimension(1) }, new double[] { img.min(0), img.min(1) },
-						new double[] { img.max(0), img.max(1) });
-
-				double[] newmax = Transformback(new double[] { img.max(0), img.max(1) },
-						new double[] { totalimg.dimension(0), totalimg.dimension(1) },
-						new double[] { totalimg.min(0), totalimg.min(1) }, new double[] { totalimg.max(0), totalimg.max(1) });
-				long[] newminlong = new long[] { Math.round(newmin[0]), Math.round(newmin[1]) };
-				long[] newmaxlong = new long[] { Math.round(newmax[0]), Math.round(newmax[1]) };
-
-				RandomAccessibleInterval<IntType> outimg = factory.create(new FinalInterval(newminlong, newmaxlong), type);
-				RandomAccess<IntType> ranac = outimg.randomAccess();
-				final Cursor<IntType> cursor = Views.iterable(img).localizingCursor();
-
-				while (cursor.hasNext()) {
-
-					cursor.fwd();
-
-					double[] newlocation = Transformback(
-							new double[] { cursor.getDoublePosition(0), cursor.getDoublePosition(1) },
-							new double[] { totalimg.dimension(0), totalimg.dimension(1) },
-							new double[] { totalimg.min(0), totalimg.min(1) },
-							new double[] { totalimg.max(0), totalimg.max(1) });
-					long[] newlocationlong = new long[] { Math.round(newlocation[0]), Math.round(newlocation[1]) };
-					ranac.setPosition(newlocationlong);
-					ranac.get().set(cursor.get());
-
-				}
-		
-				return intervalView;
-			}
-			
-	public static  RandomAccessibleInterval<FloatType> getCurrentPreView(RandomAccessibleInterval<FloatType> originalPreprocessedimg,int thirdDimension, int thirdDimensionSize) {
-
-		final FloatType type = originalPreprocessedimg.randomAccess().get().createVariable();
-		long[] dim = { originalPreprocessedimg.dimension(0), originalPreprocessedimg.dimension(1) };
-		final ImgFactory<FloatType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(originalPreprocessedimg,
-				type);
-		RandomAccessibleInterval<FloatType> totalimg = factory.create(dim, type);
-
-		if (thirdDimensionSize == 0) {
-
-			totalimg = originalPreprocessedimg;
-		}
-
-		if (thirdDimensionSize > 0) {
-
-			totalimg = Views.hyperSlice(originalPreprocessedimg, 2, thirdDimension - 1);
-
-		}
-
-		return totalimg;
-
-	}
 	
-	public static RandomAccessibleInterval<FloatType> getCurrentView(RandomAccessibleInterval<FloatType> originalimg, int thirdDimension, int thirdDimensionSize) {
 
-		final FloatType type = originalimg.randomAccess().get().createVariable();
+	
+	public static <T extends RealType<T> & NativeType<T>>  RandomAccessibleInterval<T> getCurrentView(RandomAccessibleInterval<T> originalimg, int thirdDimension, int thirdDimensionSize) {
+
+		final T type = originalimg.randomAccess().get().createVariable();
 		long[] dim = { originalimg.dimension(0), originalimg.dimension(1) };
-		final ImgFactory<FloatType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(originalimg, type);
-		RandomAccessibleInterval<FloatType> totalimg = factory.create(dim, type);
+		final ImgFactory<T> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(originalimg, type);
+		RandomAccessibleInterval<T> totalimg = factory.create(dim, type);
 
 		if (thirdDimensionSize == 0) {
 
@@ -555,7 +334,7 @@ public class Utils {
 				// note that the input provides the size for the new image as it
 				// implements
 				// the Interval interface
-				RandomAccessibleInterval<BitType> inputcopy = copyImageBit(input);
+				RandomAccessibleInterval<BitType> inputcopy = copyImage(input);
 				
 				final UnsignedByteType type = new UnsignedByteType();
 				final ImgFactory<UnsignedByteType> factory = net.imglib2.util.Util.getArrayOrCellImgFactory(input, type);
@@ -570,9 +349,6 @@ public class Utils {
 				while (cursorOutput.hasNext()) {
 					// move both cursors forward by one pixel
 					cursorOutput.fwd();
-
-					int x = cursorOutput.getIntPosition(0);
-					int y = cursorOutput.getIntPosition(1);
 
 
 						ranac.setPosition(cursorOutput);
