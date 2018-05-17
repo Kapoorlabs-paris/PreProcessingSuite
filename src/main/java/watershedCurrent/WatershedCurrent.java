@@ -1,50 +1,35 @@
-package watershed3D;
+package watershedCurrent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JOptionPane;
+import javax.naming.InitialContext;
 import javax.swing.SwingWorker;
-
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 import common3D.CommonWater;
 import distanceTransform.DistWatershed;
+import distanceTransform.WatershedBinary;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
-import linkers.PRENNsearch;
 import net.imglib2.Cursor;
-import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
-import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
-import net.imglib2.util.Intervals;
-import net.imglib2.util.Pair;
-import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import preProcessing.GetLocalmaxminMT;
 import preProcessing.GlobalThresholding;
 import timeGUI.CovistoTimeselectPanel;
-import utility.PreRoiobject;
-import utility.ThreeDRoiobject;
 import watershedGUI.CovistoWatershedPanel;
 import zGUI.CovistoZselectPanel;
 
-public class WatershedAll extends SwingWorker<Void, Void> {
+public class WatershedCurrent extends SwingWorker<Void, Void> {
 
 	final InteractiveMethods parent;
 
-	public WatershedAll(final InteractiveMethods parent) {
+	public WatershedCurrent(final InteractiveMethods parent) {
 
 		this.parent = parent;
 
@@ -55,28 +40,17 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 
 
 		
-		parent.apply3D = true;
-		
-		RandomAccessibleInterval<FloatType> newimg = new ArrayImgFactory<FloatType>().create(parent.originalimg, new FloatType());
+		parent.apply3D = false;
+	   RandomAccessibleInterval<FloatType> newimg = new ArrayImgFactory<FloatType>().create(parent.originalimg, new FloatType());
 		
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(newimg, new BitType());
 		
 		RandomAccessibleInterval<IntType> intimg = new ArrayImgFactory<IntType>().create(newimg, new IntType());
 		
-		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
-
-
-			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
-				
-				CovistoZselectPanel.thirdDimension = z;
-				CovistoTimeselectPanel.fourthDimension = t;
-				CommonWater.Watershed(parent, newimg, bitimg, intimg, t, z);
-			
-			}
-			
+		int t = CovistoTimeselectPanel.fourthDimension;
+		int z = CovistoZselectPanel.thirdDimension;
 		
-		}
-		
+		CommonWater.Watershed(parent, newimg, bitimg, intimg, t, z);
 		if(parent.displayBinaryimg)
 			ImageJFunctions.show(bitimg).setTitle("Binary Image");
 		
@@ -87,16 +61,11 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 		if (parent.displayDistTransimg)
 			ImageJFunctions.show(newimg ).setTitle("Distance Transform Image");
 		
-		
-		
-		
-		
 		return null;
 	}
 	
 	
 	
-
 	@Override
 	protected void done() {
 		try {
@@ -108,5 +77,4 @@ public class WatershedAll extends SwingWorker<Void, Void> {
 		}
 
 	}
-
 }

@@ -785,9 +785,9 @@ public class InteractiveMethods {
 		DOG.addItemListener(new DoDOGListener(this));
 		MSER.addItemListener(new DoMSERListener(this));
 		CovistoWatershedPanel.autothreshold.addItemListener(new PREauto(this));
-
+		CovistoWatershedPanel.dodist.addItemListener(new PREdist(this));
 		CovistoWatershedPanel.Water3D.addActionListener(new PREApplyWater3DListener(this));
-
+		CovistoWatershedPanel.tryWater.addActionListener(new PREApplyWaterCurrentListener(this));
 		CovistoDogPanel.findminima.addItemListener(new FindMinimaListener(this));
 		CovistoDogPanel.findmaxima.addItemListener(new FindMaximaListener(this));
 		CovistoMserPanel.findminimaMser.addItemListener(new FindMinimaMserListener(this));
@@ -814,6 +814,8 @@ public class InteractiveMethods {
 				new PreWaterListener(this, CovistoWatershedPanel.watertext, CovistoWatershedPanel.waterstring,
 						CovistoWatershedPanel.thresholdMinWater, CovistoWatershedPanel.thresholdMaxWater, scrollbarSize,
 						CovistoWatershedPanel.thresholdWaterslider));
+		
+		
 		CovistoDogPanel.sigmaslider.addAdjustmentListener(new PreSigmaListener(this, CovistoDogPanel.sigmaText,
 				CovistoDogPanel.sigmastring, CovistoDogPanel.sigmaMin, CovistoDogPanel.sigmaMax,
 				CovistoDogPanel.scrollbarSize, CovistoDogPanel.sigmaslider));

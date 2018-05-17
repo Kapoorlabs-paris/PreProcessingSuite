@@ -34,13 +34,14 @@ public class PreUploadMovieListener implements ActionListener {
 		if (parent.chooserA.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
 			System.out.println("getCurrentDirectory(): " + parent.chooserA.getCurrentDirectory());
 			System.out.println("getSelectedFile() : " + parent.chooserA.getSelectedFile());
+			parent.impA = new Opener().openImage(parent.chooserA.getSelectedFile().getPath());
+			
+			parent.Done(parent.Cardframe);
 		} else {
 			System.out.println("No Selection ");
 		}
 		
-		parent.impA = new Opener().openImage(parent.chooserA.getSelectedFile().getPath());
-		
-		parent.Done(parent.Cardframe);
+	
 
 	
 	}
