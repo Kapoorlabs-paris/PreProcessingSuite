@@ -14,7 +14,7 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 
 public class PreThresholdListener implements AdjustmentListener {
 	final Label label;
-	InteractiveMethods parent;
+	final InteractiveMethods parent;
 	final String string;
 	final float min, max;
 	final int scrollbarSize;
@@ -34,6 +34,8 @@ public class PreThresholdListener implements AdjustmentListener {
 		scrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		
 	}
+
+	
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {

@@ -18,10 +18,9 @@ import zGUI.CovistoZselectPanel;
 public class PreZListener implements AdjustmentListener {
 		final Label label;
 		final String string;
-		InteractiveMethods parent;
+		final InteractiveMethods parent;
 		final float min, max;
 		final int scrollbarSize;
-
 		final JScrollBar deltaScrollbar;
 
 		public PreZListener(final InteractiveMethods parent, final Label label, final String string, final float min, final float max,
@@ -34,13 +33,14 @@ public class PreZListener implements AdjustmentListener {
 			this.scrollbarSize = scrollbarSize;
 
 			this.deltaScrollbar = deltaScrollbar;
-			
 				deltaScrollbar.addMouseListener(new CovistoStandardMouseListener(parent, ValueChange.THIRDDIMmouse));
 			
 				
 				deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 				deltaScrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		}
+
+
 
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent e) {

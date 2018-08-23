@@ -9,14 +9,15 @@ import interactivePreprocessing.InteractiveMethods.ValueChange;
 public class FindMaximaListener implements ItemListener {
 	
 	final InteractiveMethods  parent;
-	
 	public FindMaximaListener( InteractiveMethods parent) {
 		
 		this.parent = parent;
-		
 	}
 	
 	
+
+
+
 	@Override
 	public void itemStateChanged(final ItemEvent arg0) {
 		

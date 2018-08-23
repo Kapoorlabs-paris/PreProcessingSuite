@@ -29,13 +29,14 @@ public class PREMaxSizeListener implements AdjustmentListener {
 		this.max = max;
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
-		
 		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
 		
 	}
 	
 	
-	
+
+
+
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
 		CovistoMserPanel.maxSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);

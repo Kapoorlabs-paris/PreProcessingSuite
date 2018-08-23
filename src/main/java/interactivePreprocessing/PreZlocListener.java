@@ -24,7 +24,9 @@ public class PreZlocListener implements TextListener {
 		this.parent = parent;
 
 		this.pressed = pressed;
+		
 	}
+
 
 	@Override
 	public void textValueChanged(TextEvent e) {

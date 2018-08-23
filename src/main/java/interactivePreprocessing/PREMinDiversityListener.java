@@ -28,14 +28,16 @@ public class PREMinDiversityListener implements AdjustmentListener {
 		this.max = max;
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
-		
 		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
 		scrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		scrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
 	
+
 	
-	
+
+
+
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
 		CovistoMserPanel.minDiversity = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);

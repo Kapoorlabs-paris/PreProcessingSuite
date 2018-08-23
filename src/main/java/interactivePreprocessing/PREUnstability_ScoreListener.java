@@ -29,13 +29,14 @@ public class PREUnstability_ScoreListener implements AdjustmentListener {
 		this.max = max;
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
-		
 		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
 		
 	}
 	
 	
-	
+
+
+
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
 		    CovistoMserPanel.Unstability_Score = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);

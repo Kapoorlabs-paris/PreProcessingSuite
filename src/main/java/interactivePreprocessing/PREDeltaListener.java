@@ -28,7 +28,6 @@ public class PREDeltaListener implements AdjustmentListener {
 		this.max = max;
 		this.scrollbarSize = scrollbarSize;
 		this.scrollbar = scrollbar;
-		
 		scrollbar.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.MSER ) );
 		scrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 		scrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
@@ -36,6 +35,10 @@ public class PREDeltaListener implements AdjustmentListener {
 	
 	
 	
+
+
+
+
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
 		CovistoMserPanel.delta = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);

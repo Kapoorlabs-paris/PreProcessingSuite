@@ -37,90 +37,66 @@ public class DogAll extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-
-		
 		parent.apply3D = true;
-		
-		
-		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg, new BitType());
-		
-		
+
+		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg,
+				new BitType());
+
 		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
-
 			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
-				
+
 				CovistoZselectPanel.thirdDimension = z;
 				CovistoTimeselectPanel.fourthDimension = t;
-				
-				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, CovistoZselectPanel.thirdDimensionSize, t,
-						CovistoTimeselectPanel.fourthDimensionSize);
-				
+
+				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z,
+						CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
+
 				// UnsignedByteType image created here
 				parent.updatePreview(ValueChange.THIRDDIMmouse);
 				parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
-				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, CovistoZselectPanel.thirdDimensionSize, t,
-						CovistoTimeselectPanel.fourthDimensionSize);
-				
-			
-				
-			processSlice(parent.newimg, currentbitimg, z, t);
-			
+				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z,
+						CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
+
+				processSlice(parent.newimg, currentbitimg, z, t);
+
 			}
-			
-		
+
 		}
-		
-		
-			ImageJFunctions.show(bitimg).setTitle("Binary Image");
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+		ImageJFunctions.show(bitimg).setTitle("Binary Image");
+
 		return null;
 	}
-	
-	
-	protected void processSlice(RandomAccessibleInterval< UnsignedByteType > slice, RandomAccessibleInterval< BitType > bitoutputslice, int z, int t) {
-		
-		
-		
-		
-	
-		ComputeDoG<UnsignedByteType> ComputeDOG = new ComputeDoG<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
+
+	protected void processSlice(RandomAccessibleInterval<UnsignedByteType> slice,
+			RandomAccessibleInterval<BitType> bitoutputslice, int z, int t) {
+
+		ComputeDoG<UnsignedByteType> ComputeDOG = new ComputeDoG<UnsignedByteType>(parent, slice, parent.jpb,
+				parent.apply3D, z, t);
 		ComputeDOG.execute();
-		
-		RandomAccessibleInterval<BitType> bitimg =  ComputeDOG.getBinaryimg();
-		Cursor< BitType > bitcursor = Views.iterable(bitoutputslice).localizingCursor();
-		
+
+		RandomAccessibleInterval<BitType> bitimg = ComputeDOG.getBinaryimg();
+		Cursor<BitType> bitcursor = Views.iterable(bitoutputslice).localizingCursor();
+
 		RandomAccess<BitType> ranac = bitimg.randomAccess();
-		
-		while(bitcursor.hasNext()) {
-			
+
+		while (bitcursor.hasNext()) {
+
 			bitcursor.fwd();
-			
+
 			ranac.setPosition(bitcursor);
-			
+
 			bitcursor.get().set(ranac.get());
-			
-			
+
 		}
-		
-	
-	
-		
+
 	}
 
 	@Override
 	protected void done() {
 		try {
-		
+
 			parent.apply3D = false;
 			get();
 		} catch (ExecutionException | InterruptedException e) {

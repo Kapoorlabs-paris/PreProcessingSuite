@@ -14,8 +14,7 @@ import mserGUI.CovistoMserPanel;
 
 public class PreSigmaListener implements AdjustmentListener {
 	final Label label;
-	InteractiveMethods parent;
-	
+	final InteractiveMethods parent;
 	final String string;
 	final float min, max;
 	final int scrollbarSize;
@@ -32,6 +31,8 @@ public class PreSigmaListener implements AdjustmentListener {
 		this.sigmaScrollbar1 = sigmaScrollbar1;
 		sigmaScrollbar1.addMouseListener( new CovistoStandardMouseListener( parent, ValueChange.DOG ) );
 	}
+
+
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {

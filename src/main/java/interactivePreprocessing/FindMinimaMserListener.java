@@ -9,14 +9,14 @@ import mserGUI.CovistoMserPanel;
 public class FindMinimaMserListener implements ItemListener {
 	
 	final InteractiveMethods  parent;
-	
 	public FindMinimaMserListener( InteractiveMethods parent) {
 		
 		this.parent = parent;
-		
 	}
 	
-	
+
+
+
 	@Override
 	public void itemStateChanged(final ItemEvent arg0) {
 		

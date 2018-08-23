@@ -87,6 +87,7 @@ public class JaqamanLinkingCostMatrixCreator< K extends Comparable< K >, J exten
 			{
 
 				final double cost = costFunction.linkingCost( source, target );
+				
 				if ( cost < costThreshold )
 				{
 					accSources.add( source );

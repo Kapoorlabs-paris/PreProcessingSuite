@@ -81,6 +81,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		parent.peaks = newdog.getSubpixelPeaks();
 		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 
+		System.out.println(parent.Rois.size() + "How is this getting filled");
 		for (Roi currentroi : parent.Rois) {
 
 			final double[] geocenter = currentroi.getContourCentroid();

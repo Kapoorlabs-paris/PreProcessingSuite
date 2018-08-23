@@ -19,10 +19,9 @@ import timeGUI.CovistoTimeselectPanel;
 public class PreTimeListener implements AdjustmentListener {
 	final Label label;
 	final String string;
-	InteractiveMethods parent;
+	final InteractiveMethods parent;
 	final float min, max;
 	final int scrollbarSize;
-
 	final JScrollBar deltaScrollbar;
 
 	public PreTimeListener(final InteractiveMethods parent, final Label label, final String string, final float min, final float max,
@@ -40,6 +39,8 @@ public class PreTimeListener implements AdjustmentListener {
 			deltaScrollbar.setBlockIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 			deltaScrollbar.setUnitIncrement(utility.CovistoSlicer.computeScrollbarPositionFromValue(2, min, max, scrollbarSize));
 	}
+
+	
 
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
