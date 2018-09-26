@@ -184,7 +184,7 @@ public class DistWatershed <T extends NativeType<T>> {
 
 		// To get maximum Labels on the image
 		Cursor<IntType> intCursor = Views.iterable(intimg).cursor();
-		int currentLabel = 1;
+		int currentLabel = 0;
 		boolean anythingFound = true;
 		while (anythingFound) {
 			anythingFound = false;

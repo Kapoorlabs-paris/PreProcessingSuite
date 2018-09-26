@@ -74,7 +74,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			type = DogDetection.ExtremaType.MINIMA;
 		else
 			type = DogDetection.ExtremaType.MAXIMA;
-		CovistoDogPanel.sigma2 = utility.ScrollbarUtils.computeSigma2(CovistoDogPanel.sigma, parent.sensitivity);
+		CovistoDogPanel.sigma2 = utility.ETrackScrollbarUtils.computeSigma2(CovistoDogPanel.sigma, parent.sensitivity);
 		final DogDetection<T> newdog = new DogDetection<T>(Views.extendBorder(source),
 				parent.interval, new double[] { 1, 1 }, CovistoDogPanel.sigma, CovistoDogPanel.sigma2, type, CovistoDogPanel.threshold, true);
 

@@ -35,11 +35,11 @@ public class PreWaterListener implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    CovistoWatershedPanel.thresholdWater = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    CovistoWatershedPanel.thresholdWater = utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
 		
-			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, min, max, scrollbarSize));
+			sigmaScrollbar1.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoWatershedPanel.thresholdWater));
 			

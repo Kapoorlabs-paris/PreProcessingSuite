@@ -39,10 +39,10 @@ public class PREUnstability_ScoreListener implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    CovistoMserPanel.Unstability_Score = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    CovistoMserPanel.Unstability_Score = utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.Unstability_Score, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.Unstability_Score, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + CovistoMserPanel.Unstability_Score);
 			

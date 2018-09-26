@@ -37,9 +37,9 @@ public class PREAlphaListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    CovistoKalmanPanel.alpha = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    CovistoKalmanPanel.alpha = utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.alpha , min, max, scrollbarSize));
+			scrollbar.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoKalmanPanel.alpha , min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoKalmanPanel.alpha ));
 

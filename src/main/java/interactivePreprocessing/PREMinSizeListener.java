@@ -39,10 +39,10 @@ public class PREMinSizeListener implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		CovistoMserPanel.minSize = (long) utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoMserPanel.minSize = (long) utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.minSize, min, max, scrollbarSize));
+			scrollbar.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoMserPanel.minSize, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoMserPanel.minSize));
 

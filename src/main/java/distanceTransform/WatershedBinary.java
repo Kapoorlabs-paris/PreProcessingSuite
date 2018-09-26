@@ -13,6 +13,7 @@ import net.imglib2.algorithm.OutputAlgorithm;
 import net.imglib2.algorithm.labeling.AllConnectedComponents;
 import net.imglib2.algorithm.labeling.Watershed;
 import net.imglib2.img.ImgFactory;
+import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.labeling.DefaultROIStrategyFactory;
@@ -169,23 +170,16 @@ import net.imglib2.view.Views;
 
 		private NativeImgLabeling<Integer, IntType> PrepareSeedImage(RandomAccessibleInterval<BitType> inputimg) {
 
-			// New Labeling type
-			final ImgLabeling<Integer, IntType> seedLabeling = new ImgLabeling<Integer, IntType>(
-					new ArrayImgFactory<IntType>().create(inputimg, new IntType()));
-
-			// Old Labeling type
-			final NativeImgLabeling<Integer, IntType> oldseedLabeling = new NativeImgLabeling<Integer, IntType>(
-					new ArrayImgFactory<IntType>().create(inputimg, new IntType()));
-
-			// The label generator for both new and old type
-			final Iterator<Integer> labelGenerator = AllConnectedComponents.getIntegerNames(0);
-
 			
-
-			// Getting unique labelled image (old version)
-			AllConnectedComponents.labelAllConnectedComponents(oldseedLabeling, source, labelGenerator,
-					AllConnectedComponents.getStructuringElement(inputimg.numDimensions()));
-			return oldseedLabeling;
+			final long[] dimensions = new long[] { inputimg.dimension(0), inputimg.dimension(1) };
+			final ArrayImgFactory< IntType > labelingFactory = new ArrayImgFactory<IntType>( );
+			final NativeImgLabeling< Integer, IntType > labeling = new NativeImgLabeling<>( labelingFactory.create( dimensions, new IntType() ) );
+			
+			final Iterator< Integer > names = AllConnectedComponents.getIntegerNames( -100 );
+			
+				AllConnectedComponents.labelAllConnectedComponents( labeling, inputimg, names );
+			
+			return labeling;
 		}
 		
 
@@ -193,7 +187,7 @@ import net.imglib2.view.Views;
 
 			// To get maximum Labels on the image
 			Cursor<IntType> intCursor = Views.iterable(intimg).cursor();
-			int currentLabel = 1;
+			int currentLabel = 0;
 			boolean anythingFound = true;
 			while (anythingFound) {
 				anythingFound = false;
@@ -217,27 +211,8 @@ import net.imglib2.view.Views;
 		public NativeImgLabeling<Integer, IntType> GetlabeledImage(RandomAccessibleInterval<BitType> inputimg,
 				NativeImgLabeling<Integer, IntType> seedLabeling) {
 
-			int n = inputimg.numDimensions();
-			long[] dimensions = new long[n];
 
-			for (int d = 0; d < n; ++d)
-				dimensions[d] = inputimg.dimension(d);
-			final NativeImgLabeling<Integer, IntType> outputLabeling = new NativeImgLabeling<Integer, IntType>(
-					new ArrayImgFactory<IntType>().create(inputimg, new IntType()));
-
-			final Watershed<BitType, Integer> watershed = new Watershed<BitType, Integer>();
-
-			watershed.setSeeds(seedLabeling);
-			watershed.setIntensityImage(inputimg);
-			watershed.setStructuringElement(AllConnectedComponents.getStructuringElement(2));
-			watershed.setOutputLabeling(outputLabeling);
-			watershed.process();
-			DefaultROIStrategyFactory<Integer> deffactory = new DefaultROIStrategyFactory<Integer>();
-			LabelingROIStrategy<Integer, Labeling<Integer>> factory = deffactory
-					.createLabelingROIStrategy(watershed.getResult());
-			outputLabeling.setLabelingCursorStrategy(factory);
-
-			return outputLabeling;
+			return seedLabeling;
 
 		}
 	

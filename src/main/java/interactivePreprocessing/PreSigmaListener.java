@@ -36,11 +36,11 @@ public class PreSigmaListener implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		    CovistoDogPanel.sigma = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		    CovistoDogPanel.sigma = utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
 		
-			sigmaScrollbar1.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoDogPanel.sigma, min, max, scrollbarSize));
+			sigmaScrollbar1.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoDogPanel.sigma, min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoDogPanel.sigma));
 		

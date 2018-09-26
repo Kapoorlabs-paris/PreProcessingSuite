@@ -1,7 +1,7 @@
 package utility;
 
 
-public class ScrollbarUtils {
+public class ETrackScrollbarUtils {
 
 	
 	public static float computeValueFromScrollbarPosition(final int scrollbarPosition, final float min,

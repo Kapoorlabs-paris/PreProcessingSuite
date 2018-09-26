@@ -41,10 +41,10 @@ public class PREMaxSearchListener implements AdjustmentListener {
 	
 	@Override
 	public void adjustmentValueChanged(final AdjustmentEvent event) {
-		CovistoNearestNPanel.maxSearchradiusNearest = utility.ScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
+		CovistoNearestNPanel.maxSearchradiusNearest = utility.ETrackScrollbarUtils.computeValueFromScrollbarPosition(event.getValue(), min, max, scrollbarSize);
 
 		
-			scrollbar.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoNearestNPanel.maxSearchradiusNearest , min, max, scrollbarSize));
+			scrollbar.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoNearestNPanel.maxSearchradiusNearest , min, max, scrollbarSize));
 
 			label.setText(string +  " = "  + parent.nf.format(CovistoNearestNPanel.maxSearchradiusNearest));
 

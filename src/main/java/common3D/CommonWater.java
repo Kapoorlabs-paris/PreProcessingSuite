@@ -61,7 +61,7 @@ public class CommonWater {
 		
 		if(parent.autothreshwater) {
 		CovistoWatershedPanel.thresholdWater = (float) ( GlobalThresholding.AutomaticThresholding(slice));
-		CovistoWatershedPanel.thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, CovistoWatershedPanel.thresholdMinWater, 
+		CovistoWatershedPanel.thresholdWaterslider.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, CovistoWatershedPanel.thresholdMinWater, 
 				CovistoWatershedPanel.thresholdMaxWater, CovistoWatershedPanel.scrollbarSize));
 		CovistoWatershedPanel.watertext.setText(CovistoWatershedPanel.waterstring +  " = "  + CovistoWatershedPanel.thresholdWater );
 		CovistoWatershedPanel.thresholdWaterslider.validate();

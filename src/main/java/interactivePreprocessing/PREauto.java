@@ -26,7 +26,7 @@ final InteractiveMethods parent;
 		else if (arg0.getStateChange() == ItemEvent.SELECTED) {
 			parent.autothreshwater = true;
 			CovistoWatershedPanel.thresholdWater = (float) ( GlobalThresholding.AutomaticThresholding(parent.CurrentView));
-			CovistoWatershedPanel.thresholdWaterslider.setValue(utility.ScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, CovistoWatershedPanel.thresholdMinWater, CovistoWatershedPanel.thresholdMaxWater, CovistoWatershedPanel.scrollbarSize));
+			CovistoWatershedPanel.thresholdWaterslider.setValue(utility.ETrackScrollbarUtils.computeScrollbarPositionFromValue(CovistoWatershedPanel.thresholdWater, CovistoWatershedPanel.thresholdMinWater, CovistoWatershedPanel.thresholdMaxWater, CovistoWatershedPanel.scrollbarSize));
 			CovistoWatershedPanel.watertext.setText(CovistoWatershedPanel.waterstring +  " = "  + CovistoWatershedPanel.thresholdWater );
 			CovistoWatershedPanel.thresholdWaterslider.validate();
 			CovistoWatershedPanel.thresholdWaterslider.repaint();

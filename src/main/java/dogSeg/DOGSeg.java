@@ -39,7 +39,7 @@ public class DOGSeg extends SwingWorker<Void, Void> {
 				type = DogDetection.ExtremaType.MINIMA;
 			else
 				type = DogDetection.ExtremaType.MAXIMA;
-			CovistoDogPanel.sigma2 = utility.ScrollbarUtils.computeSigma2(CovistoDogPanel.sigma, parent.sensitivity);
+			CovistoDogPanel.sigma2 = utility.ETrackScrollbarUtils.computeSigma2(CovistoDogPanel.sigma, parent.sensitivity);
 			final DogDetection<FloatType> newdog = new DogDetection<FloatType>(Views.extendBorder(parent.CurrentView),
 					parent.interval, new double[] { 1, 1 }, CovistoDogPanel.sigma, CovistoDogPanel.sigma2, type, CovistoDogPanel.threshold, true);
 			parent.overlay.clear();
