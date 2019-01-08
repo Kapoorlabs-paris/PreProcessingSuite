@@ -1,7 +1,10 @@
 package dog3D;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JProgressBar;
@@ -9,6 +12,7 @@ import javax.swing.SwingWorker;
 
 import dogGUI.CovistoDogPanel;
 import ij.IJ;
+import ij.gui.OvalRoi;
 import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.Cursor;
@@ -52,6 +56,8 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 	public final RandomAccessibleInterval<T> source;
 
 	public RandomAccessibleInterval<BitType> bitimg;
+	public RandomAccessibleInterval<BitType> afterremovebitimg;
+	
 	public boolean apply3D;
 	public int z;
 	public int t;
@@ -67,6 +73,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		this.t = t;
 		
 		bitimg = new ArrayImgFactory<BitType>().create(source, new BitType());
+		afterremovebitimg = new ArrayImgFactory<BitType>().create(source, new BitType());
 	}
 
 	public void execute() {
@@ -81,24 +88,92 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 				parent.interval, new double[] { 1, 1 }, CovistoDogPanel.sigma, CovistoDogPanel.sigma2, type, CovistoDogPanel.threshold, true);
 
 		parent.peaks = newdog.getSubpixelPeaks();
+		parent.Rois = utility.FinderUtils.getcurrentRois(parent.peaks, CovistoDogPanel.sigma, CovistoDogPanel.sigma2);
 		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
-	
-		ArrayList<Roi> CleanRois = new ArrayList<Roi>();
+		parent.AfterRemovedRois = new ArrayList<Roi>();
+		
+		
+		
+		parent.overlay.clear();
+		
+		
+		for (int index = 0; index < parent.peaks.size(); ++index) {
+
+			Roi or = parent.Rois.get(index);
+
+			or.setStrokeColor(parent.colorDrawDog);
+			parent.overlay.add(or);
+		}
+		
+		for (Map.Entry<String, ArrayList<PreRoiobject>> entry : parent.ZTRois.entrySet()) {
+
+			ArrayList<PreRoiobject> current = entry.getValue();
+			for (PreRoiobject currentroi : current) {
+
+				if (currentroi.fourthDimension == CovistoTimeselectPanel.fourthDimension && currentroi.thirdDimension == CovistoZselectPanel.thirdDimension) {
+
+					currentroi.rois.setStrokeColor(parent.colorSnake);
+					parent.overlay.add(currentroi.rois);
+					
+				}
+
+			}
+		}
+		parent.imp.setOverlay(parent.overlay);
+		parent.imp.updateAndDraw();
+		Set<double[]> mergepoints = new HashSet<double[]>();
 		
 		ArrayList<RefinedPeak<Point>> peaks = parent.peaks;
 		
+		ArrayList<double[]> points = new ArrayList<double[]>();
+		ArrayList<double[]> duppoints = new ArrayList<double[]>(points);
 		for(RefinedPeak<Point> peak : peaks ) {
 			
 			double[] currentpoint = new double[] {peak.getDoublePosition(0), peak.getDoublePosition(1)};
 			
-			System.out.println(currentpoint[0] + " " +  currentpoint[1]);
+			points.add(currentpoint);
+		}
+		
+		
+		for(double[] currentpoint : points ) {
 			
+			
+			duppoints.remove(currentpoint);
+			Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, duppoints, currentpoint, CovistoDogPanel.distthreshold);
+			
+			
+			if(!mergepointbol.getB()) {
+			
+				mergepoints.add(currentpoint);
+			
+			
+			}
+			else {
+			mergepoints.add(mergepointbol.getA());
+			
+			}
+			
+		
 			
 		}
 		
+		for(double[] center:mergepoints) {
+			
+			int width = 2;
+			int height = 2;
+			int radius = 2;
+			Roi Bigroi = new OvalRoi(Util.round(center[0] -(width + radius)/2), Util.round(center[1] - (height + radius)/2 ), Util.round(width + radius),
+					Util.round(height + radius));
+			parent.AfterRemovedRois.add(Bigroi);
+			
+		}
 
+		//System.out.println(parent.AfterRemovedRois.size() + " " + parent.Rois.size());
 		for (Roi currentroi : parent.Rois) {
 
+			
+			
+			
 			final double[] geocenter = currentroi.getContourCentroid();
 			final Pair<Double, Integer> Intensityandpixels = PreRoiobject.getIntensity(currentroi, source);
 			final double intensity = Intensityandpixels.getA();
@@ -114,7 +189,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
 		
 		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
-
+		common3D.BinaryCreation.CreateBinary(parent, source, afterremovebitimg,parent.AfterRemovedRois, z, t);
 	}
 
 
@@ -124,7 +199,10 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		return bitimg;
 	}
 
-	
+	public RandomAccessibleInterval<BitType> getafterremoveBinaryimg() {
+
+		return afterremovebitimg;
+	}
 
 
 }

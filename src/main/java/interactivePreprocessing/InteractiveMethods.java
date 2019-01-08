@@ -114,6 +114,9 @@ public class InteractiveMethods {
 	public boolean displayDistTransimg = false;
 	public RandomAccessibleInterval<UnsignedByteType> newimg;
 	public RandomAccessibleInterval<FloatType> CurrentView;
+	
+	
+	
 	public RoiManager roimanager;
 	public final int scrollbarSize = 1000;
 	public JProgressBar jpb;
@@ -143,6 +146,7 @@ public class InteractiveMethods {
 	
 
 	public ArrayList<Roi> Rois;
+	public ArrayList<Roi> AfterRemovedRois;
 	public ArrayList<PreRoiobject> CurrentPreRoiobject;
 	public ArrayList<Roi> NearestNeighbourRois;
 	public ArrayList<Roi> BiggerRois;
@@ -159,6 +163,12 @@ public class InteractiveMethods {
 	public FinalInterval interval;
 	
 	public RandomAccessibleInterval<BitType> bitimg;
+	
+	
+	public RandomAccessibleInterval<BitType> Segbitimg;
+	public RandomAccessibleInterval<BitType> Segafterremovebitimg;
+	
+	
 	public RandomAccessibleInterval<FloatType> bitimgFloat;
 	public RandomAccessibleInterval<IntType> intimg;
 	public HashMap<Integer, ArrayList<ThreeDRoiobject>> Timetracks;
@@ -231,6 +241,8 @@ public class InteractiveMethods {
 				java.awt.image.ColorModel.getRGBdefault());
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
+		
+		AfterRemovedRois = new ArrayList<Roi>(); 
 		universe = new Image3DUniverse((int) originalimg.dimension(0), (int) originalimg.dimension(1));
 		jpb = new JProgressBar();
 		overlay = new Overlay();
@@ -242,6 +254,13 @@ public class InteractiveMethods {
 		configDriver = new SnakeConfigDriver();
 		ZTPreRoiobject = new ArrayList<PreRoiobject>();
 		Timetracks = new HashMap<Integer, ArrayList<ThreeDRoiobject>>();
+		
+		Segbitimg = new ArrayImgFactory<BitType>().create(originalimg,
+				new BitType());
+		
+		Segafterremovebitimg =  new ArrayImgFactory<BitType>().create(originalimg,
+				new BitType());
+		
 
 		if (ndims < 3) {
 
@@ -471,14 +490,14 @@ public class InteractiveMethods {
 
 			newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
 
-			if (showMSER) {
+			if (showMSER &&!apply3D ) {
 
 				MSERSeg computeMSER = new MSERSeg(this, jpb);
 				computeMSER.execute();
 
 			}
 
-			if (showDOG) {
+			if (showDOG &&!apply3D ) {
 
 				DOGSeg computeDOG = new DOGSeg(this, jpb);
 				computeDOG.execute();
@@ -807,6 +826,9 @@ public class InteractiveMethods {
 		Tsnakes.addActionListener(new PRETSnakeListener(this));
 		Allsnakes.addActionListener(new PREZTSnakeListener(this));
 		CovistoDogPanel.AllDog.addActionListener(new PREApplyDog3DListener(this));
+		
+		
+		
 		CovistoMserPanel.AllMser.addActionListener(new PREZMserListener(this));
 		CovistoSnakePanel.AllSnake.addActionListener(new PREApplySnake3DListener(this));
 		CovistoSnakePanel.advanced.addItemListener(new AdvancedSnakeListener(this));
@@ -848,6 +870,9 @@ public class InteractiveMethods {
 		CovistoDogPanel.thresholdslider.addAdjustmentListener(new PreThresholdListener(this,
 				CovistoDogPanel.thresholdText, CovistoDogPanel.thresholdstring, CovistoDogPanel.thresholdMin,
 				CovistoDogPanel.thresholdMax, CovistoDogPanel.scrollbarSize, CovistoDogPanel.thresholdslider));
+		
+		
+		CovistoDogPanel.inputFieldSpot.addTextListener(new PreDistThresholdListener(this, CovistoDogPanel.distthreshold));
 
 		CovistoTimeselectPanel.timeslider.addAdjustmentListener(
 				new PreTimeListener(this, CovistoTimeselectPanel.timeText, CovistoTimeselectPanel.timestring,

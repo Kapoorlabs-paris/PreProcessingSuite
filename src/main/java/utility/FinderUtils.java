@@ -62,7 +62,7 @@ import net.imglib2.util.Util;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
-public class FinderUtils< T extends RealType< T > & NativeType< T >> {
+public class FinderUtils{
 
 	public static ArrayList<Roi> getcurrentRois(ArrayList<RefinedPeak<Point>> peaks, double sigma, double sigma2) {
 
@@ -683,10 +683,11 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 		return Velocity;
 	}
 
-	public static ArrayList<Roi> getKNearestRois(final RandomAccessibleInterval<FloatType> currentimg,
+	public static < T extends RealType< T > & NativeType< T >>  Pair<ArrayList<Roi>, ArrayList<Double>> getKNearestRois(final RandomAccessibleInterval<T> currentimg,
 			ArrayList<Roi> Allrois, Roi kdtreeroi, int k) {
 
 		ArrayList<Roi> KnearestRoi = new ArrayList<Roi>();
+		ArrayList<Double> Knearestdist = new ArrayList<Double>();
 		Roi Knear = null;
 
 		ArrayList<Pair<Double, Roi>> distRoi = new ArrayList<Pair<Double, Roi>>();
@@ -726,15 +727,138 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 			for (int i = 0; i < k ; ++i){
 				
 				KnearestRoi.add(distRoi.get(i).getB());
-				
+				Knearestdist.add(distRoi.get(i).getA());
 			}
 			
 		
 
-		return KnearestRoi;
+		return new ValuePair<ArrayList<Roi>, ArrayList<Double>>(KnearestRoi, Knearestdist);
 
 	}
 
+	public static < T extends RealType< T > & NativeType< T >>  ArrayList<Roi> getKNearestRoisaboveCut(final RandomAccessibleInterval<T> currentimg,
+			ArrayList<Roi> Allrois, Roi kdtreeroi, double distthresh, int k) {
+
+		ArrayList<Roi> KnearestRoi = new ArrayList<Roi>();
+		ArrayList<Roi> KnearestclearRoi = new ArrayList<Roi>();
+		ArrayList<Double> Knearestdist = new ArrayList<Double>();
+		Roi Knear = null;
+
+		ArrayList<Pair<Double, Roi>> distRoi = new ArrayList<Pair<Double, Roi>>();
+		double[] kdcenter = getCenter(currentimg, kdtreeroi);
+
+		
+
+			for (int index = 0; index < Allrois.size(); ++index) {
+
+				double[] roicenter = getCenter(currentimg, Allrois.get(index));
+
+				Pair<Double, Roi> distpair = new ValuePair<Double, Roi>(Distance(kdcenter, roicenter), Allrois.get(index));
+				
+				distRoi.add(distpair);
+
+			}
+			
+			Comparator<Pair<Double, Roi>> distcomparison = new Comparator<Pair<Double, Roi>>() {
+
+				@Override
+				public int compare(final Pair<Double, Roi> A, final Pair<Double, Roi> B) {
+
+					double diff= A.getA() - B.getA();
+					
+					if ( diff < 0 )
+						return -1;
+					else if ( diff > 0 )
+						return 1;
+					else
+						return 0;
+				}
+
+			};
+			
+			Collections.sort(distRoi, distcomparison);
+			
+			for (int i = 0; i < k ; ++i){
+				
+				KnearestRoi.add(distRoi.get(i).getB());
+				Knearestdist.add(distRoi.get(i).getA());
+			}
+			
+			for (int i = 0; i < Knearestdist.size(); ++i) {
+				
+				if(Knearestdist.get(i) > distthresh)
+					KnearestclearRoi.add(KnearestRoi.get(i));
+				
+			}
+			
+			
+			
+		
+
+		return KnearestclearRoi;
+
+	}
+
+	
+	public static < T extends RealType< T > & NativeType< T >>   Pair<double[], Boolean> mergeNearestRois(final RandomAccessibleInterval<T> currentimg, ArrayList<double[]> Allrois, double[] Clickedpoint, double distthresh) {
+
+		double[] KDtreeroi = new double[Clickedpoint.length];
+
+		boolean merged = false;
+		final List<RealPoint> targetCoords = new ArrayList<RealPoint>(Allrois.size());
+		final List<FlagNode<double[]>> targetNodes = new ArrayList<FlagNode<double[]>>(Allrois.size());
+		for (int index = 0; index < Allrois.size(); ++index) {
+
+			double[] r = Allrois.get(index);
+			 
+			 targetCoords.add( new RealPoint(r[0], r[1] ) );
+			 
+
+			targetNodes.add(new FlagNode<double[]>(Allrois.get(index)));
+
+		}
+
+		if (targetNodes.size() > 0 && targetCoords.size() > 0) {
+
+			final KDTree<FlagNode<double[]>> Tree = new KDTree<FlagNode<double[]>>(targetNodes, targetCoords);
+
+			final NNFlagsearchKDtree<double[]> Search = new NNFlagsearchKDtree<double[]>(Tree);
+
+
+				final double[] source = Clickedpoint;
+				final RealPoint sourceCoords = new RealPoint(source);
+				Search.search(sourceCoords);
+				
+				final FlagNode<double[]> targetNode = Search.getSampler().get();
+
+				KDtreeroi = targetNode.getValue();
+		}
+		
+		System.out.println(Distance(KDtreeroi,Clickedpoint));
+		
+		double[] roicenter = KDtreeroi;
+		
+		double[] mergepoint = new double[roicenter.length];
+		
+		double distance = Distance(Clickedpoint, roicenter);
+		if (distance < distthresh) {
+			
+			mergepoint[0] = (Clickedpoint[0] + roicenter[0]) / 2;
+			
+			mergepoint[1] = (Clickedpoint[1] + roicenter[1]) / 2; 
+			
+			merged = true;
+		}
+		else
+			
+			mergepoint = roicenter;
+		
+
+		return new ValuePair<double[], Boolean>(mergepoint, merged);
+		
+	}
+	
+	
 	public static Roi getNearestRois(ArrayList<Roi> Allrois, double[] Clickedpoint) {
 
 		Roi KDtreeroi = null;
@@ -801,11 +925,11 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 
 	}
 
-	public static double[] getCenter(RandomAccessibleInterval<FloatType> source, Roi roi) {
+	public static< T extends RealType< T > & NativeType< T >>  double[] getCenter(RandomAccessibleInterval<T> source, Roi roi) {
 
 		double Intensity = 0;
 		double[] center = new double[source.numDimensions()];
-		Cursor<FloatType> currentcursor = Views.iterable(source).localizingCursor();
+		Cursor<T> currentcursor = Views.iterable(source).localizingCursor();
 		double SumX = 0;
 		double SumY = 0;
 		final double[] position = new double[source.numDimensions()];
