@@ -102,7 +102,7 @@ public class InteractiveMethods {
 
 	public int Maxlabel;
 	public int thresholdsliderInit = 125;
-
+ 
 	public ImagePlus imp;
 	public boolean showMSER = false;
 	public boolean showDOG = false;
@@ -593,6 +593,7 @@ public class InteractiveMethods {
 	public JPanel SnakePanel = new JPanel();
 	public JPanel RoiPanel = new JPanel();
 	public JPanel DetectionPanel = new JPanel();
+	public JPanel RemovalPanel = new JPanel();
 
 	public JPanel NearestNPanel = new JPanel();
 	public JPanel KalmanPanel = new JPanel();
@@ -644,10 +645,13 @@ public class InteractiveMethods {
 		DetectionPanel.setLayout(layout);
 		RoiPanel.setLayout(layout);
 
+		RemovalPanel.setLayout(layout);
 		inputField.setColumns(10);
 
 		Border methodborder = new CompoundBorder(new TitledBorder("Choose a segmentation algorithm"),
 				new EmptyBorder(c.insets));
+		
+		
 
 		c.anchor = GridBagConstraints.BOTH;
 		c.ipadx = 35;

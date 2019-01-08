@@ -13,6 +13,7 @@ import ij.gui.Roi;
 import interactivePreprocessing.InteractiveMethods;
 import net.imglib2.Cursor;
 import net.imglib2.KDTree;
+import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
@@ -21,6 +22,7 @@ import net.imglib2.algorithm.componenttree.mser.MserTree;
 import net.imglib2.algorithm.dog.DogDetection;
 import net.imglib2.algorithm.labeling.AllConnectedComponents;
 import net.imglib2.algorithm.labeling.Watershed;
+import net.imglib2.algorithm.localextrema.RefinedPeak;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
@@ -80,8 +82,21 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
 		parent.peaks = newdog.getSubpixelPeaks();
 		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
+	
+		ArrayList<Roi> CleanRois = new ArrayList<Roi>();
+		
+		ArrayList<RefinedPeak<Point>> peaks = parent.peaks;
+		
+		for(RefinedPeak<Point> peak : peaks ) {
+			
+			double[] currentpoint = new double[] {peak.getDoublePosition(0), peak.getDoublePosition(1)};
+			
+			System.out.println(currentpoint[0] + " " +  currentpoint[1]);
+			
+			
+		}
+		
 
-		System.out.println(parent.Rois.size() + "How is this getting filled");
 		for (Roi currentroi : parent.Rois) {
 
 			final double[] geocenter = currentroi.getContourCentroid();
@@ -97,6 +112,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
 		String uniqueID = Integer.toString(z) + Integer.toString(t);
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
+		
 		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
 
 	}
