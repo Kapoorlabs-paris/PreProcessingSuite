@@ -123,12 +123,12 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
 		ArrayList<Roi> Rois = parent.Rois;
-		Set<double[]> mergepoints = new HashSet<double[]>();
+		
 		
 		ArrayList<RefinedPeak<Point>> peaks = parent.peaks;
 		
 		ArrayList<double[]> points = new ArrayList<double[]>();
-		
+		ArrayList<double[]> mergepoints = new ArrayList<double[]>();
 	
 		
 		for(RefinedPeak<Point> peak : peaks ) {
@@ -138,10 +138,28 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			points.add(currentpoint);
 		}
 		
+	
+		
+		
+		ArrayList<Boolean> allmerged = new ArrayList<Boolean>();
+
+		System.out.println(points.size() + " " + "division before");
+		
+	do{
+		
+
+		
+	    mergepoints = new ArrayList<double[]>();
 		ArrayList<double[]> copylist = new ArrayList<double[]>(points);
-		for(double[] currentpoint : points ) {
+		Iterator<double[]> listiter = points.iterator();
+		
+		
+		
+		
+		while(listiter.hasNext()) {
+	
 			
-			
+			double[] currentpoint = listiter.next();
 			
 			
 		
@@ -154,7 +172,8 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			if(!mergepointbol.getB()) {
 			
 				mergepoints.add(currentpoint);
-			
+			   boolean merged = true;
+			   allmerged.add(merged);
 			
 			}
 			else {
@@ -162,10 +181,8 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 				double[] mean = new double[] {(currentpoint[0] + mergepointbol.getA()[0])/ 2, (currentpoint[1] + mergepointbol.getA()[1])/ 2 };
 				mergepoints.add(mean);
 				
-				copylist.add(mean);
-				copylist.remove(currentpoint);
 				
-			}
+		}
 			
 			
 			
@@ -173,21 +190,30 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			
 			if(mergepointbol==null)
 				mergepoints.add(currentpoint);
-				
+			
 		}
 		
+		RemoveDuplicates(mergepoints);
+		points = new ArrayList<double[]>();
+		points.addAll(mergepoints);
+		
+		if(allmerged.size() == 0)
+			break;
+		
+	}while(allmerged.size() < points.size());
+	
+	System.out.println(mergepoints.size() + " " + "division now");
 		for(double[] center:mergepoints) {
 			
-			int width = 2;
-			int height = 2;
-			int radius = 2;
+			int width = 1;
+			int height = 1;
+			int radius = 1;
 			Roi Bigroi = new OvalRoi(Util.round(center[0] -(width + radius)/2), Util.round(center[1] - (height + radius)/2 ), Util.round(width + radius),
 					Util.round(height + radius));
 			parent.AfterRemovedRois.add(Bigroi);
 			
 		}
 
-		System.out.println(parent.AfterRemovedRois.size() + " " + parent.Rois.size());
 		for (Roi currentroi : parent.Rois) {
 
 			
@@ -213,6 +239,33 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
 
 
+	public void RemoveDuplicates(ArrayList<double[]> points) {
+		
+		int j = 0;
+
+		for (int i = 0; i < points.size(); ++i) {
+
+			j = i + 1;
+			while (j < points.size()) {
+
+				if (points.get(i)[0] == points.get(j)[0] && points.get(i)[1] == points.get(j)[1] ) {
+
+					points.remove(j);
+
+				}
+
+				else {
+					++j;
+				}
+
+			}
+
+		}
+
+	}
+		
+		
+	
 	public RandomAccessibleInterval<BitType> getBinaryimg() {
 
 		return bitimg;

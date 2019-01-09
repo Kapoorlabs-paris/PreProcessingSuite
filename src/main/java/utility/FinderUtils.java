@@ -846,7 +846,8 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 		double[] roicenter = KDtreeroi;
 		
 		double[] mergepoint = new double[roicenter.length];
-		System.out.println(roicenter[0] + " " + roicenter[1] + " " + Clickedpoint[0] + " " + Clickedpoint[1]);
+		
+		
 		double distance = Distance(Clickedpoint, roicenter);
 		if (distance < distthresh) {
 		
