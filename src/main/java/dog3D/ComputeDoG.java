@@ -1,5 +1,6 @@
 package dog3D;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -121,27 +122,35 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		}
 		parent.imp.setOverlay(parent.overlay);
 		parent.imp.updateAndDraw();
+		ArrayList<Roi> Rois = parent.Rois;
 		Set<double[]> mergepoints = new HashSet<double[]>();
 		
 		ArrayList<RefinedPeak<Point>> peaks = parent.peaks;
 		
 		ArrayList<double[]> points = new ArrayList<double[]>();
-		ArrayList<double[]> duppoints = new ArrayList<double[]>(points);
+		
+	
+		
 		for(RefinedPeak<Point> peak : peaks ) {
 			
-			double[] currentpoint = new double[] {peak.getDoublePosition(0), peak.getDoublePosition(1)};
+			double[] currentpoint = new double[] {(float)peak.getDoublePosition(0), (float)peak.getDoublePosition(1)};
 			
 			points.add(currentpoint);
 		}
 		
-		
+		ArrayList<double[]> copylist = new ArrayList<double[]>(points);
 		for(double[] currentpoint : points ) {
 			
 			
-			duppoints.remove(currentpoint);
-			Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, duppoints, currentpoint, CovistoDogPanel.distthreshold);
 			
 			
+		
+			
+			copylist.remove(currentpoint);
+			Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, copylist, currentpoint, CovistoDogPanel.distthreshold);
+			copylist.add(currentpoint);
+			
+			if(mergepointbol!=null) {
 			if(!mergepointbol.getB()) {
 			
 				mergepoints.add(currentpoint);
@@ -149,12 +158,22 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			
 			}
 			else {
-			mergepoints.add(mergepointbol.getA());
+				
+				double[] mean = new double[] {(currentpoint[0] + mergepointbol.getA()[0])/ 2, (currentpoint[1] + mergepointbol.getA()[1])/ 2 };
+				mergepoints.add(mean);
+				
+				copylist.add(mean);
+				copylist.remove(currentpoint);
+				
+			}
+			
+			
 			
 			}
 			
-		
-			
+			if(mergepointbol==null)
+				mergepoints.add(currentpoint);
+				
 		}
 		
 		for(double[] center:mergepoints) {
@@ -168,7 +187,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			
 		}
 
-		//System.out.println(parent.AfterRemovedRois.size() + " " + parent.Rois.size());
+		System.out.println(parent.AfterRemovedRois.size() + " " + parent.Rois.size());
 		for (Roi currentroi : parent.Rois) {
 
 			

@@ -802,14 +802,17 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 	
 	public static < T extends RealType< T > & NativeType< T >>   Pair<double[], Boolean> mergeNearestRois(final RandomAccessibleInterval<T> currentimg, ArrayList<double[]> Allrois, double[] Clickedpoint, double distthresh) {
 
-		double[] KDtreeroi = new double[Clickedpoint.length];
 
 		boolean merged = false;
+		double[] KDtreeroi = new double[Clickedpoint.length];
+
+		
 		final List<RealPoint> targetCoords = new ArrayList<RealPoint>(Allrois.size());
 		final List<FlagNode<double[]>> targetNodes = new ArrayList<FlagNode<double[]>>(Allrois.size());
 		for (int index = 0; index < Allrois.size(); ++index) {
 
 			double[] r = Allrois.get(index);
+			 
 			 
 			 targetCoords.add( new RealPoint(r[0], r[1] ) );
 			 
@@ -817,6 +820,7 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 			targetNodes.add(new FlagNode<double[]>(Allrois.get(index)));
 
 		}
+
 
 		if (targetNodes.size() > 0 && targetCoords.size() > 0) {
 
@@ -834,27 +838,31 @@ public static FinalInterval CurrentroiInterval(RandomAccessibleInterval<FloatTyp
 				KDtreeroi = targetNode.getValue();
 		}
 		
-		System.out.println(Distance(KDtreeroi,Clickedpoint));
+
 		
+		
+		if(KDtreeroi!=null) {
+			
 		double[] roicenter = KDtreeroi;
 		
 		double[] mergepoint = new double[roicenter.length];
-		
+		System.out.println(roicenter[0] + " " + roicenter[1] + " " + Clickedpoint[0] + " " + Clickedpoint[1]);
 		double distance = Distance(Clickedpoint, roicenter);
 		if (distance < distthresh) {
-			
-			mergepoint[0] = (Clickedpoint[0] + roicenter[0]) / 2;
-			
-			mergepoint[1] = (Clickedpoint[1] + roicenter[1]) / 2; 
+		
 			
 			merged = true;
 		}
 		else
+			merged = false;
 			
 			mergepoint = roicenter;
 		
 
 		return new ValuePair<double[], Boolean>(mergepoint, merged);
+		}
+		
+		else return null;
 		
 	}
 	
