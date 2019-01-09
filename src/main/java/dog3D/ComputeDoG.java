@@ -180,8 +180,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 				
 				double[] mean = new double[] {(currentpoint[0] + mergepointbol.getA()[0])/ 2, (currentpoint[1] + mergepointbol.getA()[1])/ 2 };
 				mergepoints.add(mean);
-				
-				
+				listiter.remove();
 		}
 			
 			
