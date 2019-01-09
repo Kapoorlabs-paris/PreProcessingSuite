@@ -150,6 +150,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
 		
 	    mergepoints = new ArrayList<double[]>();
+	    allmerged = new ArrayList<Boolean>();
 		ArrayList<double[]> copylist = new ArrayList<double[]>(points);
 		Iterator<double[]> listiter = points.iterator();
 		
@@ -180,11 +181,10 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 				
 				double[] mean = new double[] {(currentpoint[0] + mergepointbol.getA()[0])/ 2, (currentpoint[1] + mergepointbol.getA()[1])/ 2 };
 				mergepoints.add(mean);
-				listiter.remove();
+		        listiter.remove();
 		}
 			
-			
-			
+	
 			}
 			
 			if(mergepointbol==null)
@@ -193,15 +193,15 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		}
 		
 		RemoveDuplicates(mergepoints);
+		System.out.println(mergepoints.size() + " division after " + allmerged.size() + " " + " time " +  z);
 		points = new ArrayList<double[]>();
 		points.addAll(mergepoints);
 		
-		if(allmerged.size() == 0)
-			break;
+		
 		
 	}while(allmerged.size() < points.size());
 	
-	System.out.println(mergepoints.size() + " " + "division now");
+	//System.out.println(allmerged.size() + " " + "merged" + " " + points.size());
 		for(double[] center:mergepoints) {
 			
 			int width = 1;
