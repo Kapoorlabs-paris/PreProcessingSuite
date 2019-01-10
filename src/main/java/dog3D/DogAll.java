@@ -1,6 +1,12 @@
 package dog3D;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -76,8 +82,62 @@ public class DogAll extends SwingWorker<Void, Void> {
 		ImageJFunctions.show(bitimg).setTitle("Binary Image");
 		ImageJFunctions.show(afterremovebitimg).setTitle("Merge Points Binary Image");
 		utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
+		
+		Savefunction(parent.AllEvents);
 		return null;
 	}
+
+	
+
+	public void Savefunction(HashMap<Integer, ArrayList<double[]>> Mergedpoints) {
+		
+		
+		
+		File file = new File(parent.inputfile + "//" + parent.userfile.replace(".tif","") + ".txt");
+		
+		FileWriter fw;
+		
+		try {
+			
+			
+			fw = new FileWriter(file);
+			
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			bw.write(" Time (px), X, Y  \n" );
+			
+			for(Entry<Integer, ArrayList<double[]>> entry : Mergedpoints.entrySet()) {
+				
+				
+				ArrayList<double[]> timedlist = entry.getValue();
+			for(int index = 0; index < timedlist.size(); ++index) {
+				
+				
+				int time = entry.getKey();
+				
+				double X = timedlist.get(index)[0];
+				
+				double Y = timedlist.get(index)[1];
+				
+				
+				bw.write(time + "," + parent.nf.format(X) + "," + parent.nf.format(Y) + "\n" );
+				
+				
+			}
+			
+			
+			}
+			bw.close();
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+
 
 	protected void processSlice(RandomAccessibleInterval<UnsignedByteType> slice,
 			RandomAccessibleInterval<BitType> bitoutputslice, 	RandomAccessibleInterval<BitType> afterremovebitoutputslice, int z, int t) {

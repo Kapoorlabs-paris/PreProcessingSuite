@@ -175,7 +175,7 @@ public class InteractiveMethods {
 	public ArrayList<PreRoiobject> ZTPreRoiobject;
 	public HashMap<String, ArrayList<PreRoiobject>> ZTRois;
 	public HashMap<Integer, ArrayList<ThreeDRoiobject>> threeDTRois;
-
+    public HashMap<Integer, ArrayList<double[]>> AllEvents;
 	public ArrayList<RefinedPeak<Point>> peaks;
 
 	public String uniqueID, ZID, TID;
@@ -189,7 +189,7 @@ public class InteractiveMethods {
 	public boolean SegMode;
 
 	public ColorProcessor cp = null;
-
+    public final String userfile;
 	public boolean AutoSnake = true;
 	public boolean advancedSnake = false;
 	public SnakeConfigDriver configDriver;
@@ -207,22 +207,23 @@ public class InteractiveMethods {
 
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
-
+        this.userfile = null;
 	}
 
 	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg, final boolean SegMode,
-			final boolean TrackandSeg) {
+			final boolean TrackandSeg, String userfile) {
 
 		this.originalimg = originalimg;
 		this.SegMode = SegMode;
 		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
+		this.userfile = userfile;
 		this.ndims = originalimg.numDimensions();
 	}
 
 	public InteractiveMethods(final RandomAccessibleInterval<FloatType> originalimg, File file, final boolean SegMode,
-			final boolean TrackandSeg) {
+			final boolean TrackandSeg, String userfile) {
 
 		this.originalimg = originalimg;
 		this.inputfile = file;
@@ -230,6 +231,7 @@ public class InteractiveMethods {
 		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
+		this.userfile = userfile;
 		this.ndims = originalimg.numDimensions();
 	}
 
@@ -241,7 +243,7 @@ public class InteractiveMethods {
 				java.awt.image.ColorModel.getRGBdefault());
 		Accountedframes = new HashMap<String, Integer>();
 		AccountedZ = new HashMap<String, Integer>();
-		
+		AllEvents = new HashMap<Integer, ArrayList<double[]>>();
 		AfterRemovedRois = new ArrayList<Roi>(); 
 		universe = new Image3DUniverse((int) originalimg.dimension(0), (int) originalimg.dimension(1));
 		jpb = new JProgressBar();

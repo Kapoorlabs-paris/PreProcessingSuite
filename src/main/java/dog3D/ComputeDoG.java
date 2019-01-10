@@ -1,15 +1,23 @@
 package dog3D;
 
 import java.awt.Rectangle;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
+
+import org.ojalgo.type.keyvalue.MapEntry;
 
 import dogGUI.CovistoDogPanel;
 import ij.IJ;
@@ -213,6 +221,9 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			
 		}
 
+	parent.AllEvents.put(z, mergepoints);	
+		
+		
 		for (Roi currentroi : parent.Rois) {
 
 			
@@ -234,10 +245,10 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		
 		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
 		common3D.BinaryCreation.CreateBinary(parent, source, afterremovebitimg,parent.AfterRemovedRois, z, t);
+		
 	}
 
-
-
+	
 	public void RemoveDuplicates(ArrayList<double[]> points) {
 		
 		int j = 0;

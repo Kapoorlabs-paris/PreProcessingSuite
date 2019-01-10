@@ -146,7 +146,7 @@ public class PreprocessingFileChooser extends JPanel {
 	    
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
-		new InteractiveMethods(image, chooserA.getSelectedFile(), onlySeg, TrackandSeg).run(null);
+		new InteractiveMethods(image, chooserA.getSelectedFile().getParentFile(), onlySeg, TrackandSeg, impA.getOriginalFileInfo().fileName).run(null);
 		close(parent);
 
 		
@@ -161,7 +161,7 @@ public class PreprocessingFileChooser extends JPanel {
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
 		
-		new InteractiveMethods(image, onlySeg, TrackandSeg).run(null);
+		new InteractiveMethods(image, onlySeg, TrackandSeg, impA.getOriginalFileInfo().fileName).run(null);
 		close(parent);
 		if(impA!=null)
         impA.close();
