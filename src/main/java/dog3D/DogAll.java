@@ -163,8 +163,6 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 			ranac.setPosition(bitcursor);
 
-			
-			
 			bitcursor.get().set(ranac.get());
 
 		}
@@ -175,8 +173,6 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 			afterremoveranac.setPosition(afterremovebitcursor);
 
-			
-			
 			afterremovebitcursor.get().set(afterremoveranac.get());
 
 		}

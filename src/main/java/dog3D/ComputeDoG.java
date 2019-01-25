@@ -205,8 +205,6 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		points = new ArrayList<double[]>();
 		points.addAll(mergepoints);
 		
-		
-		
 	}while(allmerged.size() < points.size());
 	
 	//System.out.println(allmerged.size() + " " + "merged" + " " + points.size());
@@ -214,7 +212,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 			
 			int width = 1;
 			int height = 1;
-			int radius = 1;
+			int radius = (int)CovistoDogPanel.distthreshold;
 			Roi Bigroi = new OvalRoi(Util.round(center[0] -(width + radius)/2), Util.round(center[1] - (height + radius)/2 ), Util.round(width + radius),
 					Util.round(height + radius));
 			parent.AfterRemovedRois.add(Bigroi);
@@ -223,6 +221,18 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 
 	parent.AllEvents.put(z, mergepoints);	
 		
+	
+	if(z > 1) {
+		
+		
+		ArrayList<double[]> currentlist = parent.AllEvents.get(z);
+		ArrayList<double[]> previouslist = parent.AllEvents.get(z - 1);
+		
+		ArrayList<double[]> timedup = RemoveTimeDuplicates(currentlist, previouslist);
+		
+		
+		parent.AllEvents.put(z, timedup);
+	}
 		
 		for (Roi currentroi : parent.Rois) {
 
@@ -248,6 +258,55 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		
 	}
 
+	
+	public ArrayList<double[]> RemoveTimeDuplicates(ArrayList<double[]> Currentpoints, ArrayList<double[]> Previouspoints) {
+		
+		
+
+		ArrayList<Boolean> allmerged = new ArrayList<Boolean>();
+		ArrayList<double[]> mergepoints = new ArrayList<double[]>();
+		ArrayList<double[]> copylist = new ArrayList<double[]>(Currentpoints);
+		
+		for (int i = 0; i < Previouspoints.size(); ++i) {
+			
+			double[] previouspoint = Previouspoints.get(i);
+			
+			
+			do {
+				  mergepoints = new ArrayList<double[]>();
+				    allmerged = new ArrayList<Boolean>();
+					Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, Currentpoints, previouspoint, CovistoDogPanel.distthreshold);
+					
+					
+					if(mergepointbol!=null) {
+						if(!mergepointbol.getB()) {
+						
+						   boolean merged = true;
+						   allmerged.add(merged);
+						
+						}
+						else {
+							
+							copylist.remove(mergepointbol.getA());
+					}
+					
+				
+			}
+			
+			
+			
+		}while(allmerged.size() < Currentpoints.size());
+		
+		
+		
+		}
+	
+		RemoveDuplicates(mergepoints);
+
+		return copylist;
+		
+		
+	}
 	
 	public void RemoveDuplicates(ArrayList<double[]> points) {
 		

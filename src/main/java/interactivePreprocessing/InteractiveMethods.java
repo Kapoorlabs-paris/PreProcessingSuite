@@ -207,6 +207,7 @@ public class InteractiveMethods {
 
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
+		nf.setGroupingUsed(false);
         this.userfile = null;
 	}
 
@@ -218,6 +219,7 @@ public class InteractiveMethods {
 		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
+		nf.setGroupingUsed(false);
 		this.userfile = userfile;
 		this.ndims = originalimg.numDimensions();
 	}
@@ -231,6 +233,7 @@ public class InteractiveMethods {
 		this.TrackandSeg = TrackandSeg;
 		nf = NumberFormat.getInstance(Locale.ENGLISH);
 		nf.setMaximumFractionDigits(3);
+		nf.setGroupingUsed(false);
 		this.userfile = userfile;
 		this.ndims = originalimg.numDimensions();
 	}
