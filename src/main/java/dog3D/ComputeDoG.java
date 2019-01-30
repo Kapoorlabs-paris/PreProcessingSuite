@@ -65,6 +65,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 	public final RandomAccessibleInterval<T> source;
 
 	public RandomAccessibleInterval<BitType> bitimg;
+	public RandomAccessibleInterval<BitType> bitdotimg;
 	public RandomAccessibleInterval<BitType> afterremovebitimg;
 	
 	public boolean apply3D;
@@ -82,7 +83,9 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		this.t = t;
 		
 		bitimg = new ArrayImgFactory<BitType>().create(source, new BitType());
+		bitdotimg = new ArrayImgFactory<BitType>().create(source, new BitType());
 		afterremovebitimg = new ArrayImgFactory<BitType>().create(source, new BitType());
+		
 	}
 
 	public void execute() {
@@ -152,7 +155,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		ArrayList<Boolean> allmerged = new ArrayList<Boolean>();
 
 		System.out.println(points.size() + " " + "division before");
-		
+		if(points.size() > 0) {
 	do{
 		
 
@@ -201,7 +204,7 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		}
 		
 		RemoveDuplicates(mergepoints);
-		System.out.println(mergepoints.size() + " division after " + allmerged.size() + " " + " time " +  z);
+		
 		points = new ArrayList<double[]>();
 		points.addAll(mergepoints);
 		
@@ -222,17 +225,43 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 	parent.AllEvents.put(z, mergepoints);	
 		
 	
-	if(z > 1) {
+	if(z >= CovistoDogPanel.timeblock) {
 		
 		
 		ArrayList<double[]> currentlist = parent.AllEvents.get(z);
-		ArrayList<double[]> previouslist = parent.AllEvents.get(z - 1);
+		ArrayList<double[]> copylist = new ArrayList<double[]>(currentlist);
+		for(int i = 1; i <=CovistoDogPanel.timeblock; ++i ) {
+		ArrayList<double[]> previouslist = parent.AllEvents.get(z - i);
 		
-		ArrayList<double[]> timedup = RemoveTimeDuplicates(currentlist, previouslist);
 		
 		
-		parent.AllEvents.put(z, timedup);
+		copylist = RemoveTimeDuplicates(currentlist, previouslist, copylist);
+		
+		
+		parent.AllEvents.replace(z, copylist);
+		
+		}
 	}
+		
+		
+	else if (z<CovistoDogPanel.timeblock && z >1) {
+			
+
+			ArrayList<double[]> currentlist = parent.AllEvents.get(z);
+			ArrayList<double[]>	copylist = new ArrayList<double[]>(currentlist);
+			for(int i = z - 1; i >=0; --i ) {
+			ArrayList<double[]> previouslist = parent.AllEvents.get(z - i);
+			
+			
+			
+			copylist = RemoveTimeDuplicates(currentlist, previouslist, copylist);
+			
+			
+			parent.AllEvents.replace(z, copylist);
+			
+			}
+		}
+	
 		
 		for (Roi currentroi : parent.Rois) {
 
@@ -253,29 +282,28 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		String uniqueID = Integer.toString(z) + Integer.toString(t);
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
 		
-		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
-		common3D.BinaryCreation.CreateBinary(parent, source, afterremovebitimg,parent.AfterRemovedRois, z, t);
-		
+		common3D.BinaryCreation.CreateBinaryRoi(parent, source, bitimg,parent.Rois, z, t);
+		common3D.BinaryCreation.CreateBinary(parent, source, afterremovebitimg, z, t);
+		common3D.BinaryCreation.CreateBinaryDots(parent, source, bitdotimg, z, t);
+		System.out.println(" Division after " + parent.AllEvents.get(z).size());
 	}
 
-	
-	public ArrayList<double[]> RemoveTimeDuplicates(ArrayList<double[]> Currentpoints, ArrayList<double[]> Previouspoints) {
+	}
+	public ArrayList<double[]> RemoveTimeDuplicates(ArrayList<double[]> Currentpoints, ArrayList<double[]> Previouspoints, ArrayList<double[]>copylist) {
 		
 		
 
 		ArrayList<Boolean> allmerged = new ArrayList<Boolean>();
-		ArrayList<double[]> mergepoints = new ArrayList<double[]>();
-		ArrayList<double[]> copylist = new ArrayList<double[]>(Currentpoints);
-		
+	
+		if(Previouspoints!=null) {
 		for (int i = 0; i < Previouspoints.size(); ++i) {
 			
 			double[] previouspoint = Previouspoints.get(i);
-			
+			allmerged = new ArrayList<Boolean>();
 			
 			do {
-				  mergepoints = new ArrayList<double[]>();
-				    allmerged = new ArrayList<Boolean>();
-					Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, Currentpoints, previouspoint, CovistoDogPanel.distthreshold);
+				  
+					Pair<double[], Boolean> mergepointbol = utility.FinderUtils.mergeNearestRois(source, copylist, previouspoint, CovistoDogPanel.timethreshold);
 					
 					
 					if(mergepointbol!=null) {
@@ -292,17 +320,17 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 					
 				
 			}
+					
 			
 			
-			
-		}while(allmerged.size() < Currentpoints.size());
+		}while(allmerged.size() < Previouspoints.size());
 		
 		
 		
 		}
 	
-		RemoveDuplicates(mergepoints);
-
+		RemoveDuplicates(copylist);
+		}
 		return copylist;
 		
 		
@@ -345,5 +373,10 @@ public class ComputeDoG<T extends RealType<T> & NativeType<T>> {
 		return afterremovebitimg;
 	}
 
+	public RandomAccessibleInterval<BitType> getBinarydotimg() {
+		
+		return bitdotimg;
+		
+	}
 
 }

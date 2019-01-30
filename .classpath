@@ -49,5 +49,6 @@
 	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/jogl-all-2.3.2-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="src" path="/scifio"/>
 	<classpathentry exported="true" kind="src" path="/MasterPanels"/>
+	<classpathentry kind="src" path="/imglib2-algorithm"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -98,7 +98,7 @@ public class ComputeCompTree<T extends RealType<T> & NativeType<T>> {
 
 		String uniqueID = Integer.toString(z) + Integer.toString(t);
 		parent.ZTRois.put(uniqueID, parent.CurrentPreRoiobject);
-		common3D.BinaryCreation.CreateBinary(parent, source, bitimg,parent.Rois, z, t);
+		common3D.BinaryCreation.CreateBinaryRoi(parent, source, bitimg,parent.Rois, z, t);
 	}
 
 

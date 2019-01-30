@@ -92,7 +92,7 @@ public class ComputeSnakeSeg <T extends RealType<T> & NativeType<T>> {
 			
 		}
 		
-		common3D.BinaryCreation.CreateBinary(parent, source, bitimg, currentroi, z, t);
+		common3D.BinaryCreation.CreateBinaryRoi(parent, source, bitimg, currentroi, z, t);
 
 	}
 

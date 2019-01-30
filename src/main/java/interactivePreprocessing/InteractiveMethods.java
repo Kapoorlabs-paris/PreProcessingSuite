@@ -878,6 +878,11 @@ public class InteractiveMethods {
 		
 		
 		CovistoDogPanel.inputFieldSpot.addTextListener(new PreDistThresholdListener(this, CovistoDogPanel.distthreshold));
+		CovistoDogPanel.inputtimedist.addTextListener(new PreTimeDistThresholdListener(this, CovistoDogPanel.timethreshold));
+		CovistoDogPanel.inputtimeskip.addTextListener(new PreTimeSkipListener(this, CovistoDogPanel.timeblock));
+		
+		
+		
 
 		CovistoTimeselectPanel.timeslider.addAdjustmentListener(
 				new PreTimeListener(this, CovistoTimeselectPanel.timeText, CovistoTimeselectPanel.timestring,

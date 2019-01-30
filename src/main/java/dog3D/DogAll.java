@@ -13,6 +13,7 @@ import javax.swing.SwingWorker;
 
 import distanceTransform.DistWatershed;
 import dogGUI.CovistoDogPanel;
+import ij.IJ;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Cursor;
@@ -49,6 +50,10 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg,
 				new BitType());
+		
+		RandomAccessibleInterval<BitType> bitdotimg = new ArrayImgFactory<BitType>().create(parent.originalimg,
+				new BitType());
+		
 		RandomAccessibleInterval<BitType> afterremovebitimg = new ArrayImgFactory<BitType>().create(parent.originalimg,
 				new BitType());
 
@@ -57,6 +62,13 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {
 
+				if(IJ.escapePressed()) {
+				
+					IJ.resetEscape();
+					break;
+					
+				}
+				
 				percent = t + z;
 				
 				CovistoZselectPanel.thirdDimension = z;
@@ -72,8 +84,10 @@ public class DogAll extends SwingWorker<Void, Void> {
 						CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
 				RandomAccessibleInterval<BitType> afterremovecurrentbitimg = utility.CovistoSlicer.getCurrentView(afterremovebitimg, z,
 						CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
+				RandomAccessibleInterval<BitType> Dotafterremovecurrentbitimg = utility.CovistoSlicer.getCurrentView(bitdotimg, z,
+						CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
 				
-				processSlice(parent.newimg, currentbitimg, afterremovecurrentbitimg, z, t);
+				processSlice(parent.newimg, currentbitimg, afterremovecurrentbitimg,Dotafterremovecurrentbitimg,  z, t);
 			
 			}
 
@@ -81,6 +95,7 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 		ImageJFunctions.show(bitimg).setTitle("Binary Image");
 		ImageJFunctions.show(afterremovebitimg).setTitle("Merge Points Binary Image");
+		ImageJFunctions.show(bitdotimg).setTitle("Merge Points Binary Image (Dot)");
 		utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, "Done");
 		
 		Savefunction(parent.AllEvents);
@@ -140,7 +155,7 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 
 	protected void processSlice(RandomAccessibleInterval<UnsignedByteType> slice,
-			RandomAccessibleInterval<BitType> bitoutputslice, 	RandomAccessibleInterval<BitType> afterremovebitoutputslice, int z, int t) {
+			RandomAccessibleInterval<BitType> bitoutputslice, 	RandomAccessibleInterval<BitType> afterremovebitoutputslice,RandomAccessibleInterval<BitType> Dotafterremovecurrentbitimg, int z, int t) {
 
 		ComputeDoG<UnsignedByteType> ComputeDOG = new ComputeDoG<UnsignedByteType>(parent, slice, parent.jpb,
 				parent.apply3D, z, t);
@@ -148,14 +163,19 @@ public class DogAll extends SwingWorker<Void, Void> {
 
 		RandomAccessibleInterval<BitType> bitimg = ComputeDOG.getBinaryimg();
 		RandomAccessibleInterval<BitType> afterremovebitimg = ComputeDOG.getafterremoveBinaryimg();
+		RandomAccessibleInterval<BitType> Dotafterremovebitimg = ComputeDOG.getBinarydotimg();
 		
 		Cursor<BitType> bitcursor = Views.iterable(bitoutputslice).localizingCursor();
 
 		Cursor<BitType> afterremovebitcursor = Views.iterable(afterremovebitoutputslice).localizingCursor();
 		
+		Cursor<BitType> Dotafterremovebitcursor = Views.iterable(Dotafterremovecurrentbitimg).localizingCursor();
+		
 		RandomAccess<BitType> ranac = bitimg.randomAccess();
 		
 		RandomAccess<BitType> afterremoveranac = afterremovebitimg.randomAccess();
+		
+		RandomAccess<BitType> Dotafterremoveranac = Dotafterremovebitimg.randomAccess();
 
 		while (bitcursor.hasNext()) {
 
@@ -174,6 +194,16 @@ public class DogAll extends SwingWorker<Void, Void> {
 			afterremoveranac.setPosition(afterremovebitcursor);
 
 			afterremovebitcursor.get().set(afterremoveranac.get());
+
+		}
+		
+		while (Dotafterremovebitcursor.hasNext()) {
+
+			Dotafterremovebitcursor.fwd();
+
+			Dotafterremoveranac.setPosition(Dotafterremovebitcursor);
+
+			Dotafterremovebitcursor.get().set(Dotafterremoveranac.get());
 
 		}
 		
