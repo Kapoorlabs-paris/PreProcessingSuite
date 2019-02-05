@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingUtilities;
 
 import dog3D.DogAll;
+import timeGUI.CovistoTimeselectPanel;
+import zGUI.CovistoZselectPanel;
 
 public class PREApplyDog3DListener implements ActionListener {
 	
@@ -38,6 +40,9 @@ public class PREApplyDog3DListener implements ActionListener {
 
 	
 
+
+	
+		
 		DogAll dosnake = new DogAll(parent);
 		dosnake.execute();
 

@@ -1,11 +1,17 @@
 package mser3D;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.SwingWorker;
 
 import distanceTransform.DistWatershed;
+import dog3D.DogAll.ParallelCalls;
 import interactivePreprocessing.InteractiveMethods;
 import interactivePreprocessing.InteractiveMethods.ValueChange;
 import net.imglib2.Cursor;
@@ -33,7 +39,48 @@ public class MserAll extends SwingWorker<Void, Void> {
 		this.parent = parent;
 
 	}
+public class ParallelCalls implements Callable<Void> {
 
+		
+		public final InteractiveMethods parent;
+		public final int z;
+		public final int t;
+		public RandomAccessibleInterval<BitType> currentbitimg;
+
+		
+		public ParallelCalls(InteractiveMethods parent,RandomAccessibleInterval<BitType> currentbitimg, int z, int t) {
+			
+			
+			this.parent = parent;
+			this.currentbitimg = currentbitimg;
+
+			this.z = z;
+			this.t = t;
+			
+		}
+		
+		
+		@Override
+		public Void call() throws Exception {
+		
+			double percent = t +z;
+			RandomAccessibleInterval<FloatType> CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z,
+					CovistoZselectPanel.thirdDimensionSize, t, CovistoTimeselectPanel.fourthDimensionSize);
+			utility.CovsitoProgressBar.CovistoSetProgressBar(parent.jpb, 100 *(percent / (CovistoTimeselectPanel.fourthDimensionSize + CovistoZselectPanel.thirdDimensionSize + 1 )) ,"Computing");
+			// UnsignedByteType image created here
+			parent.updatePreview(ValueChange.THIRDDIMmouse);
+			RandomAccessibleInterval<UnsignedByteType> newimg = utility.CovistoSlicer.PREcopytoByteImage(CurrentView);
+		
+	
+			
+			processParallelSlice(newimg, currentbitimg,  z, t);
+			
+			return null;
+		}
+		
+		
+		
+	}
 	@Override
 	protected Void doInBackground() throws Exception {
 
@@ -44,7 +91,8 @@ public class MserAll extends SwingWorker<Void, Void> {
 		
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg, new BitType());
 		
-		
+		List<Future<Void>> list = new ArrayList<Future<Void>>();
+		final ExecutorService taskExecutor = Executors.newCachedThreadPool();
 		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 
@@ -53,25 +101,26 @@ public class MserAll extends SwingWorker<Void, Void> {
 				CovistoZselectPanel.thirdDimension = z;
 				CovistoTimeselectPanel.fourthDimension = t;
 				
-				parent.CurrentView = utility.CovistoSlicer.getCurrentView(parent.originalimg, z, CovistoZselectPanel.thirdDimensionSize, t,
-						CovistoTimeselectPanel.fourthDimensionSize);
-				
-				// UnsignedByteType image created here
-				parent.updatePreview(ValueChange.THIRDDIMmouse);
-				parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 				RandomAccessibleInterval<BitType> currentbitimg = utility.CovistoSlicer.getCurrentView(bitimg, z, CovistoZselectPanel.thirdDimensionSize, t,
 						CovistoTimeselectPanel.fourthDimensionSize);
 				
 			
+				ParallelCalls call = new ParallelCalls(parent, currentbitimg, z, t);
 				
-			processSlice(parent.newimg, currentbitimg, z, t);
+				Future<Void> Futureresult = taskExecutor.submit(call);
+				list.add(Futureresult);
 			
 			}
 			
 		
 		}
 		
-		
+	for (Future<Void> fut : list) {
+			
+			
+			fut.get();
+			
+		}
 			ImageJFunctions.show(bitimg).setTitle("Binary Image");
 		
 		
@@ -87,11 +136,42 @@ public class MserAll extends SwingWorker<Void, Void> {
 	}
 	
 	
+	protected void processParallelSlice(RandomAccessibleInterval< UnsignedByteType > slice, RandomAccessibleInterval< BitType > bitoutputslice, int z, int t) {
+		
+		
+		
+		
+		
+		ComputeCompTree<UnsignedByteType> ComputeMSER = new ComputeCompTree<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
+		ComputeMSER.execute();
+		
+		RandomAccessibleInterval<BitType> bitimg =  ComputeMSER.getBinaryimg();
+		Cursor< BitType > bitcursor = Views.iterable(bitoutputslice).localizingCursor();
+		
+		RandomAccess<BitType> ranac = bitimg.randomAccess();
+		
+		while(bitcursor.hasNext()) {
+			
+			bitcursor.fwd();
+			
+			ranac.setPosition(bitcursor);
+			
+			bitcursor.get().set(ranac.get());
+			
+			
+		}
+		
+	
+	
+		
+	}
+	
+	
 	protected void processSlice(RandomAccessibleInterval< UnsignedByteType > slice, RandomAccessibleInterval< BitType > bitoutputslice, int z, int t) {
 		
 		
 		
-		
+		parent.CurrentPreRoiobject = new ArrayList<PreRoiobject>();
 	
 		ComputeCompTree<UnsignedByteType> ComputeMSER = new ComputeCompTree<UnsignedByteType>(parent, slice, parent.jpb, parent.apply3D, z, t);
 		ComputeMSER.execute();

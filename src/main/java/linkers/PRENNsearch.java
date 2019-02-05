@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JProgressBar;
 
@@ -18,7 +19,7 @@ import utility.PreRoiobject;
 
 public class PRENNsearch implements BlobTracker {
 
-	private final HashMap<String, ArrayList<PreRoiobject>> Allblobs;
+	private final ConcurrentHashMap<String, ArrayList<PreRoiobject>> Allblobs;
 	private final double maxdistance;
 	private int T;
 	public JProgressBar jpb;
@@ -27,7 +28,7 @@ public class PRENNsearch implements BlobTracker {
 	protected String errorMessage;
 	private HashMap<String, Integer> AccountedZ;
 	public PRENNsearch(
-			final HashMap<String, ArrayList<PreRoiobject>> Allblobs, final double maxdistance, final int T,
+			final ConcurrentHashMap<String, ArrayList<PreRoiobject>> Allblobs, final double maxdistance, final int T,
 			 final HashMap<String, Integer> AccountedZ, JProgressBar jpb){
 		this.Allblobs = Allblobs;
 		this.maxdistance = maxdistance;

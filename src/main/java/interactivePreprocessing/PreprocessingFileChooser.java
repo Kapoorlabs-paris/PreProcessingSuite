@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -143,7 +144,6 @@ public class PreprocessingFileChooser extends JPanel {
 		
 		// Tracking and Measurement is done with imageA 
         
-	    
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
 		new InteractiveMethods(image, chooserA.getSelectedFile().getParentFile(), onlySeg, TrackandSeg, impA.getOriginalFileInfo().fileName).run(null);
@@ -161,7 +161,7 @@ public class PreprocessingFileChooser extends JPanel {
 		RandomAccessibleInterval<FloatType> image = ImageJFunctions.convertFloat(impA);
 		
 		
-		new InteractiveMethods(image, onlySeg, TrackandSeg, impA.getOriginalFileInfo().fileName).run(null);
+		new InteractiveMethods(image,new File(impA.getOriginalFileInfo().directory), onlySeg, TrackandSeg, impA.getOriginalFileInfo().fileName).run(null);
 		close(parent);
 		if(impA!=null)
         impA.close();
