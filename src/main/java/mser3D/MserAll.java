@@ -92,7 +92,8 @@ public class ParallelCalls implements Callable<Void> {
 		RandomAccessibleInterval<BitType> bitimg = new ArrayImgFactory<BitType>().create(parent.originalimg, new BitType());
 		
 		List<Future<Void>> list = new ArrayList<Future<Void>>();
-		final ExecutorService taskExecutor = Executors.newCachedThreadPool();
+		int nThreads = Runtime.getRuntime().availableProcessors();
+		final ExecutorService taskExecutor = Executors.newFixedThreadPool(nThreads);
 		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 

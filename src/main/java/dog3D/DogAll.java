@@ -115,7 +115,8 @@ public class DogAll extends SwingWorker<Void, Void> {
 				new BitType());
 
 		List<Future<Void>> list = new ArrayList<Future<Void>>();
-		final ExecutorService taskExecutor = Executors.newCachedThreadPool();
+		int nThreads = Runtime.getRuntime().availableProcessors();
+		final ExecutorService taskExecutor = Executors.newFixedThreadPool(nThreads);
 		for (int t = CovistoTimeselectPanel.fourthDimensionsliderInit; t <= CovistoTimeselectPanel.fourthDimensionSize; ++t) {
 
 			for (int z = CovistoZselectPanel.thirdDimensionsliderInit; z <= CovistoZselectPanel.thirdDimensionSize; ++z) {

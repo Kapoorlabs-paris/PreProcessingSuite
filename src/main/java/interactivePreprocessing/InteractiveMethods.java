@@ -239,7 +239,7 @@ public class InteractiveMethods {
 		AccountedZ = new HashMap<String, Integer>();
 		AllEvents = new ConcurrentHashMap<Integer, ArrayList<double[]>>();
 		AfterRemovedRois = new ArrayList<Roi>(); 
-		universe = new Image3DUniverse((int) originalimg.dimension(0), (int) originalimg.dimension(1));
+		//universe = new Image3DUniverse((int) originalimg.dimension(0), (int) originalimg.dimension(1));
 		jpb = new JProgressBar();
 		overlay = new Overlay();
 		interval = new FinalInterval(originalimg.dimension(0), originalimg.dimension(1));

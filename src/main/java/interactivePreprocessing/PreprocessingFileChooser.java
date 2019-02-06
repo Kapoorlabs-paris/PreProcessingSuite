@@ -85,8 +85,8 @@ public class PreprocessingFileChooser extends JPanel {
 		    
 		    ModePanel.add(SegMode, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 					GridBagConstraints.HORIZONTAL, insets, 0, 0));
-		    ModePanel.add(TrackMode, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		 //   ModePanel.add(TrackMode, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+			//		GridBagConstraints.HORIZONTAL, insets, 0, 0));
 		    panelFirst.add(ModePanel, new GridBagConstraints(0, 0, 3, 1, 0.0D, 0.0D, 17, 
 				      -1, new Insets(10, 10, 0, 10), 0, 0));
 		    ModePanel.setBorder(methodborder);
