@@ -26,6 +26,7 @@ import org.jgrapht.event.TraversalListener;
 import org.jgrapht.event.TraversalListenerAdapter;
 import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.AsUnweightedGraph;
+import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.ListenableUndirectedGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -54,7 +55,7 @@ public class TrackModel3D
 	 * {@link #removeEdge(DefaultWeightedEdge)}, {@link #removeEdge(ThreeDRoiobject, ThreeDRoiobject)}
 	 * .
 	 */
-	private ListenableUndirectedGraph< ThreeDRoiobject, DefaultWeightedEdge > graph;
+	private DefaultListenableGraph< ThreeDRoiobject, DefaultWeightedEdge > graph;
 
 	private final MyGraphListener mgl;
 
@@ -158,7 +159,7 @@ public class TrackModel3D
 		{
 			this.graph.removeGraphListener( mgl );
 		}
-		this.graph = new ListenableUndirectedGraph< ThreeDRoiobject, DefaultWeightedEdge >( graph );
+		this.graph = new DefaultListenableGraph< ThreeDRoiobject, DefaultWeightedEdge >( graph );
 		this.graph.addGraphListener( mgl );
 		init( graph );
 	}
@@ -202,7 +203,7 @@ public class TrackModel3D
 		{
 			this.graph.removeGraphListener( mgl );
 		}
-		this.graph = new ListenableUndirectedGraph< ThreeDRoiobject, DefaultWeightedEdge >( graph );
+		this.graph = new DefaultListenableGraph< ThreeDRoiobject, DefaultWeightedEdge >( graph );
 		this.graph.addGraphListener( mgl );
 
 		edgesAdded.clear();
@@ -686,7 +687,7 @@ public class TrackModel3D
 	 * @param graph
 	 *            the graph to read edges and vertices from.
 	 */
-	private void init( final UndirectedGraph< ThreeDRoiobject, DefaultWeightedEdge > graph )
+	private void init( final SimpleWeightedGraph< ThreeDRoiobject, DefaultWeightedEdge > graph )
 	{
 		vertexToID = new HashMap< ThreeDRoiobject, Integer >();
 		edgeToID = new HashMap< DefaultWeightedEdge, Integer >();
@@ -704,7 +705,7 @@ public class TrackModel3D
 		final Set< ThreeDRoiobject > vertexSet = graph.vertexSet();
 		if ( vertexSet.size() > 0 )
 		{
-			final BreadthFirstIterator< ThreeDRoiobject, DefaultWeightedEdge > i = new BreadthFirstIterator< ThreeDRoiobject, DefaultWeightedEdge >( graph, null );
+			final BreadthFirstIterator< ThreeDRoiobject, DefaultWeightedEdge > i = new BreadthFirstIterator< ThreeDRoiobject, DefaultWeightedEdge >( graph );
 			i.addTraversalListener( new MyTraversalListener() );
 
 			while ( i.hasNext() )
@@ -911,7 +912,7 @@ public class TrackModel3D
 		}
 
 		@Override
-		public void edgeTraversed( final EdgeTraversalEvent< ThreeDRoiobject, DefaultWeightedEdge > event )
+		public void edgeTraversed( final EdgeTraversalEvent<  DefaultWeightedEdge > event )
 		{
 			final DefaultWeightedEdge e = event.getEdge();
 			currentConnectedEdgeSet.add( e );

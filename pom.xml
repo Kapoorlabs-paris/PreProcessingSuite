@@ -5,7 +5,7 @@
 	<parent> 
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>17.1.1</version>
+		<version>25.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -166,10 +166,10 @@
 			<groupId>gov.nist.math</groupId>
 			<artifactId>jama</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.jgrapht</groupId>
-			<artifactId>jgrapht</artifactId>
-		</dependency>
+	<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core</artifactId>
+			</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-dom</artifactId>

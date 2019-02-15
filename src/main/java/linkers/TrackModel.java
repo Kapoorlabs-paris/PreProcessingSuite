@@ -26,6 +26,7 @@ import org.jgrapht.event.TraversalListener;
 import org.jgrapht.event.TraversalListenerAdapter;
 import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.AsUnweightedGraph;
+import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.ListenableUndirectedGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -54,7 +55,7 @@ public class TrackModel
 	 * {@link #removeEdge(DefaultWeightedEdge)}, {@link #removeEdge(PreRoiobject, PreRoiobject)}
 	 * .
 	 */
-	private ListenableUndirectedGraph< PreRoiobject, DefaultWeightedEdge > graph;
+	private DefaultListenableGraph< PreRoiobject, DefaultWeightedEdge > graph;
 
 	private final MyGraphListener mgl;
 
@@ -158,7 +159,7 @@ public class TrackModel
 		{
 			this.graph.removeGraphListener( mgl );
 		}
-		this.graph = new ListenableUndirectedGraph< PreRoiobject, DefaultWeightedEdge >( graph );
+		this.graph = new DefaultListenableGraph< PreRoiobject, DefaultWeightedEdge >( graph );
 		this.graph.addGraphListener( mgl );
 		init( graph );
 	}
@@ -202,7 +203,7 @@ public class TrackModel
 		{
 			this.graph.removeGraphListener( mgl );
 		}
-		this.graph = new ListenableUndirectedGraph< PreRoiobject, DefaultWeightedEdge >( graph );
+		this.graph = new DefaultListenableGraph< PreRoiobject, DefaultWeightedEdge >( graph );
 		this.graph.addGraphListener( mgl );
 
 		edgesAdded.clear();
@@ -686,7 +687,7 @@ public class TrackModel
 	 * @param graph
 	 *            the graph to read edges and vertices from.
 	 */
-	private void init( final UndirectedGraph< PreRoiobject, DefaultWeightedEdge > graph )
+	private void init( final SimpleWeightedGraph< PreRoiobject, DefaultWeightedEdge > graph )
 	{
 		vertexToID = new HashMap< PreRoiobject, Integer >();
 		edgeToID = new HashMap< DefaultWeightedEdge, Integer >();
@@ -704,7 +705,7 @@ public class TrackModel
 		final Set< PreRoiobject > vertexSet = graph.vertexSet();
 		if ( vertexSet.size() > 0 )
 		{
-			final BreadthFirstIterator< PreRoiobject, DefaultWeightedEdge > i = new BreadthFirstIterator< PreRoiobject, DefaultWeightedEdge >( graph, null );
+			final BreadthFirstIterator< PreRoiobject, DefaultWeightedEdge > i = new BreadthFirstIterator< PreRoiobject, DefaultWeightedEdge >( graph );
 			i.addTraversalListener( new MyTraversalListener() );
 
 			while ( i.hasNext() )
@@ -911,7 +912,7 @@ public class TrackModel
 		}
 
 		@Override
-		public void edgeTraversed( final EdgeTraversalEvent< PreRoiobject, DefaultWeightedEdge > event )
+		public void edgeTraversed( final EdgeTraversalEvent< DefaultWeightedEdge > event )
 		{
 			final DefaultWeightedEdge e = event.getEdge();
 			currentConnectedEdgeSet.add( e );

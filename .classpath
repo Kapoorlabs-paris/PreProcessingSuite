@@ -24,31 +24,7 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/NumericalSolvers"/>
 	<classpathentry exported="true" kind="src" path="/imagej-deprecated"/>
-	<classpathentry exported="true" kind="lib" path="/Users/aimachine/.m2/repository/org/scijava/j3dcore/1.6.0-scijava-2/j3dcore-1.6.0-scijava-2.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="org.scijava"/>
-			<attribute name="maven.artifactId" value="j3dcore"/>
-			<attribute name="maven.version" value="1.6.0-scijava-2"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/Users/aimachine/.m2/repository/sc/fiji/3D_Viewer/4.0.2/3D_Viewer-4.0.2.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="sc.fiji"/>
-			<attribute name="maven.artifactId" value="3D_Viewer"/>
-			<attribute name="maven.version" value="4.0.2"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/ffmpeg-2.6.1-0.11-macosx-x86_64.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/gluegen-rt-2.3.2-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/joal-2.3.2-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/jocl-2.3.2-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Applications/Fiji.app/jars/macosx/jogl-all-2.3.2-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="src" path="/scifio"/>
 	<classpathentry exported="true" kind="src" path="/MasterPanels"/>
-	<classpathentry kind="src" path="/imglib2-algorithm"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
