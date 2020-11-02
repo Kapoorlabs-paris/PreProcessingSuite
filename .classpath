@@ -23,8 +23,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/NumericalSolvers"/>
-	<classpathentry exported="true" kind="src" path="/imagej-deprecated"/>
-	<classpathentry exported="true" kind="src" path="/scifio"/>
 	<classpathentry exported="true" kind="src" path="/MasterPanels"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
